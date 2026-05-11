@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 10: Phân loại ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+  <style>
+    .reveal .arch-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      align-items: stretch;
+      text-align: center;
+      font-size: 0.78em;
+    }
+
+    .reveal .arch-card {
+      border-radius: 8px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+    }
+
+    .reveal .tiny-note {
+      color: #666;
+      font-size: 0.78em;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================== MỞ ĐẦU ===================== -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 10: Phân loại ảnh</h3>
+          <p>AlexNet · VGG · GoogLeNet · ResNet · EfficientNet · ViT · Tinh chỉnh</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:0.5em;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:10px;">
+              <strong style="color:#1565c0;">Bài toán và chuẩn so sánh</strong>
+              <p style="margin:0.3em 0 0;">Bài toán phân loại ảnh, ImageNet, cách đọc một kiến trúc.</p>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px;">
+              <strong style="color:#2e7d32;">CNN kinh điển</strong>
+              <p style="margin:0.3em 0 0;">AlexNet, VGG, GoogLeNet, ResNet.</p>
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:10px;">
+              <strong style="color:#ef6c00;">Kiến trúc hiện đại</strong>
+              <p style="margin:0.3em 0 0;">EfficientNet và Bộ biến đổi thị giác.</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px; padding:10px;">
+              <strong style="color:#7b1fa2;">Học chuyển đổi</strong>
+              <p style="margin:0.3em 0 0;">Học chuyển đổi, tinh chỉnh, danh sách kiểm tra dự án.</p>
+            </div>
+          </div>
+          <p class="caption">Mục tiêu không phải học thuộc từng tầng, mà hiểu quyết định thiết kế phía sau mỗi kiến trúc.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Bài toán phân loại ảnh quy mô 1000 lớp</h2>
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center;">
+            <div style="background:#e3f2fd; border-radius:10px; padding:14px; text-align:center;">
+              <svg width="180" height="130" viewBox="0 0 180 130">
+                <rect x="5" y="5" width="170" height="120" rx="10" fill="#cfd8dc" />
+                <circle cx="70" cy="55" r="25" fill="#78909c" />
+                <circle cx="110" cy="55" r="25" fill="#78909c" />
+                <ellipse cx="90" cy="92" rx="45" ry="16" fill="#607d8b" />
+                <circle cx="72" cy="56" r="8" fill="#263238" />
+                <circle cx="108" cy="56" r="8" fill="#263238" />
+              </svg>
+              <p style="margin:0.4em 0 0; color:#555;">224×224×3 điểm ảnh</p>
+            </div>
+            <div style="font-size:2em; color:#B15A2B;">→</div>
+            <div style="background:#e8f5e9; border-radius:10px; padding:14px;">
+              <p style="margin:0 0 0.4em;"><strong>Dự đoán cao nhất</strong></p>
+              <div style="display:grid; gap:8px; font-size:0.86em;">
+                <div style="display:grid; grid-template-columns:48px 1fr 42px; gap:8px; align-items:center;">
+                  <span>mèo</span>
+                  <div style="height:14px; background:#c8e6c9; border-radius:7px; overflow:hidden;">
+                    <div style="width:82%; height:100%; background:#2e7d32;"></div>
+                  </div>
+                  <strong>0.82</strong>
+                </div>
+                <div style="display:grid; grid-template-columns:48px 1fr 42px; gap:8px; align-items:center;">
+                  <span>chó</span>
+                  <div style="height:14px; background:#c8e6c9; border-radius:7px; overflow:hidden;">
+                    <div style="width:10%; height:100%; background:#66bb6a;"></div>
+                  </div>
+                  <span>0.10</span>
+                </div>
+                <div style="display:grid; grid-template-columns:48px 1fr 42px; gap:8px; align-items:center;">
+                  <span>cáo</span>
+                  <div style="height:14px; background:#c8e6c9; border-radius:7px; overflow:hidden;">
+                    <div style="width:3%; height:100%; background:#a5d6a7;"></div>
+                  </div>
+                  <span>0.03</span>
+                </div>
+                <div style="display:grid; grid-template-columns:48px 1fr 42px; gap:8px; align-items:center; color:#999;">
+                  <span>...</span>
+                  <div style="height:14px; background:#eeeeee; border-radius:7px;"></div>
+                  <span>997</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Phân loại ảnh là bài nhập môn kinh điển của thị giác máy tính hiện đại, nhưng nó kéo theo hầu hết ý tưởng nền tảng.</p>
+        </section>
+
+        <section style="font-size:0.83em;">
+          <h2>Câu hỏi xuyên suốt buổi học</h2>
+          <p style="color:#555;">Bài 9 đã trả lời: CNN học đặc trưng ảnh như thế nào. Bài này hỏi sâu hơn: kiến trúc nào làm CNN mạnh lên?</p>
+          <div style="margin-top:0.8em; background:#fff3e0; padding:14px 18px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
+            <p style="margin-top:0.3em; font-style:italic; font-size:1.05em;">
+              Vì sao các mô hình phân loại ảnh tiến hóa từ <strong>mạng tích chập sâu hơn</strong> sang <strong>mô hình hiệu quả hơn</strong> và <strong>bộ biến đổi</strong>?
+            </p>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <p style="color:#555; margin:0 0 0.7em;">Sau buổi học, sinh viên có thể:</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:12px 14px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.35em;">
+                <span style="display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:50%; background:#1565c0; color:white; font-weight:700;">1</span>
+                <strong style="color:#1565c0; font-size:1.12em;">Giải thích</strong>
+              </div>
+              <p style="margin:0; color:#444;">Điểm mới của AlexNet, VGG, GoogLeNet, ResNet.</p>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:12px 14px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.35em;">
+                <span style="display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:50%; background:#2e7d32; color:white; font-weight:700;">2</span>
+                <strong style="color:#2e7d32; font-size:1.12em;">So sánh</strong>
+              </div>
+              <p style="margin:0; color:#444;">CNN cổ điển với EfficientNet và ViT theo độ chính xác, chi phí, dữ liệu.</p>
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:12px 14px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.35em;">
+                <span style="display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:50%; background:#ef6c00; color:white; font-weight:700;">3</span>
+                <strong style="color:#ef6c00; font-size:1.12em;">Chọn</strong>
+              </div>
+              <p style="margin:0; color:#444;">Chiến lược học chuyển đổi phù hợp với kích thước dữ liệu.</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px; padding:12px 14px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.35em;">
+                <span style="display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:50%; background:#7b1fa2; color:white; font-weight:700;">4</span>
+                <strong style="color:#7b1fa2; font-size:1.12em;">Thiết kế</strong>
+              </div>
+              <p style="margin:0; color:#444;">Quy trình tinh chỉnh cơ bản cho một bài toán phân loại ảnh mới.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 1 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Phân loại ảnh</h1>
+          <p>Đầu vào · Đầu ra · ImageNet · Độ đo · Cách đọc kiến trúc</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Quy trình phân loại ảnh</h2>
+          <div class="pipeline" style="font-size:0.9em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">đổi kích thước, cắt ảnh, chuẩn hóa</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mạng xương sống</div><div class="stage-desc">CNN và ViT trích đặc trưng</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Đầu phân loại</div><div class="stage-desc">tầng tuyến tính tạo C điểm tương ứng với C lớp</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Softmax</div><div class="stage-desc">tính xác suất cho từng lớp</div></div>
+          </div>
+          <p class="caption">Trong thực tế ta thường thay đầu phân loại, còn mạng xương sống lấy từ mô hình đã huấn luyện trước.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>ImageNet như một chuẩn đánh giá quy mô lớn</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:0.5em;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#1565c0;">Bộ dữ liệu</strong>
+              <ul style="font-size:0.9em;">
+                <li>~1.2 triệu ảnh huấn luyện.</li>
+                <li>1000 lớp đối tượng.</li>
+                <li>Ảnh tự nhiên, nhiều biến thiên.</li>
+              </ul>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Tác động</strong>
+              <ul style="font-size:0.9em;">
+                <li>Tạo chuẩn so sánh chung để so sánh kiến trúc.</li>
+                <li>Tạo nguồn mô hình đã huấn luyện trước.</li>
+                <li>Đẩy bộ xử lý đồ họa và học sâu thành tiêu chuẩn.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">ImageNet không đại diện cho mọi miền, nhưng là nền tảng học chuyển đổi quan trọng nhất trong nhiều năm.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tiến bộ trên chuẩn ImageNet</h2>
+          <div style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:18px; align-items:center;">
+            <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:10px;">
+              <img src="img/lec-10/imagenet-error-progress.png" alt="Sai số của mô hình thắng cuộc ImageNet theo năm" style="max-width:100%; max-height:58vh; object-fit:contain;" />
+            </div>
+            <div>
+              <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:10px 14px; margin-bottom:0.6em;">
+                <strong style="color:#1565c0;">Ý nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Sai số của mô hình thắng cuộc giảm nhanh trong giai đoạn 2011-2015.</p>
+              </div>
+              <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:10px 14px;">
+                <strong style="color:#ef6c00;">Lưu ý</strong>
+                <p style="margin:0.35em 0 0;">Kết quả trên ImageNet là chuẩn so sánh quan trọng, không phải kết luận chung cho mọi miền ảnh.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Nguồn ảnh: Wikimedia Commons, “Classification of images progress human.png”, CC0.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Độ chính xác hạng 1 và hạng 5</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#fff3e0; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#ef6c00;">Hạng 1</strong>
+              <p style="margin:0.35em 0;">Đúng nếu nhãn có xác suất cao nhất là nhãn thật.</p>
+              <p style="margin:0; color:#555;">Khắt khe hơn, dùng nhiều khi triển khai.</p>
+            </div>
+            <div style="background:#e3f2fd; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#1565c0;">Hạng 5</strong>
+              <p style="margin:0.35em 0;">Đúng nếu nhãn thật nằm trong 5 dự đoán cao nhất.</p>
+              <p style="margin:0; color:#555;">Phù hợp ImageNet vì có các lớp gần nghĩa.</p>
+            </div>
+          </div>
+          <p class="caption">Các bài báo cũ hay báo lỗi hạng 5; bài toán ứng dụng thường quan tâm hạng 1, F1 hoặc hiệu chuẩn xác suất.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Phân tích một kiến trúc phân loại ảnh</h2>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:0.5em;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:9px;">
+              <strong style="color:#1565c0;">Độ sâu</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Bao nhiêu tầng có tham số?</p>
+            </div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:9px;">
+              <strong style="color:#2e7d32;">Chi phí</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Số tham số, phép tính, bộ nhớ, độ trễ.</p>
+            </div>
+            <div style="background:#fff3e0; border-radius:8px; padding:9px;">
+              <strong style="color:#ef6c00;">Khối chính</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Tích chập 3×3? Inception? Phần dư? Chú ý?</p>
+            </div>
+            <div style="background:#f3e5f5; border-radius:8px; padding:9px;">
+              <strong style="color:#7b1fa2;">Đầu phân loại</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Tầng nối đầy đủ lớn hay gộp trung bình toàn cục?</p>
+            </div>
+          </div>
+          <p class="caption">Một kiến trúc tốt là sự cân bằng giữa độ chính xác, chi phí và khả năng huấn luyện.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tiến trình phát triển các ý tưởng chính</h2>
+          <div class="arch-row" style="margin-top:0.6em;">
+            <div class="arch-card" style="border-top:5px solid #1565c0;"><strong>2012<br/>AlexNet</strong><br/><span style="color:#555;">GPU + ReLU + bỏ ngẫu nhiên</span></div>
+            <div class="arch-card" style="border-top:5px solid #2e7d32;"><strong>2014<br/>VGG</strong><br/><span style="color:#555;">sâu hơn bằng 3×3 conv</span></div>
+            <div class="arch-card" style="border-top:5px solid #ef6c00;"><strong>2014<br/>GoogLeNet</strong><br/><span style="color:#555;">Inception, tiết kiệm tham số</span></div>
+            <div class="arch-card" style="border-top:5px solid #c62828;"><strong>2015<br/>ResNet</strong><br/><span style="color:#555;">kết nối tắt</span></div>
+            <div class="arch-card" style="border-top:5px solid #7b1fa2;"><strong>2019–2020<br/>EfficientNet và ViT</strong><br/><span style="color:#555;">mở rộng, chú ý</span></div>
+          </div>
+          <p class="caption">AlexNet chứng minh CNN lớn huấn luyện được; ResNet chứng minh mạng cực sâu huấn luyện được; ViT chứng minh cơ chế chú ý có thể thay thế tích chập khi dữ liệu và tiền huấn luyện đủ lớn.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 2 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />Kiến trúc kinh điển</h1>
+          <p>AlexNet · VGG · GoogLeNet · ResNet</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>AlexNet và bước ngoặt ImageNet 2012</h2>
+          <div style="display:grid; gap:10px;">
+            <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:10px 12px;">
+              <div style="font-weight:bold; color:#555; margin-bottom:7px;">Kiến trúc AlexNet chuẩn cho ImageNet-1K</div>
+              <div style="display:grid; grid-template-columns:repeat(13,minmax(0,1fr)); gap:4px; text-align:center; align-items:stretch; font-size:0.82em; line-height:1.15;">
+                <div style="background:#e3f2fd; border-top:4px solid #1565c0; border-radius:6px; padding:5px 3px;">
+                  <strong>Ảnh vào</strong><br/>
+                  <span style="color:#555;">224×224×3</span>
+                </div>
+                <div style="background:#fff3e0; border-top:4px solid #ef6c00; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv1</strong><br/>
+                  <span style="color:#555;">96 @ 11×11<br/>stride 4</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool1</strong><br/>
+                  <span style="color:#555;">3×3<br/>stride 2</span>
+                </div>
+                <div style="background:#fff3e0; border-top:4px solid #ef6c00; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv2</strong><br/>
+                  <span style="color:#555;">256 @ 5×5<br/>pad 2</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool2</strong><br/>
+                  <span style="color:#555;">3×3<br/>stride 2</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv3</strong><br/>
+                  <span style="color:#555;">384 @ 3×3<br/>pad 1</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv4</strong><br/>
+                  <span style="color:#555;">384 @ 3×3<br/>pad 1</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv5</strong><br/>
+                  <span style="color:#555;">256 @ 3×3<br/>pad 1</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool5</strong><br/>
+                  <span style="color:#555;">3×3<br/>stride 2</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>FC6</strong><br/>
+                  <span style="color:#555;">4096<br/>dropout</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>FC7</strong><br/>
+                  <span style="color:#555;">4096<br/>dropout</span>
+                </div>
+                <div style="background:#f3e5f5; border-top:4px solid #7b1fa2; border-radius:6px; padding:5px 3px;">
+                  <strong>FC8</strong><br/>
+                  <span style="color:#555;">1000<br/>điểm lớp</span>
+                </div>
+                <div style="background:#ede7f6; border-top:4px solid #512da8; border-radius:6px; padding:5px 3px;">
+                  <strong>Softmax</strong><br/>
+                  <span style="color:#555;">xác suất<br/>1000 lớp</span>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; color:#555;">
+                <div><span style="display:inline-block; width:12px; height:12px; background:#fff3e0; border-top:4px solid #ef6c00;"></span> Tích chập lớn</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#fff8e1; border-top:4px solid #f9a825;"></span> Tích chập 3×3</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#e0f2f1; border-top:4px solid #00897b;"></span> Gộp cực đại</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#e8f5e9; border-top:4px solid #2e7d32;"></span> Tầng nối đầy đủ</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+              <div style="background:#e3f2fd; border-left:4px solid #1565c0; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#1565c0;">GPU</strong><br/>
+                <span style="color:#555;">mô hình lớn trở nên huấn luyện được.</span>
+              </div>
+              <div style="background:#e8f5e9; border-left:4px solid #2e7d32; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#2e7d32;">ReLU</strong><br/>
+                <span style="color:#555;">hội tụ nhanh hơn sigmoid/tanh.</span>
+              </div>
+              <div style="background:#fff3e0; border-left:4px solid #ef6c00; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#ef6c00;">Bỏ ngẫu nhiên</strong><br/>
+                <span style="color:#555;">giảm quá khớp ở các tầng nối đầy đủ lớn.</span>
+              </div>
+              <div style="background:#f3e5f5; border-left:4px solid #7b1fa2; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#7b1fa2;">Đầu-cuối</strong><br/>
+                <span style="color:#555;">học đặc trưng trực tiếp từ dữ liệu.</span>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Thông điệp chính: học đặc trưng đầu-cuối thắng quy trình đặc trưng thủ công.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Tác động của AlexNet đối với giả định thiết kế</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#ffebee; border-left:5px solid #c62828; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#c62828;">Trước đó</strong>
+              <ul style="font-size:0.9em;">
+                <li>Thiết kế đặc trưng thủ công: SIFT, HOG, BoVW.</li>
+                <li>Bộ phân loại tách rời đặc trưng.</li>
+                <li>Học sâu bị xem là khó huấn luyện.</li>
+              </ul>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Sau đó</strong>
+              <ul style="font-size:0.9em;">
+                <li>Học đặc trưng trực tiếp từ ảnh.</li>
+                <li>Kiến trúc, dữ liệu, GPU là một hệ thống chung.</li>
+                <li>ImageNet trở thành nguồn dữ liệu huấn luyện trước mô hình (pretrained).</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Khi dữ liệu đủ lớn, đặc trưng học được thường vượt đặc trưng thiết kế thủ công.</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>VGG và thiết kế tích chập 3×3 đồng nhất</h2>
+          <div style="display:grid; gap:10px;">
+            <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:10px 12px;">
+              <div style="font-weight:bold; color:#555; margin-bottom:7px;">Kiến trúc VGG-16 chuẩn cho ImageNet-1K</div>
+              <div style="display:grid; grid-template-columns:repeat(13,minmax(0,1fr)); gap:4px; text-align:center; align-items:stretch; font-size:0.82em; line-height:1.15;">
+                <div style="background:#e3f2fd; border-top:4px solid #1565c0; border-radius:6px; padding:5px 3px;">
+                  <strong>Ảnh vào</strong><br/>
+                  <span style="color:#555;">224×224×3</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Block 1</strong><br/>
+                  <span style="color:#555;">64 @ 3×3<br/>×2</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool1</strong><br/>
+                  <span style="color:#555;">2×2<br/>stride 2</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Block 2</strong><br/>
+                  <span style="color:#555;">128 @ 3×3<br/>×2</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool2</strong><br/>
+                  <span style="color:#555;">2×2<br/>stride 2</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Block 3</strong><br/>
+                  <span style="color:#555;">256 @ 3×3<br/>×3</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool3</strong><br/>
+                  <span style="color:#555;">2×2<br/>stride 2</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Block 4</strong><br/>
+                  <span style="color:#555;">512 @ 3×3<br/>×3</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool4</strong><br/>
+                  <span style="color:#555;">2×2<br/>stride 2</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Block 5</strong><br/>
+                  <span style="color:#555;">512 @ 3×3<br/>×3</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Pool5</strong><br/>
+                  <span style="color:#555;">2×2<br/>stride 2</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>FC6-FC8</strong><br/>
+                  <span style="color:#555;">4096, 4096<br/>1000</span>
+                </div>
+                <div style="background:#ede7f6; border-top:4px solid #512da8; border-radius:6px; padding:5px 3px;">
+                  <strong>Softmax</strong><br/>
+                  <span style="color:#555;">xác suất<br/>1000 lớp</span>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; color:#555;">
+                <div><span style="display:inline-block; width:12px; height:12px; background:#fff8e1; border-top:4px solid #f9a825;"></span> Khối tích chập 3×3</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#e0f2f1; border-top:4px solid #00897b;"></span> Gộp cực đại</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#e8f5e9; border-top:4px solid #2e7d32;"></span> Tầng nối đầy đủ</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#ede7f6; border-top:4px solid #512da8;"></span> Chuẩn hóa xác suất</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+              <div style="background:#fff8e1; border-left:4px solid #f9a825; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#f9a825;">Đồng nhất</strong><br/>
+                <span style="color:#555;">toàn bộ phần trích đặc trưng dùng conv 3×3, stride 1, pad 1.</span>
+              </div>
+              <div style="background:#e0f2f1; border-left:4px solid #00897b; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#00897b;">Giảm kích thước</strong><br/>
+                <span style="color:#555;">mỗi khối kết thúc bằng max-pool 2×2 stride 2.</span>
+              </div>
+              <div style="background:#e8f5e9; border-left:4px solid #2e7d32; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#2e7d32;">Sâu hơn</strong><br/>
+                <span style="color:#555;">VGG-16: 13 lớp conv + 3 lớp FC, khoảng 138 triệu tham số.</span>
+              </div>
+              <div style="background:#ffebee; border-left:4px solid #c62828; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#c62828;">Đắt tham số</strong><br/>
+                <span style="color:#555;">hai tầng FC 4096 làm mô hình rất nặng.</span>
+              </div>
+            </div>
+          </div>
+          <p class="caption">VGG cho thấy: sâu hơn + thiết kế đều có thể rất mạnh, dù chi phí tham số lớn (VGG-16 khoảng 138 triệu tham số). VGG-19: có 3 khối gồm 4 lớp tích chập (khoảng 144 triệu tham số).</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Hai tầng tích chập 3×3 thay cho một tầng 5×5</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:center;">
+            <div style="background:#ffebee; border-radius:8px; padding:12px; text-align:center;">
+              <strong style="color:#c62828;">1 lớp 5×5</strong>
+              <p style="font-size:1.5em; margin:0.4em;">25C² tham số</p>
+              <p style="color:#555; margin:0;">1 lần phi tuyến</p>
+            </div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:12px; text-align:center;">
+              <strong style="color:#2e7d32;">2 lớp 3×3</strong>
+              <p style="font-size:1.5em; margin:0.4em;">18C² tham số</p>
+              <p style="color:#555; margin:0;">2 lần phi tuyến</p>
+            </div>
+          </div>
+          <p class="caption">Cùng vùng nhìn 5×5, nhưng tích chập nhỏ hơn vừa tiết kiệm tham số vừa tăng khả năng biểu diễn.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Ưu điểm và hạn chế của VGG</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Điểm mạnh</strong>
+              <ul style="font-size:0.9em;">
+                <li>Dễ hiểu, dễ cài đặt.</li>
+                <li>Bộ trích đặc trưng tốt cho nhiều bài toán.</li>
+                <li>Thiết kế “khối” ảnh hưởng lâu dài.</li>
+              </ul>
+            </div>
+            <div style="background:#ffebee; border-left:5px solid #c62828; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#c62828;">Điểm yếu</strong>
+              <ul style="font-size:0.9em;">
+                <li>Tầng nối đầy đủ rất lớn, nhiều tham số.</li>
+                <li>Tốn bộ nhớ và tính toán.</li>
+                <li>Không phải lựa chọn tốt cho thiết bị di động/thiết bị biên.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>GoogLeNet và xử lý đa tỉ lệ trong một tầng</h2>
+          <div style="display:grid; grid-template-columns:2.2fr 0.9fr; gap:12px; align-items:stretch;">
+            <div style="background:#fafafa; border:1px solid #ddd; border-radius:10px; padding:12px;">
+              <div style="text-align:center; margin-bottom:8px;">
+                <span style="display:inline-block; background:#e3f2fd; border-top:4px solid #1565c0; border-radius:8px; padding:7px 18px;">
+                  <strong>Bản đồ đặc trưng đầu vào</strong><br/>
+                  <span style="color:#555;">H×W×C</span>
+                </span>
+              </div>
+              <div style="text-align:center; color:#777; font-size:1.25em; margin:-2px 0 4px;">↓ đưa cùng một đầu vào vào 4 nhánh song song</div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; text-align:center; align-items:stretch;">
+                <div style="background:#e3f2fd; border-top:4px solid #1565c0; border-radius:8px; padding:8px;">
+                  <strong>Nhánh 1</strong>
+                  <div style="margin-top:6px; background:#fff; border:1px solid #bbdefb; border-radius:6px; padding:7px;">1×1 conv</div>
+                  <div style="color:#555; margin-top:6px;">đặc trưng rất cục bộ</div>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:8px; padding:8px;">
+                  <strong>Nhánh 2</strong>
+                  <div style="margin-top:6px; background:#fff; border:1px solid #c8e6c9; border-radius:6px; padding:5px;">1×1 giảm kênh</div>
+                  <div style="color:#777; margin:3px 0;">↓</div>
+                  <div style="background:#fff; border:1px solid #c8e6c9; border-radius:6px; padding:5px;">3×3 conv</div>
+                </div>
+                <div style="background:#fff3e0; border-top:4px solid #ef6c00; border-radius:8px; padding:8px;">
+                  <strong>Nhánh 3</strong>
+                  <div style="margin-top:6px; background:#fff; border:1px solid #ffe0b2; border-radius:6px; padding:5px;">1×1 giảm kênh</div>
+                  <div style="color:#777; margin:3px 0;">↓</div>
+                  <div style="background:#fff; border:1px solid #ffe0b2; border-radius:6px; padding:5px;">5×5 conv</div>
+                </div>
+                <div style="background:#f3e5f5; border-top:4px solid #7b1fa2; border-radius:8px; padding:8px;">
+                  <strong>Nhánh 4</strong>
+                  <div style="margin-top:6px; background:#fff; border:1px solid #e1bee7; border-radius:6px; padding:5px;">3×3 max-pool</div>
+                  <div style="color:#777; margin:3px 0;">↓</div>
+                  <div style="background:#fff; border:1px solid #e1bee7; border-radius:6px; padding:5px;">1×1 conv</div>
+                </div>
+              </div>
+              <div style="text-align:center; font-size:1.35em; color:#555; margin:0.25em;">↓ ghép nối theo chiều kênh</div>
+              <div style="background:#ffecb3; border-top:4px solid #f9a825; border-radius:8px; padding:8px; text-align:center;">
+                <strong>Bản đồ đặc trưng đầu ra</strong><br/>
+                <span style="color:#555;">H×W×(số kênh từ 4 nhánh cộng lại)</span>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+              <div style="background:#e8f5e9; border-left:4px solid #2e7d32; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#2e7d32;">Đa tỉ lệ</strong><br/>
+                <span style="color:#555;">1×1, 3×3, 5×5 và gộp nhìn ảnh ở các vùng nhìn khác nhau.</span>
+              </div>
+              <div style="background:#fff3e0; border-left:4px solid #ef6c00; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#ef6c00;">Tiết kiệm</strong><br/>
+                <span style="color:#555;">1×1 giảm số kênh trước các phép tích chập 3×3 và 5×5 đắt.</span>
+              </div>
+              <div style="background:#f3e5f5; border-left:4px solid #7b1fa2; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#7b1fa2;">Ghép đặc trưng</strong><br/>
+                <span style="color:#555;">kết quả các nhánh được nối lại để tầng sau tự chọn thông tin hữu ích.</span>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Thông điệp chính: không chỉ “sâu hơn”, mà còn phải “hiệu quả hơn”.</p>
+        </section>
+
+        <section style="font-size:0.52em;">
+          <h2>GoogLeNet đầy đủ theo sơ đồ khối</h2>
+          <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:8px 10px;">
+            <svg width="100%" viewBox="0 0 1430 650" role="img" aria-label="Sơ đồ GoogLeNet đầy đủ với các khối Inception">
+              <defs>
+                <marker id="gnet-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#444" />
+                </marker>
+                <style>
+                  .gline { stroke:#444; stroke-width:1.5; fill:none; marker-end:url(#gnet-arrow); }
+                  .gtext { font-family:Arial, sans-serif; font-size:14px; fill:#111; text-anchor:middle; dominant-baseline:middle; }
+                  .gsmall { font-size:12px; }
+                  .glabel { font-size:15px; font-weight:bold; }
+                  .ginput { fill:#fff; stroke:#777; stroke-width:1.5; }
+                  .gconv { fill:#2f80ed; stroke:#1f5fb5; stroke-width:1; }
+                  .gpool { fill:#d32f2f; stroke:#9a1f1f; stroke-width:1; }
+                  .gconcat { fill:#0b9b53; stroke:#08713d; stroke-width:1; }
+                  .gsoft { fill:#f4a000; stroke:#b97800; stroke-width:1; }
+                  .gfc { fill:#5b6ee1; stroke:#3848aa; stroke-width:1; }
+                  .gaux { fill:#fff7e0; stroke:#b97800; stroke-width:1.2; }
+                  .gwhite { fill:#fff; font-weight:bold; }
+                </style>
+                <symbol id="gnet-inception" viewBox="0 0 150 260">
+                  <line class="gline" x1="0" y1="146" x2="18" y2="48" />
+                  <line class="gline" x1="0" y1="146" x2="18" y2="113" />
+                  <line class="gline" x1="0" y1="146" x2="18" y2="178" />
+                  <line class="gline" x1="0" y1="146" x2="18" y2="243" />
+                  <rect class="gconv" x="20" y="25" width="46" height="42" rx="3" />
+                  <text class="gtext gwhite gsmall" x="43" y="46">1×1</text>
+                  <rect class="gconv" x="20" y="90" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="43" y="106">1×1</text>
+                  <rect class="gconv" x="68" y="90" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="91" y="106">3×3</text>
+                  <rect class="gconv" x="20" y="155" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="43" y="171">1×1</text>
+                  <rect class="gconv" x="68" y="155" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="91" y="171">5×5</text>
+                  <rect class="gpool" x="20" y="220" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="43" y="236">Pool</text>
+                  <rect class="gconv" x="68" y="220" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="91" y="236">1×1</text>
+                  <line class="gline" x1="66" y1="46" x2="122" y2="146" />
+                  <line class="gline" x1="114" y1="106" x2="122" y2="146" />
+                  <line class="gline" x1="114" y1="171" x2="122" y2="146" />
+                  <line class="gline" x1="114" y1="236" x2="122" y2="146" />
+                  <rect class="gconcat" x="124" y="118" width="22" height="56" rx="2" />
+                  <text class="gtext gwhite gsmall" transform="translate(135 146) rotate(-90)">DepthConcat</text>
+                </symbol>
+                <symbol id="gnet-inception-rev" viewBox="0 0 150 260">
+                  <line class="gline" x1="150" y1="146" x2="132" y2="48" />
+                  <line class="gline" x1="150" y1="146" x2="132" y2="113" />
+                  <line class="gline" x1="150" y1="146" x2="132" y2="178" />
+                  <line class="gline" x1="150" y1="146" x2="132" y2="243" />
+                  <rect class="gconv" x="84" y="25" width="46" height="42" rx="3" />
+                  <text class="gtext gwhite gsmall" x="107" y="46">1×1</text>
+                  <rect class="gconv" x="84" y="90" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="107" y="106">1×1</text>
+                  <rect class="gconv" x="36" y="90" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="59" y="106">3×3</text>
+                  <rect class="gconv" x="84" y="155" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="107" y="171">1×1</text>
+                  <rect class="gconv" x="36" y="155" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="59" y="171">5×5</text>
+                  <rect class="gpool" x="84" y="220" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="107" y="236">Pool</text>
+                  <rect class="gconv" x="36" y="220" width="46" height="32" rx="3" />
+                  <text class="gtext gwhite gsmall" x="59" y="236">1×1</text>
+                  <line class="gline" x1="84" y1="46" x2="28" y2="146" />
+                  <line class="gline" x1="36" y1="106" x2="28" y2="146" />
+                  <line class="gline" x1="36" y1="171" x2="28" y2="146" />
+                  <line class="gline" x1="36" y1="236" x2="28" y2="146" />
+                  <rect class="gconcat" x="4" y="118" width="22" height="56" rx="2" />
+                  <text class="gtext gwhite gsmall" transform="translate(15 146) rotate(-90)">DepthConcat</text>
+                </symbol>
+              </defs>
+
+              <text class="gtext glabel" x="72" y="32">Stem</text>
+              <rect class="ginput" x="8" y="199" width="48" height="34" rx="14" />
+              <text class="gtext gsmall" x="32" y="216">Input</text>
+              <line class="gline" x1="56" y1="216" x2="78" y2="216" />
+
+              <rect class="gconv" x="80" y="191" width="54" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="107" y="209">7×7</text>
+              <text class="gtext gwhite gsmall" x="107" y="224">Conv</text>
+              <line class="gline" x1="134" y1="216" x2="152" y2="216" />
+              <rect class="gpool" x="154" y="191" width="54" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="181" y="209">3×3</text>
+              <text class="gtext gwhite gsmall" x="181" y="224">Pool</text>
+              <line class="gline" x1="208" y1="216" x2="226" y2="216" />
+              <rect class="gconv" x="228" y="191" width="54" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="255" y="209">1×1</text>
+              <text class="gtext gwhite gsmall" x="255" y="224">Conv</text>
+              <line class="gline" x1="282" y1="216" x2="300" y2="216" />
+              <rect class="gconv" x="302" y="191" width="54" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="329" y="209">3×3</text>
+              <text class="gtext gwhite gsmall" x="329" y="224">Conv</text>
+              <line class="gline" x1="356" y1="216" x2="374" y2="216" />
+              <rect class="gpool" x="376" y="191" width="54" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="403" y="209">3×3</text>
+              <text class="gtext gwhite gsmall" x="403" y="224">Pool</text>
+
+              <line class="gline" x1="430" y1="216" x2="454" y2="216" />
+              <text class="gtext glabel" x="530" y="60">Inception 3a</text>
+              <use href="#gnet-inception" x="456" y="70" width="150" height="260" />
+              <line class="gline" x1="602" y1="216" x2="624" y2="216" />
+              <text class="gtext glabel" x="700" y="60">Inception 3b</text>
+              <use href="#gnet-inception" x="626" y="70" width="150" height="260" />
+              <line class="gline" x1="772" y1="216" x2="792" y2="216" />
+              <rect class="gpool" x="794" y="191" width="48" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="818" y="209">3×3</text>
+              <text class="gtext gwhite gsmall" x="818" y="224">Pool</text>
+              <line class="gline" x1="842" y1="216" x2="862" y2="216" />
+              <text class="gtext glabel" x="938" y="60">Inception 4a</text>
+              <use href="#gnet-inception" x="864" y="70" width="150" height="260" />
+              <line class="gline" x1="1010" y1="216" x2="1050" y2="48" />
+              <rect class="gaux" x="1008" y="12" width="88" height="30" rx="3" />
+              <text class="gtext gsmall" x="1052" y="27">Aux softmax</text>
+
+              <path class="gline" d="M1010,216 H1390 V456" />
+
+              <use href="#gnet-inception-rev" x="1240" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="1315" y="590">Inception 4b</text>
+              <line class="gline" x1="1244" y1="456" x2="1222" y2="456" />
+              <use href="#gnet-inception-rev" x="1070" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="1145" y="590">Inception 4c</text>
+              <line class="gline" x1="1074" y1="456" x2="1052" y2="456" />
+              <use href="#gnet-inception-rev" x="900" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="975" y="590">Inception 4d</text>
+              <line class="gline" x1="904" y1="456" x2="860" y2="608" />
+              <rect class="gaux" x="812" y="614" width="88" height="30" rx="3" />
+              <text class="gtext gsmall" x="856" y="629">Aux softmax</text>
+
+              <line class="gline" x1="904" y1="456" x2="882" y2="456" />
+              <use href="#gnet-inception-rev" x="730" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="805" y="590">Inception 4e</text>
+              <line class="gline" x1="734" y1="456" x2="710" y2="456" />
+              <rect class="gpool" x="660" y="431" width="48" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="684" y="449">3×3</text>
+              <text class="gtext gwhite gsmall" x="684" y="464">Pool</text>
+              <line class="gline" x1="660" y1="456" x2="642" y2="456" />
+              <use href="#gnet-inception-rev" x="490" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="565" y="590">Inception 5a</text>
+              <line class="gline" x1="494" y1="456" x2="472" y2="456" />
+              <use href="#gnet-inception-rev" x="320" y="310" width="150" height="260" />
+              <text class="gtext glabel" x="395" y="590">Inception 5b</text>
+
+              <line class="gline" x1="324" y1="456" x2="296" y2="456" />
+              <rect class="gpool" x="230" y="431" width="64" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="262" y="449">Avg</text>
+              <text class="gtext gwhite gsmall" x="262" y="464">Pool</text>
+              <line class="gline" x1="230" y1="456" x2="210" y2="456" />
+              <rect class="gpool" x="150" y="431" width="58" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="179" y="456">Dropout</text>
+              <line class="gline" x1="150" y1="456" x2="130" y2="456" />
+              <rect class="gfc" x="84" y="431" width="44" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="106" y="456">FC</text>
+              <line class="gline" x1="84" y1="456" x2="68" y2="456" />
+              <rect class="gsoft" x="8" y="431" width="58" height="50" rx="3" />
+              <text class="gtext gwhite gsmall" x="37" y="456">Softmax</text>
+            </svg>
+          </div>
+          <p class="caption">Sơ đồ đầy đủ của GoogLeNet (22 lớp có tham số, khoảng 6,8 triệu tham số): nhiều khối Inception nối tiếp, hai bộ phân loại phụ khi huấn luyện, và bộ phân loại cuối dùng gộp trung bình toàn cục.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Tích chập 1×1 như cơ chế giảm chiều</h2>
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center;">
+            <div style="background:#ffebee; border-radius:8px; padding:10px; text-align:center;">
+              <strong style="color:#c62828;">Đắt</strong>
+              <p style="margin:0.3em 0;">28×28×192 → 5×5×32</p>
+              <p style="margin:0; color:#555;">nhiều phép nhân</p>
+            </div>
+            <div style="font-size:1.8em; color:#B15A2B;">→</div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px; text-align:center;">
+              <strong style="color:#2e7d32;">Rẻ hơn</strong>
+              <p style="margin:0.3em 0;">1×1 giảm 192 → 16 kênh</p>
+              <p style="margin:0; color:#555;">rồi mới 5×5</p>
+            </div>
+          </div>
+          <p class="caption">1×1 conv trộn thông tin theo kênh và giảm chi phí trước các conv lớn.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>GoogLeNet so với AlexNet, VGG</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <div style="background:#ffebee; border-left:5px solid #c62828; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#c62828;">AlexNet và VGG</strong>
+              <p style="margin:0.4em 0;">Nhiều tham số nằm ở các tầng nối đầy đủ.</p>
+              <p style="margin:0; color:#555;">Dễ quá khớp, tốn bộ nhớ.</p>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">GoogLeNet</strong>
+              <p style="margin:0.4em 0;">Dùng gộp trung bình toàn cục trước bộ phân loại.</p>
+              <p style="margin:0; color:#555;">Ít tham số hơn rất nhiều.</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#7b1fa2;">Bộ phân loại phụ (Aux)</strong>
+              <p style="margin:0.4em 0;">Gắn sau Inception 4a và 4d trong huấn luyện.</p>
+              <p style="margin:0; color:#555;">Tăng tín hiệu gradient cho các tầng giữa; khi suy luận thường bỏ đi.</p>
+            </div>
+          </div>
+          <p class="caption">GoogLeNet giảm phụ thuộc vào tầng nối đầy đủ lớn, đồng thời dùng Aux để hỗ trợ huấn luyện mạng sâu.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Hiện tượng suy giảm khi tăng độ sâu</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:center;">
+            <div>
+              <svg width="100%" viewBox="0 0 300 160">
+                <line x1="30" y1="130" x2="280" y2="130" stroke="#888" />
+                <line x1="30" y1="130" x2="30" y2="20" stroke="#888" />
+                <text x="110" y="152" font-size="12" fill="#555">số tầng</text>
+                <text x="0" y="75" font-size="12" fill="#555" transform="rotate(-90,10,75)">training error</text>
+                <path d="M40,55 C90,82 130,98 170,105 C210,112 245,116 275,118" fill="none" stroke="#2e7d32" stroke-width="3" />
+                <path d="M40,55 C90,82 130,102 165,106 C210,98 245,78 275,62" fill="none" stroke="#c62828" stroke-width="3" />
+                <text x="190" y="123" font-size="12" fill="#2e7d32">mong muốn</text>
+                <text x="170" y="58" font-size="12" fill="#c62828">thực tế trước ResNet</text>
+              </svg>
+            </div>
+            <div>
+              <ul>
+                <li>Không chỉ là quá khớp: lỗi huấn luyện cũng tăng.</li>
+                <li>Gradient khó đi qua hàng chục/hàng trăm tầng.</li>
+                <li>ResNet tạo “đường tắt” cho tín hiệu và đạo hàm.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">ResNet biến câu hỏi từ “có thể huấn luyện mạng 20 tầng không?” thành “GPU/bộ nhớ cho phép sâu đến đâu?”.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>ResNet và biểu diễn phần dư</h2>
+          <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:18px; align-items:center;">
+            <div style="text-align:center;">
+              <svg width="100%" viewBox="0 0 390 150">
+                <rect x="20" y="65" width="45" height="26" rx="5" fill="#e3f2fd" stroke="#1565c0" />
+                <text x="42" y="83" font-size="13" fill="#1565c0" text-anchor="middle">x</text>
+                <line x1="65" y1="78" x2="115" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr1)" />
+                <rect x="120" y="45" width="70" height="66" rx="8" fill="#fff3e0" stroke="#ef6c00" />
+                <text x="155" y="70" font-size="13" fill="#e65100" text-anchor="middle">Conv</text>
+                <text x="155" y="88" font-size="13" fill="#e65100" text-anchor="middle">BN ReLU</text>
+                <line x1="190" y1="78" x2="230" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr1)" />
+                <circle cx="250" cy="78" r="14" fill="#e8f5e9" stroke="#2e7d32" />
+                <text x="250" y="84" font-size="18" fill="#2e7d32" text-anchor="middle">+</text>
+                <line x1="264" y1="78" x2="330" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr1)" />
+                <text x="345" y="83" font-size="13" fill="#2e7d32">H(x)</text>
+                <path d="M65,78 C95,20 210,20 250,64" fill="none" stroke="#c62828" stroke-width="2.5" marker-end="url(#arr2)" />
+                <text x="145" y="28" font-size="13" fill="#c62828">kết nối tắt</text>
+                <defs>
+                  <marker id="arr1" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker>
+                  <marker id="arr2" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c62828"/></marker>
+                </defs>
+              </svg>
+            </div>
+            <div>
+              <p style="margin:0;">Thay vì học trực tiếp \(H(x)\), khối học:</p>
+              <p style="font-size:1.25em; margin:0.35em 0;">\[\mathcal{F}(x) = H(x) - x\]</p>
+              <p style="margin:0;">Đầu ra: \(H(x) = \mathcal{F}(x) + x\)</p>
+            </div>
+          </div>
+          <p class="caption">Kết nối tắt cho đạo hàm đi qua nhiều tầng dễ hơn, giúp huấn luyện mạng rất sâu.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>ResNet như kiến trúc xương sống tiêu chuẩn</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:10px;">
+              <strong style="color:#1565c0;">Ổn định</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Dễ huấn luyện, dễ tinh chỉnh, có nhiều biến thể.</p>
+            </div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px;">
+              <strong style="color:#2e7d32;">Tổng quát</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Dùng cho phân loại, phát hiện, phân đoạn.</p>
+            </div>
+            <div style="background:#fff3e0; border-radius:8px; padding:10px;">
+              <strong style="color:#ef6c00;">Mốc so sánh</strong>
+              <p style="margin:0.3em 0 0; color:#555;">Nhiều mô hình mới vẫn so với ResNet-50.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Kiến trúc ResNet-50</h2>
+          <div style="display:grid; gap:10px;">
+            <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:10px 12px;">
+              <div style="font-weight:bold; color:#555; margin-bottom:7px;">ResNet-50 cho ImageNet-1K: các stage bottleneck</div>
+              <div style="display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:4px; text-align:center; align-items:stretch; font-size:0.82em; line-height:1.15;">
+                <div style="background:#e3f2fd; border-top:4px solid #1565c0; border-radius:6px; padding:5px 3px;">
+                  <strong>Ảnh vào</strong><br/>
+                  <span style="color:#555;">224×224×3</span>
+                </div>
+                <div style="background:#fff8e1; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv1</strong><br/>
+                  <span style="color:#555;">7×7, 64<br/>stride 2</span>
+                </div>
+                <div style="background:#e0f2f1; border-top:4px solid #00897b; border-radius:6px; padding:5px 3px;">
+                  <strong>Max-pool</strong><br/>
+                  <span style="color:#555;">3×3<br/>stride 2</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv2_x</strong><br/>
+                  <span style="color:#555;">bottleneck<br/>×3</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv3_x</strong><br/>
+                  <span style="color:#555;">bottleneck<br/>×4</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv4_x</strong><br/>
+                  <span style="color:#555;">bottleneck<br/>×6</span>
+                </div>
+                <div style="background:#e8f5e9; border-top:4px solid #2e7d32; border-radius:6px; padding:5px 3px;">
+                  <strong>Conv5_x</strong><br/>
+                  <span style="color:#555;">bottleneck<br/>×3</span>
+                </div>
+                <div style="background:#f3e5f5; border-top:4px solid #7b1fa2; border-radius:6px; padding:5px 3px;">
+                  <strong>Avg-pool</strong><br/>
+                  <span style="color:#555;">toàn cục</span>
+                </div>
+                <div style="background:#ede7f6; border-top:4px solid #512da8; border-radius:6px; padding:5px 3px;">
+                  <strong>FC</strong><br/>
+                  <span style="color:#555;">1000 điểm lớp</span>
+                </div>
+                <div style="background:#ffecb3; border-top:4px solid #f9a825; border-radius:6px; padding:5px 3px;">
+                  <strong>Softmax</strong><br/>
+                  <span style="color:#555;">1000 lớp</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+              <div style="background:#e8f5e9; border-left:4px solid #2e7d32; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#2e7d32;">Khối bottleneck</strong><br/>
+                <span style="color:#555;">mỗi khối dùng chuỗi 1×1 → 3×3 → 1×1.</span>
+              </div>
+              <div style="background:#fff3e0; border-left:4px solid #ef6c00; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#ef6c00;">Mở rộng kênh</strong><br/>
+                <span style="color:#555;">đầu ra stage lần lượt 256, 512, 1024, 2048 kênh.</span>
+              </div>
+              <div style="background:#e3f2fd; border-left:4px solid #1565c0; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#1565c0;">Kết nối tắt</strong><br/>
+                <span style="color:#555;">mỗi bottleneck cộng đầu vào với phần dư học được.</span>
+              </div>
+              <div style="background:#f3e5f5; border-left:4px solid #7b1fa2; border-radius:8px; padding:8px 11px;">
+                <strong style="color:#7b1fa2;">Quy mô</strong><br/>
+                <span style="color:#555;">50 lớp, khoảng 25,6 triệu tham số.</span>
+              </div>
+            </div>
+          </div>
+          <p class="caption">ResNet-50 sâu hơn ResNet-34 nhưng dùng nút cổ chai (bottleneck) để giữ chi phí tính toán hợp lý.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tổng hợp các kiến trúc ResNet</h2>
+          <table style="width:100%; border-collapse:collapse; font-size:0.88em;">
+            <thead>
+              <tr style="background:#f5f5f5;">
+                <th style="padding:8px; border:1px solid #ddd;">Kiến trúc</th>
+                <th style="padding:8px; border:1px solid #ddd;">Loại khối</th>
+                <th style="padding:8px; border:1px solid #ddd;">Số khối theo stage</th>
+                <th style="padding:8px; border:1px solid #ddd;">Số tầng</th>
+                <th style="padding:8px; border:1px solid #ddd;">Số tham số xấp xỉ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">ResNet-18</td><td style="padding:8px; border:1px solid #ddd;">basic block</td><td style="padding:8px; border:1px solid #ddd;">2, 2, 2, 2</td><td style="padding:8px; border:1px solid #ddd;">18</td><td style="padding:8px; border:1px solid #ddd;">11,7 triệu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">ResNet-34</td><td style="padding:8px; border:1px solid #ddd;">basic block</td><td style="padding:8px; border:1px solid #ddd;">3, 4, 6, 3</td><td style="padding:8px; border:1px solid #ddd;">34</td><td style="padding:8px; border:1px solid #ddd;">21,8 triệu</td></tr>
+              <tr style="background:#e8f5e9;"><td style="padding:8px; border:1px solid #ddd;"><strong>ResNet-50</strong></td><td style="padding:8px; border:1px solid #ddd;">bottleneck</td><td style="padding:8px; border:1px solid #ddd;">3, 4, 6, 3</td><td style="padding:8px; border:1px solid #ddd;">50</td><td style="padding:8px; border:1px solid #ddd;">25,6 triệu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">ResNet-101</td><td style="padding:8px; border:1px solid #ddd;">bottleneck</td><td style="padding:8px; border:1px solid #ddd;">3, 4, 23, 3</td><td style="padding:8px; border:1px solid #ddd;">101</td><td style="padding:8px; border:1px solid #ddd;">44,5 triệu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">ResNet-152</td><td style="padding:8px; border:1px solid #ddd;">bottleneck</td><td style="padding:8px; border:1px solid #ddd;">3, 8, 36, 3</td><td style="padding:8px; border:1px solid #ddd;">152</td><td style="padding:8px; border:1px solid #ddd;">60,2 triệu</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Các số tham số là xấp xỉ cho phiên bản ImageNet-1K phổ biến; khác biệt nhỏ có thể xuất hiện tùy thư viện cài đặt.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Đối chiếu các kiến trúc kinh điển</h2>
+          <table style="width:100%; border-collapse:separate; border-spacing:0 6px; font-size:0.9em;">
+            <thead>
+              <tr style="background:#37474f; color:white;">
+                <th style="padding:8px; border:1px solid #37474f; border-radius:8px 0 0 8px;">Kiến trúc</th>
+                <th style="padding:8px; border:1px solid #37474f;">Ý tưởng chính</th>
+                <th style="padding:8px; border:1px solid #37474f;">Đổi lại</th>
+                <th style="padding:8px; border:1px solid #37474f; border-radius:0 8px 8px 0;">Bài học</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#e3f2fd;"><td style="padding:8px; border-left:5px solid #1565c0; border-radius:8px 0 0 8px;"><strong style="color:#1565c0;">AlexNet</strong></td><td style="padding:8px;">CNN lớn + GPU</td><td style="padding:8px;">Tầng nối đầy đủ rất nặng</td><td style="padding:8px; border-radius:0 8px 8px 0;">Học đầu-cuối thắng đặc trưng thủ công</td></tr>
+              <tr style="background:#e8f5e9;"><td style="padding:8px; border-left:5px solid #2e7d32; border-radius:8px 0 0 8px;"><strong style="color:#2e7d32;">VGG</strong></td><td style="padding:8px;">Nhiều Conv 3×3</td><td style="padding:8px;">Tốn tham số</td><td style="padding:8px; border-radius:0 8px 8px 0;">Thiết kế đều, sâu hơn</td></tr>
+              <tr style="background:#fff3e0;"><td style="padding:8px; border-left:5px solid #ef6c00; border-radius:8px 0 0 8px;"><strong style="color:#ef6c00;">GoogLeNet</strong></td><td style="padding:8px;">Inception + 1×1</td><td style="padding:8px;">Phức tạp hơn</td><td style="padding:8px; border-radius:0 8px 8px 0;">Hiệu quả tính toán quan trọng</td></tr>
+              <tr style="background:#f3e5f5;"><td style="padding:8px; border-left:5px solid #7b1fa2; border-radius:8px 0 0 8px;"><strong style="color:#7b1fa2;">ResNet</strong></td><td style="padding:8px;">Kết nối phần dư</td><td style="padding:8px;">Cần thiết kế khối tốt</td><td style="padding:8px; border-radius:0 8px 8px 0;">Dòng đạo hàm quyết định độ sâu</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết phần kiến trúc kinh điển</h2>
+          <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> AlexNet mở đường, VGG tăng độ sâu có kiểm soát, GoogLeNet tối ưu chi phí, ResNet giải bài toán huấn luyện mạng rất sâu.
+          </div>
+          <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> Nếu tài nguyên giới hạn hoặc dữ liệu cực lớn, ta nên mở rộng mô hình theo cách nào?
+          </div>
+          <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo:</strong> EfficientNet cân bằng cách mở rộng; ViT thay tích chập bằng chú ý trên mảnh ảnh.
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 3 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />Kiến trúc hiện đại</h1>
+          <p>EfficientNet · Bộ biến đổi thị giác (ViT)</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Các chiều mở rộng sau ResNet</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:10px; text-align:center;">
+              <strong style="color:#1565c0;">Độ sâu</strong>
+              <p style="margin:0.3em 0 0; color:#555;">thêm tầng</p>
+            </div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px; text-align:center;">
+              <strong style="color:#2e7d32;">Độ rộng</strong>
+              <p style="margin:0.3em 0 0; color:#555;">thêm kênh</p>
+            </div>
+            <div style="background:#fff3e0; border-radius:8px; padding:10px; text-align:center;">
+              <strong style="color:#ef6c00;">Độ phân giải</strong>
+              <p style="margin:0.3em 0 0; color:#555;">ảnh đầu vào lớn hơn</p>
+            </div>
+          </div>
+          <p class="caption">Câu hỏi EfficientNet đặt ra: mở rộng cả ba chiều như thế nào cho cân bằng?</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>EfficientNet và nguyên lý mở rộng cân bằng</h2>
+          <div style="background:#fafafa; border:1px solid #ddd; border-radius:10px; padding:12px; text-align:center;">
+            <p style="margin:0.2em 0; font-size:1.1em;">
+              độ sâu: \(d=\alpha^\phi\), độ rộng: \(w=\beta^\phi\), độ phân giải: \(r=\gamma^\phi\)
+            </p>
+            <p style="margin:0.4em 0 0; color:#555;">
+              với ràng buộc xấp xỉ: \(\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2\)
+            </p>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:0.6em; font-size:0.9em;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:8px;">Không chỉ sâu hơn.</div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:8px;">Không chỉ rộng hơn.</div>
+            <div style="background:#fff3e0; border-radius:8px; padding:8px;">Không chỉ ảnh lớn hơn.</div>
+          </div>
+          <p class="caption">Mở rộng cân bằng dùng một hệ số \(\phi\) để tăng mô hình theo cách cân bằng.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>EfficientNet-B0 như kiến trúc cơ sở</h2>
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:12px; text-align:center;">
+              <strong style="color:#1565c0;">B0</strong>
+              <p style="margin:0.3em 0;">mốc nền tìm bằng tìm kiếm kiến trúc tự động</p>
+              <p style="margin:0; color:#555;">dùng MBConv và nút cổ chai đảo</p>
+            </div>
+            <div style="font-size:1.8em; color:#B15A2B;">→</div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:12px; text-align:center;">
+              <strong style="color:#2e7d32;">B1 ... B7</strong>
+              <p style="margin:0.3em 0;">mở rộng độ sâu, độ rộng, độ phân giải</p>
+              <p style="margin:0; color:#555;">chọn theo ngân sách tính toán</p>
+            </div>
+          </div>
+          <p class="caption">EfficientNet hữu ích khi phải cân bằng độ chính xác và độ trễ thay vì chỉ tối đa độ chính xác.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Điều kiện lựa chọn EfficientNet</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Nên cân nhắc</strong>
+              <ul style="font-size:0.9em;">
+                <li>Triển khai có giới hạn độ trễ hoặc RAM.</li>
+                <li>Cần mốc nền mạnh, gọn, đã huấn luyện trước.</li>
+                <li>Ảnh tự nhiên, bài toán gần ImageNet.</li>
+              </ul>
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#ef6c00;">Cần kiểm tra</strong>
+              <ul style="font-size:0.9em;">
+                <li>Độ trễ thực tế phụ thuộc phần cứng.</li>
+                <li>Ảnh miền hẹp cần tinh chỉnh cẩn thận.</li>
+                <li>Tăng cường dữ liệu quá mạnh có thể phá nhãn.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>ViT và biểu diễn ảnh dưới dạng chuỗi đơn vị</h2>
+          <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:18px; align-items:center;">
+            <div>
+              <svg width="100%" viewBox="0 0 380 160">
+                <rect x="10" y="20" width="110" height="110" fill="#e3f2fd" stroke="#1565c0" />
+                <g stroke="#1565c0" opacity="0.65">
+                  <line x1="37.5" y1="20" x2="37.5" y2="130"/><line x1="65" y1="20" x2="65" y2="130"/><line x1="92.5" y1="20" x2="92.5" y2="130"/>
+                  <line x1="10" y1="47.5" x2="120" y2="47.5"/><line x1="10" y1="75" x2="120" y2="75"/><line x1="10" y1="102.5" x2="120" y2="102.5"/>
+                </g>
+                <text x="65" y="148" font-size="12" fill="#555" text-anchor="middle">ảnh → mảnh ảnh</text>
+                <text x="145" y="82" font-size="22" fill="#B15A2B">→</text>
+                <rect x="175" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
+                <rect x="214" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
+                <rect x="253" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
+                <rect x="292" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
+                <text x="250" y="88" font-size="12" fill="#555" text-anchor="middle">biểu diễn mảnh ảnh + vị trí</text>
+                <rect x="205" y="105" width="95" height="35" rx="8" fill="#fff3e0" stroke="#ef6c00" />
+                <text x="252" y="127" font-size="13" fill="#e65100" text-anchor="middle">Bộ biến đổi</text>
+              </svg>
+            </div>
+            <div>
+              <ul>
+                <li>Chia ảnh thành các mảnh, ví dụ 16×16.</li>
+                <li>Mỗi mảnh thành một véc-tơ biểu diễn.</li>
+                <li>Thêm biểu diễn vị trí.</li>
+                <li>Dùng bộ mã hóa biến đổi như trong xử lý ngôn ngữ tự nhiên.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">ViT thay thiên kiến quy nạp của tích chập bằng khả năng học quan hệ toàn cục qua cơ chế tự chú ý.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Cơ chế tự chú ý và quan hệ toàn cục</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">CNN</strong>
+              <p style="margin:0.3em 0;">Bắt đầu từ vùng nhìn cục bộ.</p>
+              <p style="margin:0; color:#555;">Thông tin xa nhau gặp nhau sau nhiều tầng.</p>
+            </div>
+            <div style="background:#fff3e0; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#ef6c00;">ViT</strong>
+              <p style="margin:0.3em 0;">Mỗi đơn vị có thể chú ý tới mọi đơn vị khác.</p>
+              <p style="margin:0; color:#555;">Quan hệ toàn cục có ngay từ tầng đầu.</p>
+            </div>
+          </div>
+          <p class="caption">Đổi lại: cơ chế chú ý có chi phí tăng theo bình phương số đơn vị, nên kích thước mảnh ảnh và độ phân giải rất quan trọng.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Yêu cầu dữ liệu của ViT</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#ffebee; border-left:5px solid #c62828; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#c62828;">Ít dữ liệu</strong>
+              <p style="margin:0.35em 0;">CNN thường tổng quát tốt hơn nhờ thiên kiến cục bộ và chia sẻ trọng số.</p>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Nhiều dữ liệu và tiền huấn luyện lớn</strong>
+              <p style="margin:0.35em 0;">ViT tận dụng mở rộng rất tốt và học chuyển đổi mạnh.</p>
+            </div>
+          </div>
+          <p class="caption">Kết luận thực tế: không huấn luyện ViT từ đầu với vài nghìn ảnh; hãy dùng mô hình đã huấn luyện trước.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>So sánh khái niệm giữa CNN và ViT</h2>
+          <table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+            <thead><tr style="background:#f5f5f5;"><th style="padding:8px; border:1px solid #ddd;"></th><th style="padding:8px; border:1px solid #ddd;">CNN</th><th style="padding:8px; border:1px solid #ddd;">ViT</th></tr></thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Đơn vị xử lý</td><td style="padding:8px; border:1px solid #ddd;">điểm ảnh lân cận hoặc bản đồ đặc trưng</td><td style="padding:8px; border:1px solid #ddd;">đơn vị mảnh ảnh</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Thiên kiến chính</td><td style="padding:8px; border:1px solid #ddd;">cục bộ, tịnh tiến</td><td style="padding:8px; border:1px solid #ddd;">quan hệ toàn cục học từ dữ liệu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Dữ liệu ít</td><td style="padding:8px; border:1px solid #ddd;">thường an toàn hơn</td><td style="padding:8px; border:1px solid #ddd;">cần mô hình đã huấn luyện trước mạnh</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Dữ liệu rất lớn</td><td style="padding:8px; border:1px solid #ddd;">tốt</td><td style="padding:8px; border:1px solid #ddd;">mở rộng rất tốt</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Lựa chọn mô hình mốc nền</h2>
+          <div style="display:grid; gap:9px; margin-top:0.4em;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:8px 12px;">
+              <strong style="color:#1565c0;">Cần mốc nền chắc chắn:</strong> ResNet-50 đã huấn luyện trước.
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:8px 12px;">
+              <strong style="color:#2e7d32;">Cần nhẹ và nhanh:</strong> EfficientNet-B0/B1 hoặc mô hình kiểu MobileNet.
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:8px 12px;">
+              <strong style="color:#ef6c00;">Có ViT đã huấn luyện trước tốt:</strong> thử ViT/DeiT/Swin, nhưng kiểm tra độ trễ và dữ liệu.
+            </div>
+          </div>
+          <p class="caption">Đừng chọn mô hình theo “mới nhất”; chọn theo dữ liệu, phần cứng và mục tiêu lỗi.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 4 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />Học chuyển đổi<br />và tinh chỉnh</h1>
+          <p>Bộ trích đặc trưng cố định · Tinh chỉnh · Kích thước dữ liệu · Danh sách kiểm tra</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Động cơ sử dụng học chuyển đổi</h2>
+          <div class="question-box">
+            <div class="question-title">Thực tế</div>
+            <p>Rất ít dự án có đủ dữ liệu và GPU để huấn luyện một mạng tích chập lớn từ khởi tạo ngẫu nhiên.</p>
+          </div>
+          <ul style="margin-top:0.6em;">
+            <li>Tầng đầu học cạnh, màu, kết cấu — thường dùng lại được.</li>
+            <li>Tầng sau học đặc trưng gần nhãn gốc — cần điều chỉnh nhiều hơn.</li>
+            <li>Tiền huấn luyện giúp tối ưu bắt đầu từ điểm tốt hơn.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Hai chiến lược học chuyển đổi</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#1565c0;">Bộ trích đặc trưng cố định</strong>
+              <ul style="font-size:0.9em;">
+                <li>Đóng băng mạng xương sống.</li>
+                <li>Thay đầu phân loại.</li>
+                <li>Huấn luyện nhanh, ít quá khớp.</li>
+              </ul>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Tinh chỉnh</strong>
+              <ul style="font-size:0.9em;">
+                <li>Huấn luyện đầu phân loại trước.</li>
+                <li>Mở dần một số khối cuối.</li>
+                <li>Tốc độ học nhỏ hơn cho mạng xương sống.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">CS231n khuyến nghị chọn giữa hai chế độ dựa trên kích thước dữ liệu và độ giống với ImageNet.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Ma trận ra quyết định cho tinh chỉnh</h2>
+          <table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+            <thead>
+              <tr style="background:#f5f5f5;">
+                <th style="padding:8px; border:1px solid #ddd;">Dữ liệu mới</th>
+                <th style="padding:8px; border:1px solid #ddd;">Giống ImageNet</th>
+                <th style="padding:8px; border:1px solid #ddd;">Khác ImageNet</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:8px; border:1px solid #ddd;"><strong>Nhỏ</strong><br/><span style="color:#666;">vài trăm đến vài nghìn ảnh</span></td>
+                <td style="padding:8px; border:1px solid #ddd;">Đóng băng mạng xương sống, huấn luyện đầu phân loại.</td>
+                <td style="padding:8px; border:1px solid #ddd;">Đóng băng nhiều tầng, tinh chỉnh khối cuối rất nhẹ.</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border:1px solid #ddd;"><strong>Trung bình/lớn</strong><br/><span style="color:#666;">chục nghìn ảnh trở lên</span></td>
+                <td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh nhiều khối.</td>
+                <td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh toàn bộ hoặc tiền huấn luyện theo miền nếu có thể.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Quy trình tinh chỉnh có kiểm soát</h2>
+          <div style="display:grid; gap:8px;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:8px 12px;"><strong style="color:#1565c0;">1.</strong> Bắt đầu bằng mạng xương sống đã huấn luyện trước, thay đầu phân loại đúng số lớp.</div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:8px 12px;"><strong style="color:#2e7d32;">2.</strong> Đóng băng mạng xương sống, huấn luyện đầu phân loại vài lượt để ổn định.</div>
+            <div style="background:#fff3e0; border-radius:8px; padding:8px 12px;"><strong style="color:#ef6c00;">3.</strong> Mở khóa khối cuối, dùng tốc độ học nhỏ hơn 10–100 lần.</div>
+            <div style="background:#f3e5f5; border-radius:8px; padding:8px 12px;"><strong style="color:#7b1fa2;">4.</strong> Theo dõi tập kiểm định, dừng sớm, ma trận nhầm lẫn.</div>
+          </div>
+          <p class="caption">Sai lầm phổ biến: mở khóa toàn bộ ngay từ đầu với tốc độ học lớn, làm hỏng đặc trưng đã huấn luyện trước.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Tốc độ học phân tầng</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; text-align:center;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:10px;">
+              <strong style="color:#1565c0;">Tầng đầu</strong>
+              <p style="margin:0.3em 0;">cạnh, màu, kết cấu</p>
+              <p style="font-size:1.2em; margin:0;">tốc độ học rất nhỏ</p>
+            </div>
+            <div style="background:#fff3e0; border-radius:8px; padding:10px;">
+              <strong style="color:#ef6c00;">Khối giữa</strong>
+              <p style="margin:0.3em 0;">hình dạng, bộ phận</p>
+              <p style="font-size:1.2em; margin:0;">tốc độ học nhỏ</p>
+            </div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px;">
+              <strong style="color:#2e7d32;">Đầu phân loại mới</strong>
+              <p style="margin:0.3em 0;">nhãn bài toán mới</p>
+              <p style="font-size:1.2em; margin:0;">tốc độ học lớn hơn</p>
+            </div>
+          </div>
+          <p class="caption">Càng gần đầu vào, đặc trưng càng tổng quát; càng gần đầu ra, đặc trưng càng phụ thuộc bộ dữ liệu gốc.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tăng cường dữ liệu theo đặc thù miền</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#e8f5e9; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#2e7d32;">Thường an toàn</strong>
+              <ul style="font-size:0.9em;">
+                <li>Cắt ngẫu nhiên và đổi kích thước.</li>
+                <li>Lật ngang với ảnh tự nhiên.</li>
+                <li>Nhiễu màu nhẹ.</li>
+                <li>Mixup/CutMix nếu nhãn cho phép.</li>
+              </ul>
+            </div>
+            <div style="background:#ffebee; border-radius:8px; padding:10px 14px;">
+              <strong style="color:#c62828;">Cần tránh</strong>
+              <ul style="font-size:0.9em;">
+                <li>Lật trái-phải khi hướng có ý nghĩa y khoa.</li>
+                <li>Xoay mạnh với ký tự/chữ số.</li>
+                <li>Cắt mất vùng bệnh/đối tượng chính.</li>
+                <li>Biến đổi màu phá tín hiệu nhãn.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Đánh giá mô hình phân loại ảnh</h2>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:9px;"><strong style="color:#1565c0;">Độ chính xác</strong><br/><span style="color:#555;">tổng thể đúng bao nhiêu</span></div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:9px;"><strong style="color:#2e7d32;">Độ đúng và độ phủ</strong><br/><span style="color:#555;">quan trọng khi lệch lớp</span></div>
+            <div style="background:#fff3e0; border-radius:8px; padding:9px;"><strong style="color:#ef6c00;">Ma trận nhầm lẫn</strong><br/><span style="color:#555;">nhầm lớp nào với lớp nào</span></div>
+            <div style="background:#f3e5f5; border-radius:8px; padding:9px;"><strong style="color:#7b1fa2;">Hiệu chuẩn xác suất</strong><br/><span style="color:#555;">xác suất có đáng tin không</span></div>
+          </div>
+          <p class="caption">Trong y tế/an toàn, độ chính xác cao chưa đủ; bỏ sót ca dương có thể nghiêm trọng hơn báo động nhầm.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Danh sách kiểm tra dự án phân loại ảnh</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="background:#e3f2fd; border-radius:8px; padding:8px 12px;">1. Kiểm tra cách chia dữ liệu: không rò rỉ ảnh gần trùng giữa tập huấn luyện/kiểm định/kiểm tra.</div>
+            <div style="background:#e8f5e9; border-radius:8px; padding:8px 12px;">2. Dựng mốc nền đơn giản từ mô hình đã huấn luyện trước.</div>
+            <div style="background:#fff3e0; border-radius:8px; padding:8px 12px;">3. Theo dõi lỗi huấn luyện/kiểm định để phát hiện quá khớp.</div>
+            <div style="background:#f3e5f5; border-radius:8px; padding:8px 12px;">4. Xem ảnh mô hình dự đoán sai, không chỉ xem độ đo.</div>
+            <div style="background:#ffebee; border-radius:8px; padding:8px 12px;">5. Báo cáo ma trận nhầm lẫn và lỗi theo từng lớp.</div>
+            <div style="background:#e0f2f1; border-radius:8px; padding:8px 12px;">6. Đo độ trễ/bộ nhớ trên thiết bị thật nếu triển khai.</div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== KẾT ===================== -->
+      <section>
+        <section style="font-size:0.82em;">
+          <h2>Trả lời câu hỏi xuyên suốt</h2>
+          <div style="background:#fff3e0; padding:10px 14px; border-radius:8px; border-left:5px solid #ff9800; margin-bottom:0.6em;">
+            <em style="color:#e65100;">Vì sao mô hình phân loại ảnh tiến hóa từ mạng tích chập sâu hơn sang mô hình hiệu quả hơn và bộ biến đổi?</em>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.9em;">
+            <div style="background:#e3f2fd; border-left:4px solid #1565c0; border-radius:6px; padding:8px 12px;"><strong style="color:#1565c0;">AlexNet/VGG:</strong> tăng năng lực biểu diễn bằng mạng sâu hơn.</div>
+            <div style="background:#e8f5e9; border-left:4px solid #2e7d32; border-radius:6px; padding:8px 12px;"><strong style="color:#2e7d32;">GoogLeNet/ResNet:</strong> làm mạng sâu huấn luyện được và tiết kiệm hơn.</div>
+            <div style="background:#fff3e0; border-left:4px solid #ef6c00; border-radius:6px; padding:8px 12px;"><strong style="color:#ef6c00;">EfficientNet:</strong> mở rộng cần cân bằng độ sâu, độ rộng, độ phân giải.</div>
+            <div style="background:#f3e5f5; border-left:4px solid #7b1fa2; border-radius:6px; padding:8px 12px;"><strong style="color:#7b1fa2;">ViT:</strong> khi tiền huấn luyện đủ lớn, cơ chế chú ý học quan hệ toàn cục rất mạnh.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Gợi ý minh họa trực quan</h2>
+          <div style="display:grid; gap:7px;">
+            <div style="background:#e3f2fd; border-radius:6px; padding:7px 12px;"><strong>1.</strong> Sơ đồ AlexNet gốc hoặc phiên bản CS231n: minh họa tích chập/gộp/tầng nối đầy đủ và chia tải GPU.</div>
+            <div style="background:#e8f5e9; border-radius:6px; padding:7px 12px;"><strong>2.</strong> Khối VGG: chồng nhiều tích chập 3×3 thay nhân lớn.</div>
+            <div style="background:#fff3e0; border-radius:6px; padding:7px 12px;"><strong>3.</strong> Khối Inception: 1×1, 3×3, 5×5, gộp song song.</div>
+            <div style="background:#ffebee; border-radius:6px; padding:7px 12px;"><strong>4.</strong> Khối phần dư: kết nối tắt \(x + F(x)\).</div>
+            <div style="background:#f3e5f5; border-radius:6px; padding:7px 12px;"><strong>5.</strong> EfficientNet mở rộng cân bằng: độ sâu/độ rộng/độ phân giải.</div>
+            <div style="background:#e0f2f1; border-radius:6px; padding:7px 12px;"><strong>6.</strong> Quy trình ViT: mảnh ảnh → biểu diễn → bộ mã hóa biến đổi → bộ phân loại.</div>
+          </div>
+          <p class="caption">Nguồn ưu tiên: bài giảng CS231n, bài báo gốc, hoặc hình tự vẽ lại để tránh phụ thuộc bản quyền.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Tài liệu tham khảo</h2>
+          <ul>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/slides/2021/lecture_9.pdf">Bài giảng 9: Kiến trúc CNN</a>.</li>
+            <li>Ghi chú CS231n, <a href="https://cs231n.github.io/transfer-learning/">Học chuyển đổi</a>.</li>
+            <li>Krizhevsky, Sutskever, Hinton, <a href="https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html">Phân loại ImageNet bằng mạng nơ-ron tích chập sâu</a>, 2012.</li>
+            <li>Simonyan, Zisserman, <a href="https://arxiv.org/abs/1409.1556">Mạng tích chập rất sâu cho nhận dạng ảnh quy mô lớn</a>, 2014.</li>
+            <li>Szegedy et al., <a href="https://arxiv.org/abs/1409.4842">Đi sâu hơn với tích chập</a>, 2014.</li>
+            <li>He et al., <a href="https://arxiv.org/abs/1512.03385">Học phần dư sâu cho nhận dạng ảnh</a>, 2015.</li>
+            <li>Tan, Le, <a href="https://arxiv.org/abs/1905.11946">EfficientNet: suy nghĩ lại cách mở rộng mô hình cho mạng nơ-ron tích chập</a>, 2019.</li>
+            <li>Dosovitskiy et al., <a href="https://arxiv.org/abs/2010.11929">Một ảnh đáng giá 16×16 từ</a>, 2020.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Câu hỏi tự đánh giá</h2>
+          <div style="display:grid; gap:0.45em; margin-top:0.4em;">
+            <div style="background:#e3f2fd; border-radius:6px; padding:7px 12px; border-left:4px solid #1565c0;"><strong>1.</strong> AlexNet khác quy trình đặc trưng thủ công ở điểm nào?</div>
+            <div style="background:#e8f5e9; border-radius:6px; padding:7px 12px; border-left:4px solid #2e7d32;"><strong>2.</strong> Vì sao VGG thích nhiều tích chập 3×3 hơn nhân lớn?</div>
+            <div style="background:#fff3e0; border-radius:6px; padding:7px 12px; border-left:4px solid #ef6c00;"><strong>3.</strong> Tích chập 1×1 trong GoogLeNet dùng để làm gì?</div>
+            <div style="background:#ffebee; border-radius:6px; padding:7px 12px; border-left:4px solid #c62828;"><strong>4.</strong> Kết nối phần dư giúp huấn luyện mạng sâu bằng cách nào?</div>
+            <div style="background:#f3e5f5; border-radius:6px; padding:7px 12px; border-left:4px solid #7b1fa2;"><strong>5.</strong> Khi nào nên dùng bộ trích đặc trưng cố định thay vì tinh chỉnh toàn bộ?</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bài tập mở rộng</h2>
+          <div style="background:#e3f2fd; padding:8px 12px; border-radius:6px; margin-bottom:0.4em; border-left:4px solid #1565c0;">
+            <strong style="color:#0d47a1;">A. Thiết kế mốc nền.</strong>
+            Bạn có 4000 ảnh phân loại 4 bệnh lá cây. Chọn mạng xương sống, tăng cường dữ liệu, độ đo, và chiến lược tinh chỉnh. Giải thích lý do.
+          </div>
+          <div style="background:#e8f5e9; padding:8px 12px; border-radius:6px; margin-bottom:0.4em; border-left:4px solid #2e7d32;">
+            <strong style="color:#1b5e20;">B. So sánh kiến trúc.</strong>
+            Với cùng ngân sách triển khai trên điện thoại, bạn sẽ thử ResNet-50, EfficientNet-B0 hay ViT-B/16 trước? Nêu giả định và đánh đổi.
+          </div>
+          <div style="background:#fff3e0; padding:8px 12px; border-radius:6px; border-left:4px solid #ef6c00;">
+            <strong style="color:#e65100;">C. Phân tích lỗi.</strong>
+            Mô hình đạt độ chính xác 92% nhưng nhầm lớp “khối u ác tính” thành “lành tính” nhiều. Đề xuất 3 bước kiểm tra/cải thiện trước khi triển khai.
+          </div>
+        </section>
+      </section>
+
+      <div class="footer">
+        Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §10: Phân loại ảnh
+      </div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+    });
+  </script>
+</body>
+
+</html>
