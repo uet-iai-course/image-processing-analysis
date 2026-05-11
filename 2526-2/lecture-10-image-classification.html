@@ -61,7 +61,7 @@
             </div>
             <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:10px;">
               <strong style="color:#ef6c00;">Kiến trúc hiện đại</strong>
-              <p style="margin:0.3em 0 0;">EfficientNet và Bộ biến đổi thị giác.</p>
+              <p style="margin:0.3em 0 0;">EfficientNet và Visual Transformer (ViT).</p>
             </div>
             <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px; padding:10px;">
               <strong style="color:#7b1fa2;">Học chuyển đổi</strong>
@@ -190,7 +190,7 @@
         </section>
 
         <section style="font-size:0.82em;">
-          <h2>ImageNet như một chuẩn đánh giá quy mô lớn</h2>
+          <h2>ImageNet = chuẩn đánh giá quy mô lớn</h2>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:0.5em;">
             <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:10px 14px;">
               <strong style="color:#1565c0;">Bộ dữ liệu</strong>
@@ -758,7 +758,7 @@
         </section>
 
         <section style="font-size:0.82em;">
-          <h2>Tích chập 1×1 như cơ chế giảm chiều</h2>
+          <h2>Tích chập 1×1 = cơ chế giảm chiều</h2>
           <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center;">
             <div style="background:#ffebee; border-radius:8px; padding:10px; text-align:center;">
               <strong style="color:#c62828;">Đắt</strong>
@@ -857,7 +857,7 @@
         </section>
 
         <section style="font-size:0.82em;">
-          <h2>ResNet như kiến trúc xương sống tiêu chuẩn</h2>
+          <h2>ResNet = kiến trúc xương sống tiêu chuẩn</h2>
           <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
             <div style="background:#e3f2fd; border-radius:8px; padding:10px;">
               <strong style="color:#1565c0;">Ổn định</strong>
@@ -989,7 +989,7 @@
         </section>
 
         <section style="font-size:0.78em;">
-          <h2>Tổng kết phần kiến trúc kinh điển</h2>
+          <h2>Kiến trúc kinh điển</h2>
           <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
             <strong style="color:#2e7d32;">Ta vừa biết:</strong> AlexNet mở đường, VGG tăng độ sâu có kiểm soát, GoogLeNet tối ưu chi phí, ResNet giải bài toán huấn luyện mạng rất sâu.
           </div>
@@ -1006,7 +1006,7 @@
       <section>
         <section>
           <h1><span class="text-light">3.</span><br />Kiến trúc hiện đại</h1>
-          <p>EfficientNet · Bộ biến đổi thị giác (ViT)</p>
+          <p>EfficientNet · Visual Transformer (ViT)</p>
         </section>
 
         <section style="font-size:0.82em;">
@@ -1047,7 +1047,7 @@
         </section>
 
         <section style="font-size:0.82em;">
-          <h2>EfficientNet-B0 như kiến trúc cơ sở</h2>
+          <h2>EfficientNet-B0 = kiến trúc cơ sở</h2>
           <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center;">
             <div style="background:#e3f2fd; border-radius:8px; padding:12px; text-align:center;">
               <strong style="color:#1565c0;">B0</strong>
@@ -1153,13 +1153,19 @@
 
         <section style="font-size:0.78em;">
           <h2>So sánh khái niệm giữa CNN và ViT</h2>
-          <table style="width:100%; border-collapse:collapse; font-size:0.9em;">
-            <thead><tr style="background:#f5f5f5;"><th style="padding:8px; border:1px solid #ddd;"></th><th style="padding:8px; border:1px solid #ddd;">CNN</th><th style="padding:8px; border:1px solid #ddd;">ViT</th></tr></thead>
+          <table style="width:100%; border-collapse:separate; border-spacing:0 6px; font-size:0.9em;">
+            <thead>
+              <tr>
+                <th style="padding:8px; background:#37474f; color:white; border-radius:8px 0 0 8px;"></th>
+                <th style="padding:8px; background:#e3f2fd; color:#1565c0; border-top:3px solid #1565c0;">CNN</th>
+                <th style="padding:8px; background:#f3e5f5; color:#7b1fa2; border-top:3px solid #7b1fa2; border-radius:0 8px 8px 0;">ViT</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td style="padding:8px; border:1px solid #ddd;">Đơn vị xử lý</td><td style="padding:8px; border:1px solid #ddd;">điểm ảnh lân cận hoặc bản đồ đặc trưng</td><td style="padding:8px; border:1px solid #ddd;">đơn vị mảnh ảnh</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;">Thiên kiến chính</td><td style="padding:8px; border:1px solid #ddd;">cục bộ, tịnh tiến</td><td style="padding:8px; border:1px solid #ddd;">quan hệ toàn cục học từ dữ liệu</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;">Dữ liệu ít</td><td style="padding:8px; border:1px solid #ddd;">thường an toàn hơn</td><td style="padding:8px; border:1px solid #ddd;">cần mô hình đã huấn luyện trước mạnh</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;">Dữ liệu rất lớn</td><td style="padding:8px; border:1px solid #ddd;">tốt</td><td style="padding:8px; border:1px solid #ddd;">mở rộng rất tốt</td></tr>
+              <tr><td style="padding:8px; background:#fff8e1; border-left:5px solid #f9a825; border-radius:8px 0 0 8px;"><strong>Đơn vị xử lý</strong></td><td style="padding:8px; background:#e3f2fd;">điểm ảnh lân cận hoặc bản đồ đặc trưng</td><td style="padding:8px; background:#f3e5f5; border-radius:0 8px 8px 0;">đơn vị mảnh ảnh</td></tr>
+              <tr><td style="padding:8px; background:#fff8e1; border-left:5px solid #f9a825; border-radius:8px 0 0 8px;"><strong>Thiên kiến chính</strong></td><td style="padding:8px; background:#e3f2fd;">cục bộ, tịnh tiến</td><td style="padding:8px; background:#f3e5f5; border-radius:0 8px 8px 0;">quan hệ toàn cục học từ dữ liệu</td></tr>
+              <tr><td style="padding:8px; background:#fff8e1; border-left:5px solid #f9a825; border-radius:8px 0 0 8px;"><strong>Dữ liệu ít</strong></td><td style="padding:8px; background:#e3f2fd;">thường an toàn hơn</td><td style="padding:8px; background:#f3e5f5; border-radius:0 8px 8px 0;">cần mô hình đã huấn luyện trước mạnh</td></tr>
+              <tr><td style="padding:8px; background:#fff8e1; border-left:5px solid #f9a825; border-radius:8px 0 0 8px;"><strong>Dữ liệu rất lớn</strong></td><td style="padding:8px; background:#e3f2fd;">tốt</td><td style="padding:8px; background:#f3e5f5; border-radius:0 8px 8px 0;">mở rộng rất tốt</td></tr>
             </tbody>
           </table>
         </section>
@@ -1221,29 +1227,29 @@
               </ul>
             </div>
           </div>
-          <p class="caption">CS231n khuyến nghị chọn giữa hai chế độ dựa trên kích thước dữ liệu và độ giống với ImageNet.</p>
+          <p class="caption">Chọn giữa hai chế độ dựa trên kích thước dữ liệu và độ giống với ImageNet.</p>
         </section>
 
         <section style="font-size:0.76em;">
           <h2>Ma trận ra quyết định cho tinh chỉnh</h2>
-          <table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+          <table style="width:100%; border-collapse:separate; border-spacing:0 8px; font-size:0.9em;">
             <thead>
-              <tr style="background:#f5f5f5;">
-                <th style="padding:8px; border:1px solid #ddd;">Dữ liệu mới</th>
-                <th style="padding:8px; border:1px solid #ddd;">Giống ImageNet</th>
-                <th style="padding:8px; border:1px solid #ddd;">Khác ImageNet</th>
+              <tr>
+                <th style="padding:8px; background:#37474f; color:white; border-radius:8px 0 0 8px;">Dữ liệu mới</th>
+                <th style="padding:8px; background:#e3f2fd; color:#1565c0; border-top:3px solid #1565c0;">Giống ImageNet</th>
+                <th style="padding:8px; background:#fff3e0; color:#ef6c00; border-top:3px solid #ef6c00; border-radius:0 8px 8px 0;">Khác ImageNet</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="padding:8px; border:1px solid #ddd;"><strong>Nhỏ</strong><br/><span style="color:#666;">vài trăm đến vài nghìn ảnh</span></td>
-                <td style="padding:8px; border:1px solid #ddd;">Đóng băng mạng xương sống, huấn luyện đầu phân loại.</td>
-                <td style="padding:8px; border:1px solid #ddd;">Đóng băng nhiều tầng, tinh chỉnh khối cuối rất nhẹ.</td>
+                <td style="padding:10px; background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px 0 0 8px;"><strong style="color:#7b1fa2;">Nhỏ</strong><br/><span style="color:#666;">vài trăm đến vài nghìn ảnh</span></td>
+                <td style="padding:10px; background:#e8f5e9; border-left:4px solid #2e7d32;"><strong style="color:#2e7d32;">Rủi ro thấp</strong><br/>Đóng băng mạng xương sống, huấn luyện đầu phân loại.</td>
+                <td style="padding:10px; background:#fff8e1; border-left:4px solid #f9a825; border-radius:0 8px 8px 0;"><strong style="color:#f9a825;">Thận trọng</strong><br/>Đóng băng nhiều tầng, tinh chỉnh khối cuối rất nhẹ.</td>
               </tr>
               <tr>
-                <td style="padding:8px; border:1px solid #ddd;"><strong>Trung bình/lớn</strong><br/><span style="color:#666;">chục nghìn ảnh trở lên</span></td>
-                <td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh nhiều khối.</td>
-                <td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh toàn bộ hoặc tiền huấn luyện theo miền nếu có thể.</td>
+                <td style="padding:10px; background:#f3e5f5; border-left:5px solid #7b1fa2; border-radius:8px 0 0 8px;"><strong style="color:#7b1fa2;">Trung bình/lớn</strong><br/><span style="color:#666;">chục nghìn ảnh trở lên</span></td>
+                <td style="padding:10px; background:#e3f2fd; border-left:4px solid #1565c0;"><strong style="color:#1565c0;">Linh hoạt</strong><br/>Tinh chỉnh nhiều khối.</td>
+                <td style="padding:10px; background:#ffebee; border-left:4px solid #c62828; border-radius:0 8px 8px 0;"><strong style="color:#c62828;">Can thiệp mạnh</strong><br/>Tinh chỉnh toàn bộ hoặc tiền huấn luyện theo miền nếu có thể.</td>
               </tr>
             </tbody>
           </table>
@@ -1345,7 +1351,7 @@
           </div>
         </section>
 
-        <section style="font-size:0.78em;">
+        <!-- <section style="font-size:0.78em;">
           <h2>Gợi ý minh họa trực quan</h2>
           <div style="display:grid; gap:7px;">
             <div style="background:#e3f2fd; border-radius:6px; padding:7px 12px;"><strong>1.</strong> Sơ đồ AlexNet gốc hoặc phiên bản CS231n: minh họa tích chập/gộp/tầng nối đầy đủ và chia tải GPU.</div>
@@ -1356,7 +1362,7 @@
             <div style="background:#e0f2f1; border-radius:6px; padding:7px 12px;"><strong>6.</strong> Quy trình ViT: mảnh ảnh → biểu diễn → bộ mã hóa biến đổi → bộ phân loại.</div>
           </div>
           <p class="caption">Nguồn ưu tiên: bài giảng CS231n, bài báo gốc, hoặc hình tự vẽ lại để tránh phụ thuộc bản quyền.</p>
-        </section>
+        </section> -->
 
         <section style="font-size:0.74em;">
           <h2>Tài liệu tham khảo</h2>
