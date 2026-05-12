@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 11: Phát hiện đối tượng</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+  <style>
+    .reveal .det-card {
+      border-radius: 8px;
+      padding: 9px 12px;
+      border-left: 5px solid #90a4ae;
+      background: #fafafa;
+    }
+
+    .reveal .det-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .reveal .det-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .det-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .det-imgbox {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .reveal .mini {
+      font-size: 0.78em;
+      color: #555;
+    }
+
+    .reveal .eqbox {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================== MỞ ĐẦU ===================== -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 11: Phát hiện đối tượng</h3>
+          <p>Anchor boxes · IoU · NMS · R-CNN · YOLO · SSD · RetinaNet · DETR</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="det-grid-4" style="margin-top:0.5em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bài toán</strong>
+              <p style="margin:0.35em 0 0;">Đầu vào, đầu ra, dữ liệu và độ đo.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Công cụ lõi</strong>
+              <p style="margin:0.35em 0 0;">Anchor boxes, IoU, NMS, loss hộp.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hai giai đoạn</strong>
+              <p style="margin:0.35em 0 0;">R-CNN, Fast R-CNN, Faster R-CNN.</p>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Hiện đại</strong>
+              <p style="margin:0.35em 0 0;">YOLO, SSD, RetinaNet, DETR.</p>
+            </div>
+          </div>
+          <p class="caption">Mục tiêu của bài không phải nhớ tên phiên bản, mà hiểu vì sao các detector được thiết kế khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Từ phân loại ảnh sang phát hiện đối tượng</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/detection-task.svg" alt="So sánh phân loại ảnh, định vị, phát hiện đối tượng và phân vùng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Phát hiện đối tượng phải trả lời đồng thời: có vật gì, ở đâu, và có bao nhiêu vật.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt buổi học</h2>
+          <p style="color:#555;">Bài 10 đã xem CNN/ViT phân loại cả ảnh. Bài này thêm một yêu cầu khó hơn: đầu ra không còn là một nhãn cố định.</p>
+          <div style="margin-top:0.8em; background:#fff3e0; padding:14px 18px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
+            <p style="margin-top:0.3em; font-style:italic; font-size:1.05em;">
+              Làm thế nào biến một ảnh thành <strong>một tập hộp bao có nhãn</strong>, khi số lượng đối tượng thay đổi theo từng ảnh?
+            </p>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Giải thích cơ chế</strong>
+              <p style="margin:0.35em 0 0;">Anchor, IoU, NMS và hồi quy hộp bao hoạt động như thế nào.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đọc kiến trúc</strong>
+              <p style="margin:0.35em 0 0;">Nhìn vào detector và biết đâu là backbone, proposal, head, loss.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">So sánh cách tiếp cận</strong>
+              <p style="margin:0.35em 0 0;">Hai giai đoạn, một giai đoạn, và set prediction khác nhau ở giả định nào.</p>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Hiểu loss</strong>
+              <p style="margin:0.35em 0 0;">Phân loại, định vị, objectness, focal loss và Hungarian loss.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 1 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Bài toán và dữ liệu</h1>
+          <p>Hộp bao · Tập đối tượng · PASCAL VOC · COCO · mAP</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Đầu ra của detector là một tập</h2>
+          <div class="pipeline" style="font-size:0.9em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">kích thước bất kỳ</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Backbone</div><div class="stage-desc">trích đặc trưng không gian</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Head</div><div class="stage-desc">đề xuất nhiều box</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Lọc</div><div class="stage-desc">ngưỡng điểm, NMS hoặc matching</div></div>
+          </div>
+          <p class="caption">Khác phân loại ảnh, detector phải sinh số lượng dự đoán thay đổi, nhưng tensor mạng vẫn có kích thước cố định.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Mỗi đối tượng cần ba thông tin</h2>
+          <div class="det-grid-3">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Lớp</strong>
+              <p style="margin:0.35em 0 0;">ví dụ: người, xe, chó, biển báo.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hộp bao</strong>
+              <p style="margin:0.35em 0 0;">tọa độ \((x_1,y_1,x_2,y_2)\) hoặc tâm, rộng, cao.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Điểm tin cậy</strong>
+              <p style="margin:0.35em 0 0;">mức tin rằng hộp này là đối tượng thật.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.8em;">
+            \[
+              \{(\text{class}_i, b_i, s_i)\}_{i=1}^{N}
+            \]
+          </div>
+          <p class="caption">Bản chất của object detection là bài toán dự đoán tập có kích thước biến thiên.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Vì sao detection khó hơn classification?</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Không biết số đối tượng</strong>
+              <ul>
+                <li>Một ảnh có thể không có gì, có một vật, hoặc hàng chục vật.</li>
+                <li>Các vật cùng lớp có thể chồng lấn nhau.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Không chỉ cần nhãn đúng</strong>
+              <ul>
+                <li>Box lệch nhiều vẫn là dự đoán sai.</li>
+                <li>Trùng nhiều box cho cùng một vật cũng bị phạt.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Detector phải giải quyết đồng thời nhận dạng, định vị và loại bỏ dự đoán trùng.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Các bộ dữ liệu kinh điển</h2>
+          <div class="det-grid-3">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">PASCAL VOC</strong>
+              <p style="margin:0.35em 0 0;">20 lớp, ảnh tự nhiên, chuẩn lịch sử cho R-CNN/Fast R-CNN.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">MS COCO</strong>
+              <p style="margin:0.35em 0 0;">80 lớp, nhiều vật nhỏ, nhiều vật trong một ảnh, độ đo khắt khe hơn.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Open Images</strong>
+              <p style="margin:0.35em 0 0;">quy mô lớn, nhãn đa dạng, dùng tốt cho tiền huấn luyện và kiểm thử mở rộng.</p>
+            </div>
+          </div>
+          <p class="caption">Khi đọc kết quả, luôn hỏi: mô hình được đánh giá trên bộ dữ liệu nào và bằng độ đo nào.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Độ đo: một box đúng khi IoU đủ cao</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <div class="eqbox">
+              \[
+                IoU(A,B)=\frac{|A\cap B|}{|A\cup B|}
+              \]
+            </div>
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Điều kiện đúng</strong>
+              <p style="margin:0.35em 0 0;">Dự đoán phải đúng lớp và hộp dự đoán có IoU vượt ngưỡng, thường 0.5 hoặc nhiều ngưỡng trong COCO.</p>
+            </div>
+          </div>
+          <p class="caption">IoU biến định vị từ cảm giác “hộp khá đúng” thành tiêu chí định lượng.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>mAP đo cả xếp hạng lẫn định vị</h2>
+          <div class="det-grid-3">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Precision</strong>
+              <p style="margin:0.35em 0 0;">Trong các box đã báo, bao nhiêu box đúng.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Recall</strong>
+              <p style="margin:0.35em 0 0;">Trong các vật thật, bao nhiêu vật được tìm thấy.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">AP / mAP</strong>
+              <p style="margin:0.35em 0 0;">Diện tích dưới đường precision-recall, rồi trung bình qua lớp.</p>
+            </div>
+          </div>
+          <p class="caption">COCO mAP trung bình qua nhiều ngưỡng IoU, nên phạt nặng các box đúng lớp nhưng định vị lỏng.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Nhìn detection như bài toán thiết kế</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Câu hỏi mô hình</strong>
+              <ul>
+                <li>Box ứng viên đến từ đâu?</li>
+                <li>Box nào được gán với vật thật nào?</li>
+                <li>Loss nào kéo box về đúng vị trí?</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Câu hỏi triển khai</strong>
+              <ul>
+                <li>Cần tốc độ hay độ chính xác?</li>
+                <li>Vật nhỏ có quan trọng không?</li>
+                <li>Có giới hạn RAM, GPU, độ trễ không?</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 2 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />Khái niệm lõi</h1>
+          <p>Anchor boxes · IoU · NMS · Hồi quy hộp · Loss đa nhiệm</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Anchor, IoU và NMS</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/anchors-iou-nms.svg" alt="Anchor boxes, IoU và NMS" style="max-width:100%; max-height:65vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Anchor tạo ứng viên cố định, IoU gán nhãn và đánh giá, NMS loại dự đoán trùng sau khi suy luận.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Anchor box là giả định hình học</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Trực giác</strong>
+              <p style="margin:0.35em 0 0;">Thay vì dự đoán hộp từ con số 0, mô hình bắt đầu từ các hộp mẫu có sẵn.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tại sao hữu ích?</strong>
+              <p style="margin:0.35em 0 0;">Mô hình chỉ cần học độ lệch nhỏ: dịch tâm, đổi rộng, đổi cao.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.8em;">
+            Mỗi vị trí trên feature map có \(k\) anchor với nhiều tỉ lệ: vuông, ngang, dọc.
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Gán nhãn anchor trong huấn luyện</h2>
+          <div class="det-grid-3">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dương</strong>
+              <p style="margin:0.35em 0 0;">IoU cao với một ground truth, hoặc là anchor tốt nhất cho vật đó.</p>
+            </div>
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Âm</strong>
+              <p style="margin:0.35em 0 0;">IoU thấp với mọi ground truth, được xem là nền.</p>
+            </div>
+            <div class="det-card" style="background:#f7f7f7; border-left-color:#78909c;">
+              <strong style="color:#455a64;">Bỏ qua</strong>
+              <p style="margin:0.35em 0 0;">IoU nằm giữa hai ngưỡng, tránh nhãn mơ hồ.</p>
+            </div>
+          </div>
+          <p class="caption">Chỉ một phần nhỏ anchor là dương, nên mất cân bằng nền - vật là vấn đề lớn.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Hồi quy hộp: dự đoán độ lệch</h2>
+          <div class="eqbox">
+            \[
+              t_x=\frac{x-x_a}{w_a},\quad
+              t_y=\frac{y-y_a}{h_a},\quad
+              t_w=\log\frac{w}{w_a},\quad
+              t_h=\log\frac{h}{h_a}
+            \]
+          </div>
+          <div class="det-card" style="margin-top:0.7em; background:#e3f2fd; border-left-color:#1565c0;">
+            <strong style="color:#1565c0;">Ý nghĩa</strong>
+            <p style="margin:0.35em 0 0;">Mạng học “anchor này phải dịch và co giãn bao nhiêu” thay vì học trực tiếp tọa độ tuyệt đối.</p>
+          </div>
+          <p class="caption">Cách chuẩn hóa theo kích thước anchor giúp loss ổn định hơn giữa vật nhỏ và vật lớn.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Smooth L1 cho hồi quy hộp</h2>
+          <div class="eqbox">
+            \[
+              \text{smooth}_{L1}(x)=
+              \begin{cases}
+                0.5x^2 & \text{khi } |x|<1\\
+                |x|-0.5 & \text{ngược lại}
+              \end{cases}
+            \]
+          </div>
+          <div class="det-grid-2" style="margin-top:0.7em;">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Gần nghiệm đúng</strong>
+              <p style="margin:0.35em 0 0;">Dùng dạng bình phương, giúp tối ưu mượt.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Khi sai rất xa</strong>
+              <p style="margin:0.35em 0 0;">Dùng dạng tuyến tính, giảm ảnh hưởng ngoại lệ.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Loss đa nhiệm của detector</h2>
+          <div class="eqbox">
+            \[
+              L = L_{\text{cls}} + \lambda L_{\text{box}}
+            \]
+          </div>
+          <div class="det-grid-2" style="margin-top:0.7em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(L_{\text{cls}}\)</strong>
+              <p style="margin:0.35em 0 0;">Cross entropy hoặc biến thể, phạt nhầm lớp hoặc nhầm nền.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(L_{\text{box}}\)</strong>
+              <p style="margin:0.35em 0 0;">Smooth L1, L1, IoU/GIoU; chỉ tính cho box được gán dương.</p>
+            </div>
+          </div>
+          <p class="caption">Detector vừa học “đây là gì” vừa học “dịch hộp như thế nào”.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>NMS giải quyết dự đoán trùng</h2>
+          <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+            <strong style="color:#1565c0;">Thuật toán theo từng lớp</strong>
+            <ol>
+              <li>Sắp xếp các box theo điểm tin cậy giảm dần.</li>
+              <li>Giữ box điểm cao nhất còn lại.</li>
+              <li>Loại các box có IoU lớn với box vừa giữ.</li>
+              <li>Lặp đến khi hết box.</li>
+            </ol>
+          </div>
+          <p class="caption">NMS là thủ thuật hậu xử lý đơn giản nhưng ảnh hưởng mạnh đến precision và recall.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Điểm yếu của NMS</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Vật chồng lấn</strong>
+              <p style="margin:0.35em 0 0;">Hai người đứng sát nhau có thể bị xóa mất một người nếu ngưỡng IoU quá thấp.</p>
+            </div>
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Không khả vi</strong>
+              <p style="margin:0.35em 0 0;">NMS không nằm tự nhiên trong bài toán học end-to-end.</p>
+            </div>
+          </div>
+          <p class="caption">DETR về sau chọn hướng khác: dùng loss ghép cặp để mô hình tự học không dự đoán trùng.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 3 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />Detector hai giai đoạn</h1>
+          <p>R-CNN · Fast R-CNN · Faster R-CNN · RPN · RoI Pooling</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Ý tưởng chung: tìm vùng trước, phân loại sau</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/rcnn-family.svg" alt="So sánh R-CNN, Fast R-CNN và Faster R-CNN" style="max-width:100%; max-height:65vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Dòng R-CNN tiến hóa bằng cách chia sẻ ngày càng nhiều tính toán giữa các vùng ứng viên.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>R-CNN: ghép proposal cổ điển với CNN</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Quy trình</strong>
+              <ul>
+                <li>Selective Search tạo khoảng 2000 vùng ứng viên.</li>
+                <li>Cắt từng vùng, resize, đưa qua CNN.</li>
+                <li>SVM phân loại, hồi quy hộp tinh chỉnh.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Nút thắt</strong>
+              <ul>
+                <li>CNN phải chạy hàng nghìn lần cho một ảnh.</li>
+                <li>Huấn luyện nhiều bước, không gọn end-to-end.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">R-CNN chứng minh CNN feature rất mạnh cho detection, nhưng pipeline quá chậm.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Fast R-CNN: CNN chạy một lần</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Thay đổi chính</strong>
+              <p style="margin:0.35em 0 0;">Chạy CNN trên cả ảnh để tạo feature map, rồi chiếu proposal lên feature map.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">RoI Pooling</strong>
+              <p style="margin:0.35em 0 0;">Mỗi vùng ứng viên được biến thành đặc trưng kích thước cố định để đưa vào head.</p>
+            </div>
+          </div>
+          <p class="caption">Tính toán tích chập đắt nhất được chia sẻ cho mọi proposal trong cùng ảnh.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>RoI Pooling giải bài toán kích thước</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 500 270" role="img" aria-label="RoI Pooling">
+              <rect x="25" y="38" width="190" height="180" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <rect x="70" y="78" width="110" height="92" fill="none" stroke="#ef6c00" stroke-width="5"/>
+              <text x="120" y="238" text-anchor="middle" font-size="18" fill="#455a64">feature map + RoI</text>
+              <path d="M220 128 L285 128" stroke="#555" stroke-width="3" marker-end="url(#roi-a)"/>
+              <defs>
+                <marker id="roi-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="300" y="62" width="150" height="150" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <g stroke="#ef6c00" opacity="0.65">
+                <line x1="337.5" y1="62" x2="337.5" y2="212"/><line x1="375" y1="62" x2="375" y2="212"/><line x1="412.5" y1="62" x2="412.5" y2="212"/>
+                <line x1="300" y1="99.5" x2="450" y2="99.5"/><line x1="300" y1="137" x2="450" y2="137"/><line x1="300" y1="174.5" x2="450" y2="174.5"/>
+              </g>
+              <text x="375" y="238" text-anchor="middle" font-size="18" fill="#455a64">lưới cố định</text>
+            </svg>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cơ chế</strong>
+              <p style="margin:0.35em 0 0;">Chia RoI thành lưới \(H\times W\), rồi lấy max trong từng ô. Đầu ra có kích thước cố định dù RoI ban đầu to nhỏ khác nhau.</p>
+            </div>
+          </div>
+          <p class="caption">RoI Pooling là cầu nối giữa proposal hình chữ nhật và head phân loại kích thước cố định.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Fast R-CNN loss</h2>
+          <div class="eqbox">
+            \[
+              L(p,u,t^u,v)=L_{\text{cls}}(p,u)+\lambda [u\ge 1]L_{\text{loc}}(t^u,v)
+            \]
+          </div>
+          <div class="det-grid-2" style="margin-top:0.7em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Phân loại</strong>
+              <p style="margin:0.35em 0 0;">\(u=0\) là nền, \(u\ge1\) là lớp đối tượng. Dùng softmax cross entropy.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Định vị</strong>
+              <p style="margin:0.35em 0 0;">Chỉ tính cho RoI dương. Mỗi lớp có bộ hồi quy hộp riêng.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Fast R-CNN còn nút thắt nào?</h2>
+          <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+            <strong style="color:#ef6c00;">Proposal vẫn ở ngoài mạng</strong>
+            <p style="margin:0.35em 0 0;">Selective Search không học từ dữ liệu detection, chạy chậm, và không chia sẻ mục tiêu tối ưu với CNN.</p>
+          </div>
+          <div class="det-card" style="margin-top:0.7em; background:#e3f2fd; border-left-color:#1565c0;">
+            <strong style="color:#1565c0;">Câu hỏi tự nhiên</strong>
+            <p style="margin:0.35em 0 0;">Nếu feature map đã biết vùng nào giống đối tượng, vì sao không để chính mạng đề xuất vùng?</p>
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Faster R-CNN: thêm Region Proposal Network</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/faster-rcnn-rpn.svg" alt="Cấu trúc Faster R-CNN và RPN" style="max-width:100%; max-height:65vh; object-fit:contain;" />
+          </div>
+          <p class="caption">RPN biến bước đề xuất vùng thành một nhánh học được trên cùng feature map với detector.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>RPN làm gì?</h2>
+          <div class="det-grid-3">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Trượt trên feature map</strong>
+              <p style="margin:0.35em 0 0;">Mỗi vị trí nhìn một vùng ngữ cảnh nhỏ.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dự đoán objectness</strong>
+              <p style="margin:0.35em 0 0;">Anchor này có chứa vật hay chỉ là nền?</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dự đoán offset</strong>
+              <p style="margin:0.35em 0 0;">Dịch anchor về gần vật thật hơn.</p>
+            </div>
+          </div>
+          <p class="caption">RPN không cần biết lớp cụ thể; nó chỉ cần tìm vùng “có vẻ là đối tượng”.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Loss của Faster R-CNN có bốn phần</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">RPN</strong>
+              <ul>
+                <li>Objectness: vật hay nền.</li>
+                <li>Bbox regression: chỉnh anchor thành proposal.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Detection head</strong>
+              <ul>
+                <li>Classification: lớp cụ thể hoặc nền.</li>
+                <li>Bbox regression: chỉnh box cuối.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.7em;">
+            \[
+              L = L_{\text{rpn-cls}} + L_{\text{rpn-box}} + L_{\text{det-cls}} + L_{\text{det-box}}
+            \]
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Vì sao hai giai đoạn thường chính xác?</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Lọc ứng viên sớm</strong>
+              <p style="margin:0.35em 0 0;">Head cuối chỉ xử lý vài trăm vùng tốt, không phải hàng chục nghìn anchor.</p>
+            </div>
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đặc trưng RoI mạnh</strong>
+              <p style="margin:0.35em 0 0;">Mỗi proposal được crop từ feature map và có head riêng để phân biệt lớp.</p>
+            </div>
+          </div>
+          <p class="caption">Đổi lại, pipeline phức tạp hơn và thường chậm hơn detector một giai đoạn.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> hai giai đoạn tách “tìm vùng khả nghi” và “phân loại vùng đó”.
+          </div>
+          <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> nếu cần real-time, có thể bỏ proposal stage không?
+          </div>
+          <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo trả lời:</strong> YOLO, SSD và RetinaNet dự đoán dày đặc trong một lần forward.
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 4 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />Detector một giai đoạn</h1>
+          <p>YOLO · SSD · RetinaNet · Focal Loss · Tốc độ và độ chính xác</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Từ proposal thưa sang dự đoán dày đặc</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/one-stage-detectors.svg" alt="YOLO SSD RetinaNet" style="max-width:100%; max-height:65vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Một giai đoạn bỏ bước proposal tách rời: mỗi vị trí đặc trưng trực tiếp dự đoán box và lớp.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>YOLO: xem detection như hồi quy toàn ảnh</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Ý tưởng</strong>
+              <p style="margin:0.35em 0 0;">Chia ảnh thành lưới. Mỗi ô chịu trách nhiệm dự đoán vật có tâm nằm trong ô đó.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đầu ra</strong>
+              <p style="margin:0.35em 0 0;">Một tensor chứa box, confidence và xác suất lớp cho toàn bộ ảnh.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.7em;">
+            \[
+              S\times S\times (B\cdot 5 + C)
+            \]
+          </div>
+          <p class="caption">YOLO mạnh ở tốc độ vì toàn bộ pipeline là một mạng duy nhất chạy một lần.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Loss của YOLO gồm nhiều vai trò</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Định vị</strong>
+              <p style="margin:0.35em 0 0;">Phạt sai tâm, rộng và cao của box. Các phiên bản đầu dùng loss bình phương.</p>
+            </div>
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Confidence</strong>
+              <p style="margin:0.35em 0 0;">Phạt sai mức tin rằng box chứa vật, thường liên quan đến IoU với ground truth.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Phân loại</strong>
+              <p style="margin:0.35em 0 0;">Phạt sai nhãn lớp tại ô có chứa đối tượng.</p>
+            </div>
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Nền</strong>
+              <p style="margin:0.35em 0 0;">Cần giảm trọng số của ô không có vật để nền không áp đảo loss.</p>
+            </div>
+          </div>
+          <p class="caption">YOLO phải cân bằng nhiều thành phần loss vì số ô nền lớn hơn số ô chứa vật rất nhiều.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Điểm mạnh và điểm yếu của YOLO</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Mạnh</strong>
+              <ul>
+                <li>Rất nhanh, phù hợp camera thời gian thực.</li>
+                <li>Nhìn toàn ảnh nên ít nhầm nền cục bộ hơn.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Yếu</strong>
+              <ul>
+                <li>Khó với vật nhỏ hoặc nhiều vật sát nhau trong một ô.</li>
+                <li>Phiên bản đầu dễ sai định vị hơn hai giai đoạn.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>SSD: nhiều feature map cho nhiều kích thước vật</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ý tưởng chính</strong>
+              <p style="margin:0.35em 0 0;">Dự đoán default boxes trên nhiều tầng đặc trưng: tầng nông cho vật nhỏ, tầng sâu cho vật lớn.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">So với YOLO đầu</strong>
+              <p style="margin:0.35em 0 0;">Không chỉ dự đoán ở một lưới cuối; tận dụng tháp đặc trưng tự nhiên của CNN.</p>
+            </div>
+          </div>
+          <p class="caption">SSD giữ pipeline đơn giản nhưng thêm khả năng xử lý đa tỉ lệ.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>MultiBox loss của SSD</h2>
+          <div class="eqbox">
+            \[
+              L(x,c,l,g)=\frac{1}{N}\left(L_{\text{conf}}(x,c)+\alpha L_{\text{loc}}(x,l,g)\right)
+            \]
+          </div>
+          <div class="det-grid-2" style="margin-top:0.7em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Confidence loss</strong>
+              <p style="margin:0.35em 0 0;">Softmax cross entropy trên các lớp, gồm cả nền.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Localization loss</strong>
+              <p style="margin:0.35em 0 0;">Smooth L1 giữa default box đã chỉnh và ground truth được ghép.</p>
+            </div>
+          </div>
+          <p class="caption">SSD dùng hard negative mining để không cho các box nền dễ lấn át quá trình học.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>RetinaNet: vấn đề không chỉ là kiến trúc</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Vấn đề</strong>
+              <p style="margin:0.35em 0 0;">Detector một giai đoạn xem rất nhiều vị trí nền. Các mẫu nền dễ có thể làm loss áp đảo mẫu khó.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Giải pháp</strong>
+              <p style="margin:0.35em 0 0;">RetinaNet dùng FPN để xử lý đa tỉ lệ và Focal Loss để tập trung vào mẫu khó.</p>
+            </div>
+          </div>
+          <p class="caption">RetinaNet cho thấy loss đúng có thể thu hẹp khoảng cách giữa một giai đoạn và hai giai đoạn.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Focal Loss</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/focal-loss.svg" alt="So sánh cross entropy và focal loss" style="max-width:100%; max-height:57vh; object-fit:contain;" />
+          </div>
+          <div class="eqbox" style="margin-top:0.5em;">
+            \[
+              FL(p_t)=-\alpha_t(1-p_t)^\gamma\log(p_t)
+            \]
+          </div>
+          <p class="caption">Khi \(p_t\) cao, mẫu đã dễ; hệ số \((1-p_t)^\gamma\) làm đóng góp loss của nó nhỏ đi.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>So sánh hai giai đoạn và một giai đoạn</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hai giai đoạn</strong>
+              <ul>
+                <li>Ít proposal hơn, head mạnh hơn.</li>
+                <li>Thường chính xác, tốt cho vật khó.</li>
+                <li>Pipeline phức tạp và chậm hơn.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Một giai đoạn</strong>
+              <ul>
+                <li>Dự đoán dày đặc trong một lần forward.</li>
+                <li>Nhanh, đơn giản khi triển khai.</li>
+                <li>Cần xử lý mất cân bằng nền - vật.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Đánh đổi tốc độ và độ chính xác</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/speed-accuracy-tradeoff.svg" alt="Đánh đổi tốc độ và độ chính xác trong object detection" style="max-width:100%; max-height:64vh; object-fit:contain;" />
+          </div>
+          <p class="caption">CS231n nhấn mạnh: meta-architecture, backbone, kích thước ảnh, số proposal và phần cứng đều ảnh hưởng kết quả.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 5 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">5.</span><br />DETR</h1>
+          <p>Transformer · Object queries · Hungarian matching · Set loss</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Động lực: bỏ anchor và NMS</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Detector cổ điển</strong>
+              <p style="margin:0.35em 0 0;">Dùng anchor/default boxes, gán nhãn thủ công theo IoU, rồi NMS để xóa dự đoán trùng.</p>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">DETR</strong>
+              <p style="margin:0.35em 0 0;">Xem detection là dự đoán trực tiếp một tập đối tượng, ghép mỗi dự đoán với tối đa một vật thật.</p>
+            </div>
+          </div>
+          <p class="caption">DETR thay nhiều quy tắc thiết kế bằng một loss ghép cặp toàn cục.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Kiến trúc DETR</h2>
+          <div class="det-imgbox">
+            <img src="img/lec-11/detr-architecture.svg" alt="Kiến trúc DETR" style="max-width:100%; max-height:65vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Object queries là các vector học được; mỗi query có cơ hội trở thành một đối tượng trong ảnh.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Object queries không phải anchor</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Anchor</strong>
+              <p style="margin:0.35em 0 0;">Có nghĩa hình học ban đầu: vị trí, tỉ lệ, kích thước.</p>
+            </div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Object query</strong>
+              <p style="margin:0.35em 0 0;">Là vector học được trong decoder; ý nghĩa xuất hiện qua huấn luyện và attention.</p>
+            </div>
+          </div>
+          <p class="caption">DETR không cần biết trước các mẫu hộp, nhưng cần matching để mỗi query học một vai trò riêng.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Hungarian matching</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bài toán ghép cặp</strong>
+              <p style="margin:0.35em 0 0;">Có \(N\) dự đoán và \(M\) vật thật. Chọn cách ghép một - một có tổng chi phí nhỏ nhất.</p>
+            </div>
+            <div class="eqbox">
+              \[
+                \hat{\sigma}=\arg\min_{\sigma}\sum_i
+                \mathcal{C}(y_i,\hat{y}_{\sigma(i)})
+              \]
+            </div>
+          </div>
+          <p class="caption">Nhờ ghép một - một, hai prediction không nên cùng nhận một ground truth.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Loss của DETR</h2>
+          <div class="eqbox">
+            \[
+              L = L_{\text{cls}} + \lambda_1 L_1(b,\hat{b}) + \lambda_2 L_{\text{GIoU}}(b,\hat{b})
+            \]
+          </div>
+          <div class="det-grid-3" style="margin-top:0.7em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Class</strong>
+              <p style="margin:0.35em 0 0;">Có thêm lớp “không có đối tượng”.</p>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">L1</strong>
+              <p style="margin:0.35em 0 0;">Kéo tọa độ box về gần ground truth.</p>
+            </div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">GIoU</strong>
+              <p style="margin:0.35em 0 0;">Đo chất lượng chồng lấn tốt hơn khi box không giao nhau.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>DETR mạnh và khó ở đâu?</h2>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Mạnh</strong>
+              <ul>
+                <li>Thiết kế gọn: không anchor, không NMS.</li>
+                <li>Attention toàn cục mô hình hóa quan hệ giữa đối tượng.</li>
+              </ul>
+            </div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Khó</strong>
+              <ul>
+                <li>Huấn luyện lâu hơn detector CNN cổ điển.</li>
+                <li>Phiên bản đầu yếu hơn với vật nhỏ, cần cải tiến đa tỉ lệ.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">DETR quan trọng vì thay đổi cách đặt bài toán, không chỉ thêm một backbone mới.</p>
+        </section>
+      </section>
+
+      <!-- ===================== KẾT ===================== -->
+      <section>
+        <section style="font-size:0.8em;">
+          <h2>Trả lời câu hỏi xuyên suốt</h2>
+          <div style="background:#fff3e0; padding:10px 14px; border-radius:8px; border-left:5px solid #ff9800; margin-bottom:0.6em;">
+            <em style="color:#e65100;">Làm thế nào biến một ảnh thành một tập hộp bao có nhãn?</em>
+          </div>
+          <div class="det-grid-2">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Anchor-based:</strong> tạo nhiều ứng viên cố định, học phân loại và chỉnh hộp.</div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Hai giai đoạn:</strong> lọc proposal trước, rồi phân loại từng RoI kỹ hơn.</div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Một giai đoạn:</strong> dự đoán dày đặc để đổi độ chính xác lấy tốc độ và đơn giản.</div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">DETR:</strong> dùng matching để dự đoán trực tiếp một tập, giảm thủ thuật hậu xử lý.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Bảng so sánh nhanh</h2>
+          <table style="font-size:0.82em; width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#eceff1;">
+                <th style="padding:8px; border:1px solid #cfd8dc;">Cách tiếp cận</th>
+                <th style="padding:8px; border:1px solid #cfd8dc;">Box ứng viên</th>
+                <th style="padding:8px; border:1px solid #cfd8dc;">Lọc trùng</th>
+                <th style="padding:8px; border:1px solid #cfd8dc;">Điểm mạnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:8px; border:1px solid #cfd8dc;">Faster R-CNN</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">RPN + anchors</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">NMS</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">chính xác, head RoI mạnh</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border:1px solid #cfd8dc;">YOLO / SSD</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">lưới/default boxes</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">NMS</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">nhanh, dễ triển khai</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border:1px solid #cfd8dc;">RetinaNet</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">anchors trên FPN</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">NMS</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">Focal Loss xử lý mất cân bằng</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border:1px solid #cfd8dc;">DETR</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">object queries</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">matching, không NMS</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">thiết kế gọn, set prediction</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Gợi ý hình minh họa đã chuẩn bị</h2>
+          <div style="display:grid; gap:6px;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>detection-task.svg:</strong> phân biệt classification, localization, detection, segmentation.</div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>anchors-iou-nms.svg:</strong> ba khái niệm nền tảng của detector anchor-based.</div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>rcnn-family.svg và faster-rcnn-rpn.svg:</strong> tiến hóa từ R-CNN đến Faster R-CNN.</div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong>one-stage-detectors.svg, focal-loss.svg, detr-architecture.svg:</strong> YOLO/SSD/RetinaNet và DETR.</div>
+          </div>
+          <p class="caption">Các file nằm trong thư mục <span class="inline-code">2526-2/img/lec-11/</span>; có thể thay bằng ảnh mở nếu cần ví dụ ảnh thật.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tài liệu tham khảo</h2>
+          <ul>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/slides/2024/lecture_9.pdf">Lecture 9: Object Detection and Image Segmentation</a>, 2024.</li>
+            <li>Girshick et al., <a href="https://arxiv.org/abs/1311.2524">Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation</a>, 2014.</li>
+            <li>Girshick, <a href="https://arxiv.org/abs/1504.08083">Fast R-CNN</a>, 2015.</li>
+            <li>Ren et al., <a href="https://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal">Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</a>, 2015.</li>
+            <li>Redmon et al., <a href="https://openaccess.thecvf.com/content_cvpr_2016/html/Redmon_You_Only_Look_CVPR_2016_paper.html">You Only Look Once: Unified, Real-Time Object Detection</a>, 2016.</li>
+            <li>Liu et al., <a href="https://research.google/pubs/ssd-single-shot-multibox-detector/">SSD: Single Shot MultiBox Detector</a>, 2016.</li>
+            <li>Lin et al., <a href="https://ai.meta.com/research/publications/focal-loss-for-dense-object-detection/">Focal Loss for Dense Object Detection</a>, 2017.</li>
+            <li>Carion et al., <a href="https://ai.meta.com/research/publications/end-to-end-object-detection-with-transformers/">End-to-End Object Detection with Transformers</a>, 2020.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Câu hỏi tự đánh giá</h2>
+          <div style="display:grid; gap:0.45em;">
+            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>1.</strong> Vì sao detector cần IoU trong cả huấn luyện và đánh giá?</div>
+            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>2.</strong> Anchor box khác dự đoán trực tiếp hộp từ đầu ở điểm nào?</div>
+            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>3.</strong> Fast R-CNN nhanh hơn R-CNN nhờ chia sẻ tính toán nào?</div>
+            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;"><strong>4.</strong> Focal Loss xử lý mất cân bằng nền - vật bằng cơ chế gì?</div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong>5.</strong> DETR không cần NMS vì thay đổi bài toán huấn luyện như thế nào?</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bài tập mở rộng</h2>
+          <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0; margin-bottom:0.45em;">
+            <strong style="color:#1565c0;">A. Thiết kế detector cho camera giao thông.</strong>
+            Chọn Faster R-CNN, YOLO/SSD, RetinaNet hoặc DETR. Nêu giả định về độ trễ, vật nhỏ, phần cứng và độ đo.
+          </div>
+          <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32; margin-bottom:0.45em;">
+            <strong style="color:#2e7d32;">B. Phân tích loss.</strong>
+            Với một ảnh có 2 vật thật và 10.000 anchor, giải thích vì sao loss phân loại nền có thể áp đảo loss vật thật.
+          </div>
+          <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+            <strong style="color:#ef6c00;">C. So sánh sai lỗi.</strong>
+            Cho 5 dự đoán box, hãy tự tính IoU, áp dụng NMS, rồi phân loại false positive và false negative.
+          </div>
+        </section>
+      </section>
+
+      <div class="footer">
+        Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §11: Phát hiện đối tượng
+      </div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+    });
+  </script>
+</body>
+
+</html>
