@@ -969,7 +969,7 @@
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Đối chiếu các kiến trúc kinh điển</h2>
+          <h2>So sánh các kiến trúc kinh điển</h2>
           <table style="width:100%; border-collapse:separate; border-spacing:0 6px; font-size:0.9em;">
             <thead>
               <tr style="background:#37474f; color:white;">
@@ -989,7 +989,7 @@
         </section>
 
         <section style="font-size:0.78em;">
-          <h2>Kiến trúc kinh điển</h2>
+          <h2>Tài nguyên giới hạn, dữ liệu cực lớn</h2>
           <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
             <strong style="color:#2e7d32;">Ta vừa biết:</strong> AlexNet mở đường, VGG tăng độ sâu có kiểm soát, GoogLeNet tối ưu chi phí, ResNet giải bài toán huấn luyện mạng rất sâu.
           </div>
@@ -1010,7 +1010,7 @@
         </section>
 
         <section style="font-size:0.82em;">
-          <h2>Các chiều mở rộng sau ResNet</h2>
+          <h2>Các chiều cạnh mở rộng mạng CNN</h2>
           <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
             <div style="background:#e3f2fd; border-radius:8px; padding:10px; text-align:center;">
               <strong style="color:#1565c0;">Độ sâu</strong>
@@ -1028,40 +1028,227 @@
           <p class="caption">Câu hỏi EfficientNet đặt ra: mở rộng cả ba chiều như thế nào cho cân bằng?</p>
         </section>
 
-        <section style="font-size:0.8em;">
-          <h2>EfficientNet và nguyên lý mở rộng cân bằng</h2>
-          <div style="background:#fafafa; border:1px solid #ddd; border-radius:10px; padding:12px; text-align:center;">
-            <p style="margin:0.2em 0; font-size:1.1em;">
-              độ sâu: \(d=\alpha^\phi\), độ rộng: \(w=\beta^\phi\), độ phân giải: \(r=\gamma^\phi\)
-            </p>
-            <p style="margin:0.4em 0 0; color:#555;">
-              với ràng buộc xấp xỉ: \(\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2\)
-            </p>
+        <section style="font-size:0.68em;">
+          <h2>EfficientNet: mở rộng theo độ sâu</h2>
+          <div style="display:grid; grid-template-columns:1fr 1.25fr; gap:16px; align-items:center;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; border-radius:8px; padding:9px;">
+              <strong style="color:#1565c0;">Ý tưởng</strong>
+              <p style="margin:0.3em 0 0;">Tăng số khối/tầng để mạng áp dụng nhiều bước biến đổi liên tiếp hơn.</p>
+              <p style="margin:0.3em 0 0; color:#555;">Tầng sau có thể học đặc trưng trừu tượng hơn: cạnh → bộ phận → vật thể.</p>
+              <svg width="100%" viewBox="0 0 360 150" role="img" aria-label="Minh họa mở rộng độ sâu" style="margin-top:0.35em;">
+                <defs>
+                  <marker id="depth-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#1565c0" />
+                  </marker>
+                </defs>
+                <rect x="12" y="52" width="46" height="46" rx="6" fill="#bbdefb" stroke="#1565c0" />
+                <text x="35" y="80" font-size="12" fill="#0d47a1" text-anchor="middle">x</text>
+                <line x1="58" y1="75" x2="78" y2="75" stroke="#1565c0" stroke-width="2" marker-end="url(#depth-arrow)" />
+                <rect x="82" y="44" width="36" height="62" rx="5" fill="#e3f2fd" stroke="#1565c0" />
+                <rect x="126" y="44" width="36" height="62" rx="5" fill="#e3f2fd" stroke="#1565c0" />
+                <rect x="170" y="44" width="36" height="62" rx="5" fill="#e3f2fd" stroke="#1565c0" />
+                <text x="144" y="126" font-size="12" fill="#555" text-anchor="middle">mạng nông</text>
+                <line x1="210" y1="75" x2="236" y2="75" stroke="#1565c0" stroke-width="2" marker-end="url(#depth-arrow)" />
+                <rect x="240" y="44" width="22" height="62" rx="4" fill="#90caf9" stroke="#1565c0" />
+                <rect x="267" y="44" width="22" height="62" rx="4" fill="#90caf9" stroke="#1565c0" />
+                <rect x="294" y="44" width="22" height="62" rx="4" fill="#90caf9" stroke="#1565c0" />
+                <rect x="321" y="44" width="22" height="62" rx="4" fill="#90caf9" stroke="#1565c0" />
+                <text x="292" y="126" font-size="12" fill="#555" text-anchor="middle">thêm tầng</text>
+              </svg>
+            </div>
+            <div style="font-size:0.94em;">
+              <ul>
+                <li>\(\phi\) là hệ số ngân sách: tăng \(\phi\) nghĩa là cho phép mô hình lớn hơn theo một nấc.</li>
+                <li>\(\alpha\) quyết định mỗi nấc \(\phi\) làm độ sâu tăng nhanh bao nhiêu: \(d=\alpha^\phi\).</li>
+                <li>Nếu \(\alpha\) quá lớn, mạng sâu nhanh nhưng dễ tốn thời gian huấn luyện và lợi ích bão hòa.</li>
+                <li>EfficientNet chọn \(\alpha\) cùng \(\beta,\gamma\), để độ sâu tăng theo nhịp cân bằng với kênh và kích thước ảnh.</li>
+              </ul>
+            </div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:0.6em; font-size:0.9em;">
-            <div style="background:#e3f2fd; border-radius:8px; padding:8px;">Không chỉ sâu hơn.</div>
-            <div style="background:#e8f5e9; border-radius:8px; padding:8px;">Không chỉ rộng hơn.</div>
-            <div style="background:#fff3e0; border-radius:8px; padding:8px;">Không chỉ ảnh lớn hơn.</div>
+          <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:7px 9px; margin-top:0.35em; font-size:0.92em;">
+            <strong>Trong mở rộng cân bằng:</strong> độ sâu tăng theo \(d=\alpha^\phi\), nhưng không tăng một mình; nó đi kèm độ rộng và độ phân giải.
           </div>
-          <p class="caption">Mở rộng cân bằng dùng một hệ số \(\phi\) để tăng mô hình theo cách cân bằng.</p>
         </section>
 
-        <section style="font-size:0.82em;">
-          <h2>EfficientNet-B0 = kiến trúc cơ sở</h2>
-          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center;">
-            <div style="background:#e3f2fd; border-radius:8px; padding:12px; text-align:center;">
-              <strong style="color:#1565c0;">B0</strong>
-              <p style="margin:0.3em 0;">mốc nền tìm bằng tìm kiếm kiến trúc tự động</p>
-              <p style="margin:0; color:#555;">dùng MBConv và nút cổ chai đảo</p>
+        <section style="font-size:0.68em;">
+          <h2>EfficientNet: mở rộng theo độ rộng</h2>
+          <div style="display:grid; grid-template-columns:1fr 1.25fr; gap:16px; align-items:center;">
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:9px;">
+              <strong style="color:#2e7d32;">Ý tưởng</strong>
+              <p style="margin:0.3em 0 0;">Tăng số kênh trong mỗi tầng để mỗi tầng giữ được nhiều loại đặc trưng hơn.</p>
+              <p style="margin:0.3em 0 0; color:#555;">Ví dụ: cùng một vùng ảnh có thể cần kênh cho biên, màu, vân, hướng và cấu trúc nhỏ.</p>
+              <svg width="100%" viewBox="0 0 360 150" role="img" aria-label="Minh họa mở rộng độ rộng" style="margin-top:0.35em;">
+                <defs>
+                  <marker id="width-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32" />
+                  </marker>
+                </defs>
+                <text x="72" y="24" font-size="12" fill="#555" text-anchor="middle">ít kênh</text>
+                <rect x="30" y="46" width="70" height="54" rx="5" fill="#c8e6c9" stroke="#2e7d32" />
+                <rect x="42" y="36" width="70" height="54" rx="5" fill="#e8f5e9" stroke="#2e7d32" />
+                <rect x="54" y="26" width="70" height="54" rx="5" fill="#f1f8e9" stroke="#2e7d32" />
+                <line x1="132" y1="66" x2="178" y2="66" stroke="#2e7d32" stroke-width="2" marker-end="url(#width-arrow)" />
+                <text x="244" y="24" font-size="12" fill="#555" text-anchor="middle">nhiều kênh</text>
+                <rect x="208" y="66" width="70" height="54" rx="5" fill="#a5d6a7" stroke="#2e7d32" />
+                <rect x="220" y="56" width="70" height="54" rx="5" fill="#c8e6c9" stroke="#2e7d32" />
+                <rect x="232" y="46" width="70" height="54" rx="5" fill="#dcedc8" stroke="#2e7d32" />
+                <rect x="244" y="36" width="70" height="54" rx="5" fill="#e8f5e9" stroke="#2e7d32" />
+                <rect x="256" y="26" width="70" height="54" rx="5" fill="#f1f8e9" stroke="#2e7d32" />
+                <text x="244" y="139" font-size="12" fill="#555" text-anchor="middle">cùng độ sâu, biểu diễn giàu hơn</text>
+              </svg>
             </div>
-            <div style="font-size:1.8em; color:#B15A2B;">→</div>
-            <div style="background:#e8f5e9; border-radius:8px; padding:12px; text-align:center;">
-              <strong style="color:#2e7d32;">B1 ... B7</strong>
-              <p style="margin:0.3em 0;">mở rộng độ sâu, độ rộng, độ phân giải</p>
-              <p style="margin:0; color:#555;">chọn theo ngân sách tính toán</p>
+            <div style="font-size:0.94em;">
+              <ul>
+                <li>\(\phi\) vẫn là cùng một núm điều khiển ngân sách, không phải một tham số riêng cho độ rộng.</li>
+                <li>\(\beta\) quyết định số kênh tăng theo nấc \(\phi\): \(w=\beta^\phi\).</li>
+                <li>Chi phí tích chập tăng gần theo bình phương số kênh, nên \(\beta\) thường phải được chọn thận trọng.</li>
+                <li>Khi \(\phi\) tăng, độ rộng tăng vừa đủ để các tầng sâu hơn có không gian lưu nhiều đặc trưng hơn.</li>
+              </ul>
             </div>
           </div>
-          <p class="caption">EfficientNet hữu ích khi phải cân bằng độ chính xác và độ trễ thay vì chỉ tối đa độ chính xác.</p>
+          <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:7px 9px; margin-top:0.35em; font-size:0.92em;">
+            <strong>Trong mở rộng cân bằng:</strong> độ rộng tăng theo \(w=\beta^\phi\); chi phí tích chập thường tăng mạnh khi số kênh tăng.
+          </div>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>EfficientNet: mở rộng theo độ phân giải</h2>
+          <div style="display:grid; grid-template-columns:1fr 1.25fr; gap:16px; align-items:center;">
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:9px;">
+              <strong style="color:#ef6c00;">Ý tưởng</strong>
+              <p style="margin:0.3em 0 0;">Dùng ảnh đầu vào lớn hơn để mạng nhìn thấy nhiều chi tiết không gian hơn.</p>
+              <p style="margin:0.3em 0 0; color:#555;">Điều này quan trọng khi dấu hiệu phân loại nằm ở vật thể nhỏ, hoa văn mịn hoặc ranh giới tinh tế.</p>
+              <svg width="100%" viewBox="0 0 360 150" role="img" aria-label="Minh họa mở rộng độ phân giải" style="margin-top:0.35em;">
+                <defs>
+                  <marker id="res-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#ef6c00" />
+                  </marker>
+                </defs>
+                <rect x="26" y="42" width="78" height="78" rx="5" fill="#fff8e1" stroke="#ef6c00" />
+                <g stroke="#ef6c00" opacity="0.55">
+                  <line x1="52" y1="42" x2="52" y2="120" /><line x1="78" y1="42" x2="78" y2="120" />
+                  <line x1="26" y1="68" x2="104" y2="68" /><line x1="26" y1="94" x2="104" y2="94" />
+                </g>
+                <circle cx="84" cy="62" r="5" fill="#c62828" />
+                <text x="65" y="137" font-size="12" fill="#555" text-anchor="middle">ảnh nhỏ</text>
+                <line x1="120" y1="81" x2="166" y2="81" stroke="#ef6c00" stroke-width="2" marker-end="url(#res-arrow)" />
+                <rect x="184" y="22" width="122" height="122" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <g stroke="#ef6c00" opacity="0.45">
+                  <line x1="204" y1="22" x2="204" y2="144" /><line x1="224" y1="22" x2="224" y2="144" /><line x1="244" y1="22" x2="244" y2="144" /><line x1="264" y1="22" x2="264" y2="144" /><line x1="284" y1="22" x2="284" y2="144" />
+                  <line x1="184" y1="42" x2="306" y2="42" /><line x1="184" y1="62" x2="306" y2="62" /><line x1="184" y1="82" x2="306" y2="82" /><line x1="184" y1="102" x2="306" y2="102" /><line x1="184" y1="122" x2="306" y2="122" />
+                </g>
+                <circle cx="264" cy="62" r="5" fill="#c62828" />
+                <circle cx="274" cy="72" r="3" fill="#c62828" opacity="0.85" />
+                <text x="245" y="137" font-size="12" fill="#555" text-anchor="middle">ảnh lớn: giữ chi tiết nhỏ</text>
+              </svg>
+            </div>
+            <div style="font-size:0.94em;">
+              <ul>
+                <li>\(\phi\) tăng thì ảnh đầu vào cũng được phóng lớn theo cùng kế hoạch mở rộng.</li>
+                <li>\(\gamma\) quyết định độ phân giải tăng nhanh bao nhiêu: \(r=\gamma^\phi\).</li>
+                <li>Chi phí tăng gần theo diện tích ảnh, nên phần ràng buộc có \(\gamma^2\): \(\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2\).</li>
+                <li>\(\gamma\) phải đi cùng \(\alpha,\beta\): ảnh lớn hơn cần mạng đủ sâu và đủ rộng để khai thác chi tiết mới.</li>
+              </ul>
+            </div>
+          </div>
+          <div style="background:#fafafa; border:1px solid #ddd; border-radius:8px; padding:7px 9px; margin-top:0.35em; font-size:0.92em;">
+            <strong>Trong mở rộng cân bằng:</strong> độ phân giải tăng theo \(r=\gamma^\phi\), với ràng buộc xấp xỉ \(\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2\).
+          </div>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>EfficientNet-B0 = kiến trúc cơ sở</h2>
+          <div style="display:grid; grid-template-columns:1.15fr 1fr; gap:12px; align-items:start;">
+            <div>
+              <svg width="100%" viewBox="0 0 760 350" role="img" aria-label="Minh họa kiến trúc EfficientNet-B0">
+                <defs>
+                  <marker id="b0-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#555" />
+                  </marker>
+                </defs>
+                <style>
+                  .b0box { stroke-width:1.4; rx:8; }
+                  .b0txt { font-size:13px; font-family:Arial, sans-serif; fill:#263238; text-anchor:middle; }
+                  .b0small { font-size:11px; font-family:Arial, sans-serif; fill:#555; text-anchor:middle; }
+                  .b0line { stroke:#555; stroke-width:1.6; marker-end:url(#b0-arrow); }
+                </style>
+
+                <rect class="b0box" x="12" y="112" width="74" height="86" fill="#e3f2fd" stroke="#1565c0" />
+                <text class="b0txt" x="49" y="148">Ảnh</text>
+                <text class="b0small" x="49" y="168">224×224×3</text>
+
+                <line class="b0line" x1="86" y1="155" x2="112" y2="155" />
+                <rect class="b0box" x="116" y="112" width="86" height="86" fill="#ede7f6" stroke="#512da8" />
+                <text class="b0txt" x="159" y="145">Stem</text>
+                <text class="b0small" x="159" y="164">Conv 3×3</text>
+                <text class="b0small" x="159" y="181">32 kênh</text>
+
+                <line class="b0line" x1="202" y1="155" x2="228" y2="155" />
+                <rect class="b0box" x="232" y="45" width="70" height="65" fill="#e8f5e9" stroke="#2e7d32" />
+                <text class="b0txt" x="267" y="73">S1</text>
+                <text class="b0small" x="267" y="92">MBConv1</text>
+                <rect class="b0box" x="232" y="122" width="70" height="65" fill="#e8f5e9" stroke="#2e7d32" />
+                <text class="b0txt" x="267" y="150">S2</text>
+                <text class="b0small" x="267" y="169">MBConv6</text>
+                <rect class="b0box" x="232" y="199" width="70" height="65" fill="#e8f5e9" stroke="#2e7d32" />
+                <text class="b0txt" x="267" y="227">S3</text>
+                <text class="b0small" x="267" y="246">MBConv6</text>
+
+                <line class="b0line" x1="302" y1="155" x2="328" y2="155" />
+                <rect class="b0box" x="332" y="45" width="70" height="65" fill="#fff3e0" stroke="#ef6c00" />
+                <text class="b0txt" x="367" y="73">S4</text>
+                <text class="b0small" x="367" y="92">MBConv6</text>
+                <rect class="b0box" x="332" y="122" width="70" height="65" fill="#fff3e0" stroke="#ef6c00" />
+                <text class="b0txt" x="367" y="150">S5</text>
+                <text class="b0small" x="367" y="169">MBConv6</text>
+                <rect class="b0box" x="332" y="199" width="70" height="65" fill="#fff3e0" stroke="#ef6c00" />
+                <text class="b0txt" x="367" y="227">S6</text>
+                <text class="b0small" x="367" y="246">MBConv6</text>
+
+                <line class="b0line" x1="402" y1="155" x2="428" y2="155" />
+                <rect class="b0box" x="432" y="112" width="78" height="86" fill="#f3e5f5" stroke="#7b1fa2" />
+                <text class="b0txt" x="471" y="145">S7</text>
+                <text class="b0small" x="471" y="164">MBConv6</text>
+                <text class="b0small" x="471" y="181">320 kênh</text>
+
+                <line class="b0line" x1="510" y1="155" x2="536" y2="155" />
+                <rect class="b0box" x="540" y="112" width="86" height="86" fill="#e0f2f1" stroke="#00897b" />
+                <text class="b0txt" x="583" y="145">Head</text>
+                <text class="b0small" x="583" y="164">Conv 1×1</text>
+                <text class="b0small" x="583" y="181">1280 kênh</text>
+
+                <line class="b0line" x1="626" y1="155" x2="652" y2="155" />
+                <rect class="b0box" x="656" y="112" width="90" height="86" fill="#ffebee" stroke="#c62828" />
+                <text class="b0txt" x="701" y="145">Pool + FC</text>
+                <text class="b0small" x="701" y="164">softmax</text>
+                <text class="b0small" x="701" y="181">1000 lớp</text>
+
+                <rect x="146" y="292" width="470" height="40" rx="8" fill="#fafafa" stroke="#ddd" />
+                <text class="b0txt" x="381" y="309">MBConv = mở rộng 1×1 → depthwise k×k → SE → chiếu 1×1</text>
+                <text class="b0small" x="381" y="326">có skip connection khi kích thước đầu vào và đầu ra khớp</text>
+              </svg>
+              <div style="background:#fff3e0; border-left:5px solid #ef6c00; border-radius:8px; padding:7px 9px; margin-top:7px;">
+                <strong style="color:#ef6c00;">\(\alpha,\beta,\gamma\) của B0</strong>
+                <ul style="margin:0.3em 0 0; padding-left:1.2em;">
+                  <li>B0 là mạng nền: \(\phi=0\), nên \(d=\alpha^0=1\), \(w=\beta^0=1\), \(r=\gamma^0=1\).</li>
+                  <li>B0 dùng độ sâu, số kênh và ảnh 224×224 gốc; B1...B7 mới tăng \(\phi\).</li>
+                  <li>Hệ số thường dùng: \(\alpha=1.2\), \(\beta=1.1\), \(\gamma=1.15\), với \(\alpha\beta^2\gamma^2\approx2\).</li>
+                </ul>
+              </div>
+            </div>
+            <div style="display:grid; gap:8px;">
+              <div style="background:#e8f5e9; border-left:5px solid #2e7d32; border-radius:8px; padding:8px 10px;">
+                <strong style="color:#2e7d32;">MBConv bên trong</strong>
+                <ul style="margin:0.35em 0 0; padding-left:1.2em;">
+                  <li><strong>Mở rộng 1×1:</strong> tăng số kênh tạm thời, thường hệ số 6; riêng MBConv1 không mở rộng.</li>
+                  <li><strong>Depthwise k×k:</strong> lọc không gian riêng từng kênh, dùng k=3 hoặc k=5, rẻ hơn tích chập đầy đủ.</li>
+                  <li><strong>SE:</strong> squeeze-and-excitation học trọng số cho từng kênh, nhấn mạnh đặc trưng hữu ích.</li>
+                  <li><strong>Chiếu 1×1:</strong> đưa số kênh về đầu ra của stage; dùng skip connection nếu stride=1 và kích thước khớp.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="caption">B0 cung cấp kiến trúc gốc; compound scaling không đổi bản chất MBConv, mà tăng quy mô quanh kiến trúc gốc này.</p>
         </section>
 
         <section style="font-size:0.82em;">
@@ -1086,37 +1273,76 @@
           </div>
         </section>
 
-        <section style="font-size:0.78em;">
-          <h2>ViT và biểu diễn ảnh dưới dạng chuỗi đơn vị</h2>
-          <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:18px; align-items:center;">
+        <section style="font-size:0.66em;">
+          <h2>ViT và biểu diễn ảnh dưới dạng chuỗi</h2>
+          <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:14px; align-items:center;">
             <div>
-              <svg width="100%" viewBox="0 0 380 160">
-                <rect x="10" y="20" width="110" height="110" fill="#e3f2fd" stroke="#1565c0" />
+              <svg width="100%" viewBox="0 0 620 330" role="img" aria-label="Quan hệ giữa CNN, patch embedding và Transformer trong ViT">
+                <defs>
+                  <marker id="vit-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#555" />
+                  </marker>
+                </defs>
+                <style>
+                  .vitline { stroke:#555; stroke-width:1.6; marker-end:url(#vit-arrow); }
+                  .vitlabel { font-size:12px; fill:#555; text-anchor:middle; font-family:Arial, sans-serif; }
+                  .vittext { font-size:13px; fill:#263238; text-anchor:middle; font-family:Arial, sans-serif; }
+                  .vitbox { stroke-width:1.4; rx:8; }
+                </style>
+
+                <rect x="14" y="72" width="112" height="112" rx="6" fill="#e3f2fd" stroke="#1565c0" />
                 <g stroke="#1565c0" opacity="0.65">
-                  <line x1="37.5" y1="20" x2="37.5" y2="130"/><line x1="65" y1="20" x2="65" y2="130"/><line x1="92.5" y1="20" x2="92.5" y2="130"/>
-                  <line x1="10" y1="47.5" x2="120" y2="47.5"/><line x1="10" y1="75" x2="120" y2="75"/><line x1="10" y1="102.5" x2="120" y2="102.5"/>
+                  <line x1="42" y1="72" x2="42" y2="184"/><line x1="70" y1="72" x2="70" y2="184"/><line x1="98" y1="72" x2="98" y2="184"/>
+                  <line x1="14" y1="100" x2="126" y2="100"/><line x1="14" y1="128" x2="126" y2="128"/><line x1="14" y1="156" x2="126" y2="156"/>
                 </g>
-                <text x="65" y="148" font-size="12" fill="#555" text-anchor="middle">ảnh → mảnh ảnh</text>
-                <text x="145" y="82" font-size="22" fill="#B15A2B">→</text>
-                <rect x="175" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
-                <rect x="214" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
-                <rect x="253" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
-                <rect x="292" y="35" width="34" height="34" rx="5" fill="#e8f5e9" />
-                <text x="250" y="88" font-size="12" fill="#555" text-anchor="middle">biểu diễn mảnh ảnh + vị trí</text>
-                <rect x="205" y="105" width="95" height="35" rx="8" fill="#fff3e0" stroke="#ef6c00" />
-                <text x="252" y="127" font-size="13" fill="#e65100" text-anchor="middle">Bộ biến đổi</text>
+                <text class="vittext" x="70" y="56">Ảnh</text>
+                <text class="vitlabel" x="70" y="205">chia thành patch 16×16</text>
+
+                <line class="vitline" x1="126" y1="128" x2="160" y2="128" />
+                <rect class="vitbox" x="166" y="82" width="118" height="92" fill="#e8f5e9" stroke="#2e7d32" />
+                <text class="vittext" x="225" y="110">Patch embedding</text>
+                <text class="vitlabel" x="225" y="132">Conv P×P, stride P</text>
+                <text class="vitlabel" x="225" y="152">hoặc CNN stem</text>
+                <text class="vitlabel" x="225" y="195">phần giống CNN: cục bộ, chia sẻ trọng số</text>
+
+                <line class="vitline" x1="284" y1="128" x2="318" y2="128" />
+                <rect x="326" y="82" width="28" height="34" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <rect x="360" y="82" width="28" height="34" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <rect x="394" y="82" width="28" height="34" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <rect x="428" y="82" width="28" height="34" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <rect x="462" y="82" width="28" height="34" rx="5" fill="#fff3e0" stroke="#ef6c00" />
+                <text class="vitlabel" x="408" y="135">token patch + vị trí</text>
+
+                <line class="vitline" x1="492" y1="100" x2="522" y2="100" />
+                <rect class="vitbox" x="528" y="60" width="76" height="80" fill="#f3e5f5" stroke="#7b1fa2" />
+                <text class="vittext" x="566" y="88">Transformer</text>
+                <text class="vitlabel" x="566" y="108">MSA + MLP</text>
+                <text class="vitlabel" x="566" y="128">lặp nhiều lớp</text>
+
+                <rect x="36" y="250" width="130" height="48" rx="8" fill="#e3f2fd" stroke="#1565c0" />
+                <text class="vittext" x="101" y="270">CNN thuần</text>
+                <text class="vitlabel" x="101" y="288">Conv/Pool theo lưới ảnh</text>
+                <line class="vitline" x1="166" y1="274" x2="220" y2="274" />
+                <rect x="226" y="250" width="150" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" />
+                <text class="vittext" x="301" y="270">Khối kiểu CNN</text>
+                <text class="vitlabel" x="301" y="288">stem hoặc patch projection</text>
+                <line class="vitline" x1="376" y1="274" x2="430" y2="274" />
+                <rect x="436" y="250" width="150" height="48" rx="8" fill="#f3e5f5" stroke="#7b1fa2" />
+                <text class="vittext" x="511" y="270">Khối Transformer</text>
+                <text class="vitlabel" x="511" y="288">tự chú ý toàn cục</text>
               </svg>
             </div>
             <div>
               <ul>
-                <li>Chia ảnh thành các mảnh, ví dụ 16×16.</li>
-                <li>Mỗi mảnh thành một véc-tơ biểu diễn.</li>
-                <li>Thêm biểu diễn vị trí.</li>
-                <li>Dùng bộ mã hóa biến đổi như trong xử lý ngôn ngữ tự nhiên.</li>
+                <li>Ảnh được chia thành patch; mỗi patch trở thành một token.</li>
+                <li>Patch embedding giống tích chập \(P\times P\), stride \(P\): phần này còn mang tinh thần CNN.</li>
+                <li>Thêm vị trí để token không mất thông tin nằm ở đâu trong ảnh.</li>
+                <li>Transformer dùng self-attention để nối quan hệ giữa các patch xa nhau.</li>
+                <li>Mô hình lai: đầu là CNN cho đặc trưng cục bộ, sau là Transformer cho quan hệ toàn cục.</li>
               </ul>
             </div>
           </div>
-          <p class="caption">ViT thay thiên kiến quy nạp của tích chập bằng khả năng học quan hệ toàn cục qua cơ chế tự chú ý.</p>
+          <p class="caption">ViT không phủ nhận CNN: nó thường dùng một bước chiếu kiểu tích chập ở đầu, rồi giao phần mô hình hóa quan hệ toàn cục cho Transformer.</p>
         </section>
 
         <section style="font-size:0.82em;">
