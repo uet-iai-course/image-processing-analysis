@@ -895,18 +895,58 @@
                   <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
                 </marker>
               </defs>
-              <rect x="56" y="56" width="88" height="88" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-              <text x="100" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng nông</text>
-              <rect x="236" y="82" width="66" height="66" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-              <text x="269" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng giữa</text>
-              <rect x="394" y="106" width="42" height="42" rx="7" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-              <text x="415" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng sâu</text>
-              <path d="M152 100 L226 114" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
-              <path d="M310 116 L384 126" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
-              <path d="M415 154 C416 234 310 258 164 210" fill="none" stroke="#1565c0" stroke-width="4" marker-end="url(#skip-arrow)"/>
-              <path d="M269 154 C270 218 238 234 170 196" fill="none" stroke="#2e7d32" stroke-width="4" marker-end="url(#skip-arrow)"/>
-              <rect x="214" y="230" width="170" height="54" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
-              <text x="299" y="263" text-anchor="middle" font-size="18" fill="#6a1b9a" font-family="Arial">cộng điểm lớp</text>
+              <style>
+                .skip-label{font:700 16px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                .skip-small{font:14px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                .skip-plus{font:700 24px Arial,sans-serif;fill:#6a1b9a;text-anchor:middle}
+              </style>
+
+              <rect x="32" y="44" width="112" height="74" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="1.3">
+                <line x1="69" y1="44" x2="69" y2="118"/><line x1="106" y1="44" x2="106" y2="118"/>
+                <line x1="32" y1="69" x2="144" y2="69"/><line x1="32" y1="94" x2="144" y2="94"/>
+              </g>
+              <text x="88" y="146" class="skip-label">tầng nông</text>
+              <text x="88" y="168" class="skip-small">1/8, biên rõ</text>
+
+              <rect x="244" y="54" width="88" height="64" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <g stroke="#a5d6a7" stroke-width="1.4">
+                <line x1="288" y1="54" x2="288" y2="118"/><line x1="244" y1="86" x2="332" y2="86"/>
+              </g>
+              <text x="288" y="146" class="skip-label">tầng giữa</text>
+              <text x="288" y="168" class="skip-small">1/16</text>
+
+              <rect x="452" y="62" width="54" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="479" y="146" class="skip-label">tầng sâu</text>
+              <text x="479" y="168" class="skip-small">1/32, ngữ nghĩa mạnh</text>
+
+              <path d="M152 82 L232 84" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <path d="M342 86 L442 88" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+
+              <rect x="432" y="212" width="96" height="38" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="480" y="236" class="skip-small">điểm lớp sâu</text>
+              <path d="M480 122 L480 202" stroke="#ef6c00" stroke-width="3" marker-end="url(#skip-arrow)"/>
+
+              <rect x="238" y="212" width="102" height="38" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="289" y="236" class="skip-small">điểm lớp giữa</text>
+              <path d="M289 122 L289 202" stroke="#2e7d32" stroke-width="3" marker-end="url(#skip-arrow)"/>
+
+              <circle cx="386" cy="231" r="19" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+              <text x="386" y="239" class="skip-plus">+</text>
+              <path d="M432 231 L412 231" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <path d="M340 231 L360 231" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <text x="386" y="274" class="skip-small">cộng 1: sâu + giữa</text>
+
+              <rect x="40" y="212" width="98" height="38" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="89" y="236" class="skip-small">điểm lớp nông</text>
+              <path d="M89 122 L89 202" stroke="#1565c0" stroke-width="3" marker-end="url(#skip-arrow)"/>
+
+              <circle cx="184" cy="231" r="19" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+              <text x="184" y="239" class="skip-plus">+</text>
+              <path d="M358 250 C314 302 238 302 202 246" fill="none" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <path d="M138 231 L158 231" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <text x="184" y="308" class="skip-small">cộng 2: kết quả trên + nông</text>
+              <text x="184" y="328" class="skip-small">rồi phóng to về kích thước ảnh</text>
             </svg>
             <div>
               <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
