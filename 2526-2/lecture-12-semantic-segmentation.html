@@ -1122,9 +1122,612 @@
           <h1><span class="text-light">3.</span><br />U-Net</h1>
           <p>Bộ mã hóa - bộ giải mã · liên kết tắt · cắt/ghép kênh · mất mát Dice · ảnh y tế</p>
         </section>
+
+        <section style="font-size:0.74em;">
+          <h2>U-Net trả lời phần FCN còn yếu</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Từ FCN sang U-Net">
+              <defs>
+                <marker id="unet-why-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="40" y="54" width="210" height="210" rx="10" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+              <rect x="74" y="88" width="142" height="142" rx="8" fill="#ffcdd2"/>
+              <g fill="#c62828" opacity="0.72">
+                <rect x="82" y="96" width="38" height="38"/><rect x="120" y="96" width="38" height="38"/>
+                <rect x="158" y="134" width="38" height="38"/><rect x="120" y="172" width="38" height="38"/>
+              </g>
+              <text x="145" y="300" text-anchor="middle" font-size="20" font-weight="700" fill="#b71c1c" font-family="Arial">FCN</text>
+              <text x="145" y="326" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">biên dễ thô</text>
+
+              <path d="M266 160 L354 160" stroke="#555" stroke-width="3" marker-end="url(#unet-why-arrow)"/>
+
+              <rect x="370" y="54" width="210" height="210" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <path d="M410 92 L458 92 L458 132 L506 132 L506 220 L410 220 Z" fill="#a5d6a7" stroke="#2e7d32" stroke-width="4"/>
+              <path d="M410 92 L458 132 L506 132" fill="none" stroke="#1b5e20" stroke-width="3"/>
+              <path d="M410 220 L506 220" stroke="#1b5e20" stroke-width="3"/>
+              <text x="475" y="300" text-anchor="middle" font-size="20" font-weight="700" fill="#1b5e20" font-family="Arial">U-Net</text>
+              <text x="475" y="326" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">biên được tái tạo</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề còn lại</strong>
+                <p style="margin:0.35em 0 0;">FCN dùng đặc trưng sâu để hiểu lớp, nhưng đường đi phóng to còn nghèo chi tiết.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Bước chuyển của U-Net</strong>
+                <p style="margin:0.35em 0 0;">Không chỉ phóng to điểm lớp; U-Net xây cả một bộ giải mã để phục hồi dần cấu trúc không gian.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">U-Net xem phân vùng là quá trình nén để hiểu ảnh, rồi giải mã có hướng dẫn để vẽ lại mặt nạ.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>U-Net: tổng quan kiến trúc chữ U</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">H x W</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Bộ mã hóa</div><div class="stage-desc">nén dần</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Nút cổ chai</div><div class="stage-desc">ngữ cảnh rộng</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Bộ giải mã</div><div class="stage-desc">phóng to dần</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mặt nạ</div><div class="stage-desc">H x W</div></div>
+          </div>
+          <div class="seg-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 340" role="img" aria-label="Tổng quan U-Net">
+              <defs>
+                <marker id="unet-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .unet-label{font:700 17px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .unet-small{font:14px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .unet-flow{stroke:#555;stroke-width:3;marker-end:url(#unet-overview-arrow)}
+                  .unet-skip{stroke:#1565c0;stroke-width:3;stroke-dasharray:8 6;marker-end:url(#unet-overview-arrow)}
+                </style>
+              </defs>
+              <rect x="34" y="84" width="100" height="100" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M34 140 C58 116 82 128 102 100 C118 80 126 88 134 84 L134 184 L34 184 Z" fill="#c8e6c9"/>
+              <circle cx="82" cy="132" r="18" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+              <text class="unet-label" x="84" y="232">Ảnh</text>
+
+              <g transform="translate(178,54)">
+                <rect x="0" y="0" width="86" height="140" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text class="unet-small" x="43" y="166">H</text>
+              </g>
+              <g transform="translate(318,86)">
+                <rect x="0" y="0" width="72" height="108" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <text class="unet-small" x="36" y="134">H/2</text>
+              </g>
+              <g transform="translate(448,120)">
+                <rect x="0" y="0" width="58" height="74" rx="8" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+                <text class="unet-small" x="29" y="100">H/4</text>
+              </g>
+              <g transform="translate(570,148)">
+                <rect x="0" y="0" width="50" height="46" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text class="unet-small" x="25" y="72">nút cổ chai</text>
+              </g>
+              <g transform="translate(700,120)">
+                <rect x="0" y="0" width="58" height="74" rx="8" fill="#a5d6a7" stroke="#2e7d32" stroke-width="3"/>
+                <text class="unet-small" x="29" y="100">H/4</text>
+              </g>
+              <g transform="translate(826,86)">
+                <rect x="0" y="0" width="72" height="108" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+                <text class="unet-small" x="36" y="134">H/2</text>
+              </g>
+              <g transform="translate(944,54)">
+                <rect x="0" y="0" width="86" height="140" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text class="unet-small" x="43" y="166">H</text>
+              </g>
+
+              <line class="unet-flow" x1="140" y1="134" x2="168" y2="134"/>
+              <line class="unet-flow" x1="270" y1="134" x2="308" y2="134"/>
+              <line class="unet-flow" x1="396" y1="150" x2="438" y2="150"/>
+              <line class="unet-flow" x1="512" y1="170" x2="560" y2="170"/>
+              <line class="unet-flow" x1="626" y1="170" x2="690" y2="158"/>
+              <line class="unet-flow" x1="764" y1="150" x2="816" y2="134"/>
+              <line class="unet-flow" x1="904" y1="134" x2="934" y2="134"/>
+
+              <path class="unet-skip" d="M221 46 C306 12 825 12 987 46"/>
+              <path class="unet-skip" d="M354 78 C438 38 724 38 862 78"/>
+              <path class="unet-skip" d="M477 112 C544 72 648 72 730 112"/>
+
+              <text class="unet-label" x="342" y="292">đường xuống: hiểu nội dung</text>
+              <text class="unet-label" x="806" y="292">đường lên: phục hồi vị trí</text>
+            </svg>
+          </div>
+          <p class="caption">Hình chữ U đến từ hai đường đối xứng: bên trái nén ảnh để lấy ngữ nghĩa, bên phải phóng to để dựng mặt nạ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đường xuống: khối tích chập kép giữ thông tin cục bộ</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Khối tích chập kép trong U-Net">
+              <defs>
+                <marker id="unet-block-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="36" y="84" width="96" height="150" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="84" y="268" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">đặc trưng vào</text>
+              <path d="M140 158 L194 158" stroke="#555" stroke-width="3" marker-end="url(#unet-block-arrow)"/>
+              <rect x="210" y="104" width="112" height="110" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="266" y="148" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">3x3</text>
+              <text x="266" y="174" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">tích chập</text>
+              <path d="M332 158 L386 158" stroke="#555" stroke-width="3" marker-end="url(#unet-block-arrow)"/>
+              <rect x="402" y="104" width="112" height="110" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="458" y="148" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">3x3</text>
+              <text x="458" y="174" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">tích chập</text>
+              <path d="M522 158 L584 158" stroke="#555" stroke-width="3" marker-end="url(#unet-block-arrow)"/>
+              <text x="362" y="56" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">mỗi vị trí nhìn lân cận gần, rồi tinh chỉnh thêm một lần</text>
+              <text x="362" y="306" text-anchor="middle" font-size="16" fill="#607d8b" font-family="Arial">không gian gần như giữ nguyên trong một mức độ phân giải</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Vai trò</strong>
+                <p style="margin:0.35em 0 0;">Tách cạnh, vân, hình dạng nhỏ và mẫu cục bộ trước khi giảm kích thước.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Vì sao dùng hai lần?</strong>
+                <p style="margin:0.35em 0 0;">Một lần học dấu hiệu thô; lần tiếp theo kết hợp các dấu hiệu đó thành đặc trưng ổn định hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Trong U-Net, mỗi mức độ phân giải đều có thời gian xử lý riêng trước khi bị nén xuống mức thô hơn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Giảm kích thước: đổi chi tiết lấy ngữ cảnh</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Giảm kích thước trong bộ mã hóa U-Net">
+              <defs>
+                <marker id="unet-down-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="54" y="62" width="170" height="170" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="1.4">
+                <line x1="96" y1="62" x2="96" y2="232"/><line x1="139" y1="62" x2="139" y2="232"/><line x1="182" y1="62" x2="182" y2="232"/>
+                <line x1="54" y1="104" x2="224" y2="104"/><line x1="54" y1="147" x2="224" y2="147"/><line x1="54" y1="190" x2="224" y2="190"/>
+              </g>
+              <text x="139" y="270" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">H x W, ít kênh</text>
+              <path d="M242 148 L356 148" stroke="#555" stroke-width="3" marker-end="url(#unet-down-arrow)"/>
+              <text x="299" y="126" text-anchor="middle" font-size="18" fill="#455a64" font-family="Arial">gộp 2x2</text>
+              <rect x="382" y="92" width="112" height="112" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#64b5f6" stroke-width="1.4">
+                <line x1="438" y1="92" x2="438" y2="204"/><line x1="382" y1="148" x2="494" y2="148"/>
+              </g>
+              <rect x="412" y="64" width="112" height="112" rx="8" fill="none" stroke="#ef6c00" stroke-width="3"/>
+              <text x="438" y="270" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">H/2 x W/2, nhiều kênh</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Được gì?</strong>
+                <p style="margin:0.35em 0 0;">Mỗi ô ở tầng sau nhìn một vùng ảnh lớn hơn, nên dễ hiểu cấu trúc và lớp.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Mất gì?</strong>
+                <p style="margin:0.35em 0 0;">Vị trí chính xác của biên bị gom lại; vật nhỏ có thể chỉ còn vài ô.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">U-Net chấp nhận nén không gian, nhưng lưu lại đặc trưng trước khi nén để dùng ở đường lên.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nút cổ chai: nơi ngữ cảnh rộng nhất nhưng thô nhất</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Nút cổ chai của U-Net">
+              <rect x="50" y="58" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M50 160 C92 112 136 132 174 92 C212 54 238 72 270 58 L270 278 L50 278 Z" fill="#c8e6c9"/>
+              <circle cx="132" cy="146" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="198" cy="156" rx="28" ry="48" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <rect x="102" y="116" width="128" height="98" fill="none" stroke="#7b1fa2" stroke-width="4" stroke-dasharray="9 6"/>
+              <text x="160" y="314" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">một ô sâu nhìn vùng lớn</text>
+
+              <rect x="386" y="104" width="126" height="126" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <g stroke="#ffcc80" stroke-width="1.5">
+                <line x1="428" y1="104" x2="428" y2="230"/><line x1="470" y1="104" x2="470" y2="230"/>
+                <line x1="386" y1="146" x2="512" y2="146"/><line x1="386" y1="188" x2="512" y2="188"/>
+              </g>
+              <text x="449" y="76" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">đặc trưng sâu</text>
+              <text x="449" y="270" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">ít vị trí, nhiều kênh</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Cần cho ngữ nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Muốn biết một vùng là tế bào, đường hay nền, mô hình phải nhìn quan hệ với vùng xung quanh.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Không đủ cho mặt nạ</strong>
+                <p style="margin:0.35em 0 0;">Nếu chỉ dùng tầng này để phóng to, biên cuối thường bị bệt vì lưới quá thưa.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Nút cổ chai trả lời “vùng này là gì”, nhưng cần đường lên để trả lời “ranh giới chính xác ở đâu”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đường lên: phóng to học được, không chỉ kéo giãn ảnh</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Phóng to trong bộ giải mã U-Net">
+              <defs>
+                <marker id="unet-up-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="62" y="110" width="92" height="92" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <g stroke="#ffcc80" stroke-width="1.5">
+                <line x1="108" y1="110" x2="108" y2="202"/><line x1="62" y1="156" x2="154" y2="156"/>
+              </g>
+              <text x="108" y="244" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">H/4</text>
+              <path d="M174 156 L292 156" stroke="#555" stroke-width="3" marker-end="url(#unet-up-arrow)"/>
+              <text x="233" y="132" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">tích chập chuyển vị</text>
+              <rect x="322" y="70" width="172" height="172" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <g stroke="#a5d6a7" stroke-width="1.4">
+                <line x1="365" y1="70" x2="365" y2="242"/><line x1="408" y1="70" x2="408" y2="242"/><line x1="451" y1="70" x2="451" y2="242"/>
+                <line x1="322" y1="113" x2="494" y2="113"/><line x1="322" y1="156" x2="494" y2="156"/><line x1="322" y1="199" x2="494" y2="199"/>
+              </g>
+              <text x="408" y="284" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">H/2</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Vai trò</strong>
+                <p style="margin:0.35em 0 0;">Tăng số vị trí dự đoán để mặt nạ tiến gần kích thước ảnh gốc.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Điểm khác với nội suy đơn giản</strong>
+                <p style="margin:0.35em 0 0;">Các tham số học được quyết định cách trải đặc trưng sâu ra các vị trí mới.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đường lên không chỉ làm ảnh to hơn; nó học cách biến ngữ nghĩa sâu thành bản đồ không gian dày hơn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Liên kết tắt: ghép kênh thay vì cộng điểm lớp</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Ghép kênh liên kết tắt trong U-Net">
+              <defs>
+                <marker id="unet-concat-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="56" y="74" width="132" height="132" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="1.3">
+                <line x1="100" y1="74" x2="100" y2="206"/><line x1="144" y1="74" x2="144" y2="206"/>
+                <line x1="56" y1="118" x2="188" y2="118"/><line x1="56" y1="162" x2="188" y2="162"/>
+              </g>
+              <text x="122" y="246" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">đặc trưng nông</text>
+              <text x="122" y="268" text-anchor="middle" font-size="14" fill="#607d8b" font-family="Arial">biên, vị trí</text>
+
+              <rect x="56" y="48" width="132" height="132" rx="8" fill="none" stroke="#1565c0" stroke-width="3" opacity="0.45"/>
+              <path d="M196 140 L296 140" stroke="#1565c0" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#unet-concat-arrow)"/>
+
+              <rect x="236" y="178" width="132" height="132" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="302" y="336" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">đặc trưng đang giải mã</text>
+              <path d="M302 174 L302 142" stroke="#2e7d32" stroke-width="3" marker-end="url(#unet-concat-arrow)"/>
+
+              <rect x="394" y="68" width="72" height="144" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <rect x="466" y="68" width="72" height="144" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="466" y="244" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">ghép theo chiều kênh</text>
+              <path d="M538 140 L584 140" stroke="#555" stroke-width="3" marker-end="url(#unet-concat-arrow)"/>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Từ đường xuống</strong>
+                <p style="margin:0.35em 0 0;">Mang lại cạnh, kết cấu và vị trí còn sắc trước khi bị gộp.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Từ đường lên</strong>
+                <p style="margin:0.35em 0 0;">Mang lại ngữ nghĩa sâu: điểm ảnh này có khả năng thuộc lớp nào.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Khác FCN thường cộng các điểm lớp, U-Net ghép đặc trưng rồi để các tích chập sau học cách hòa trộn chúng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Cắt và căn kích thước: để biên không lệch</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Cắt và căn bản đồ đặc trưng trong U-Net">
+              <defs>
+                <marker id="unet-align-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="60" y="58" width="190" height="190" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <rect x="88" y="86" width="134" height="134" rx="8" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="10 7"/>
+              <text x="155" y="282" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">hai bản đồ chưa trùng mép</text>
+              <rect x="370" y="86" width="134" height="134" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <rect x="370" y="86" width="134" height="134" rx="8" fill="none" stroke="#1565c0" stroke-width="4"/>
+              <text x="437" y="282" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">cắt rồi ghép đúng vị trí</text>
+              <path d="M272 154 L346 154" stroke="#555" stroke-width="3" marker-end="url(#unet-align-arrow)"/>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề</strong>
+                <p style="margin:0.35em 0 0;">Tích chập không đệm biên, gộp và phóng to có thể làm kích thước hai nhánh khác nhau.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Cách xử lý</strong>
+                <p style="margin:0.35em 0 0;">Cắt đặc trưng từ đường xuống để khớp với đặc trưng đang đi lên trước khi ghép kênh.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Với phân vùng y tế, lệch vài điểm ảnh có thể biến thành đo sai kích thước hoặc tách sai hai cấu trúc sát nhau.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Một bước giải mã hoàn chỉnh</h2>
+          <div class="seg-imgbox" style="padding:4px;">
+            <svg width="100%" viewBox="0 0 1040 340" role="img" aria-label="Một bước giải mã trong U-Net">
+              <defs>
+                <marker id="unet-decode-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .dec-label{font:700 17px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .dec-small{font:14px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .dec-flow{stroke:#555;stroke-width:3;marker-end:url(#unet-decode-arrow)}
+                </style>
+              </defs>
+              <g transform="translate(48,88)">
+                <rect x="0" y="0" width="92" height="92" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text class="dec-small" x="46" y="124">đặc trưng sâu</text>
+              </g>
+              <line class="dec-flow" x1="154" y1="134" x2="224" y2="134"/>
+              <g transform="translate(240,62)">
+                <rect x="0" y="0" width="142" height="142" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text class="dec-small" x="71" y="174">phóng to 2 lần</text>
+              </g>
+              <line class="dec-flow" x1="392" y1="134" x2="456" y2="134"/>
+              <g transform="translate(472,62)">
+                <rect x="0" y="0" width="70" height="142" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="70" y="0" width="70" height="142" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text class="dec-small" x="70" y="174">ghép liên kết tắt</text>
+              </g>
+              <path d="M542 38 C542 18 520 18 520 50" fill="none" stroke="#1565c0" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#unet-decode-arrow)"/>
+              <text class="dec-small" x="542" y="24">đặc trưng nông đã căn</text>
+              <line class="dec-flow" x1="624" y1="134" x2="688" y2="134"/>
+              <g transform="translate(704,82)">
+                <rect x="0" y="0" width="118" height="102" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text class="dec-label" x="59" y="43">3x3 + 3x3</text>
+                <text class="dec-small" x="59" y="70">hòa trộn đặc trưng</text>
+              </g>
+              <line class="dec-flow" x1="834" y1="134" x2="900" y2="134"/>
+              <g transform="translate(916,62)">
+                <rect x="0" y="0" width="92" height="142" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text class="dec-small" x="46" y="174">đặc trưng sạch hơn</text>
+              </g>
+              <text class="dec-label" x="520" y="300">mỗi mức đường lên vừa tăng độ phân giải, vừa lọc lại thông tin sau khi ghép</text>
+            </svg>
+          </div>
+          <p class="caption">Một bước giải mã của U-Net gồm ba việc: phóng to, ghép chi tiết cùng mức, rồi dùng tích chập để quyết định giữ thông tin nào.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đầu ra: tích chập 1x1 biến đặc trưng thành điểm lớp</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Đầu dự đoán của U-Net">
+              <defs>
+                <marker id="unet-head-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="54" y="74" width="156" height="156" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <rect x="78" y="50" width="156" height="156" rx="8" fill="none" stroke="#2e7d32" stroke-width="3" opacity="0.45"/>
+              <text x="132" y="270" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">đặc trưng cuối</text>
+              <path d="M248 152 L340 152" stroke="#555" stroke-width="3" marker-end="url(#unet-head-arrow)"/>
+              <rect x="356" y="98" width="104" height="108" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="408" y="142" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">1x1</text>
+              <text x="408" y="168" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">trộn kênh</text>
+              <path d="M474 152 L550 152" stroke="#555" stroke-width="3" marker-end="url(#unet-head-arrow)"/>
+              <rect x="560" y="88" width="34" height="128" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <rect x="570" y="78" width="34" height="128" rx="6" fill="none" stroke="#7b1fa2" stroke-width="3"/>
+              <text x="578" y="270" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">C bản đồ điểm</text>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  z\in\mathbb{R}^{C\times H\times W}
+                \]
+                \[
+                  p_{c,h,w}=softmax(z_{:,h,w})_c
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Ý nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Tại mỗi điểm ảnh, lớp được chọn từ các điểm lớp sau cùng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">U-Net khác FCN ở đường tạo đặc trưng, nhưng đầu ra cuối vẫn là bản đồ điểm lớp theo từng điểm ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Mất cân bằng lớp: nền thường áp đảo vật cần tách</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Mất cân bằng lớp trong phân vùng y tế">
+              <rect x="70" y="50" width="230" height="230" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="142" cy="120" r="18" fill="#ef6c00"/>
+              <circle cx="222" cy="164" r="22" fill="#ef6c00"/>
+              <circle cx="168" cy="226" r="14" fill="#ef6c00"/>
+              <text x="185" y="318" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">ít điểm ảnh vật, rất nhiều nền</text>
+              <rect x="392" y="74" width="44" height="174" fill="#ef6c00"/>
+              <rect x="456" y="28" width="44" height="220" fill="#b0bec5"/>
+              <text x="414" y="278" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">vật</text>
+              <text x="478" y="278" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">nền</text>
+              <text x="448" y="318" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">nền chiếm phần lớn mất mát</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Rủi ro</strong>
+                <p style="margin:0.35em 0 0;">Mô hình có thể đạt mất mát nhỏ bằng cách dự đoán nền tốt, nhưng bỏ sót vật nhỏ.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Trong ảnh y tế</strong>
+                <p style="margin:0.35em 0 0;">Tế bào, tổn thương hoặc mạch máu thường chiếm ít điểm ảnh hơn nền rất nhiều.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Thiết kế U-Net thường đi kèm mất mát nhạy với vùng nhỏ, vì đúng nền chưa đủ để có mặt nạ hữu ích.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Mất mát Dice đo trực tiếp độ chồng lấn</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  Dice=\frac{2\sum_i p_i y_i}{\sum_i p_i+\sum_i y_i}
+                \]
+                \[
+                  L_{\text{Dice}}=1-Dice
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Trực giác</strong>
+                <p style="margin:0.35em 0 0;">Nếu vùng dự đoán và vùng đúng chồng lên nhau nhiều, hệ số Dice cao.</p>
+              </div>
+            </div>
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Hệ số Dice là độ chồng lấn mặt nạ">
+              <circle cx="244" cy="168" r="96" fill="#ef6c00" opacity="0.58"/>
+              <circle cx="346" cy="168" r="96" fill="#1565c0" opacity="0.58"/>
+              <text x="208" y="292" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">mặt nạ đúng</text>
+              <text x="388" y="292" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">mặt nạ dự đoán</text>
+              <text x="295" y="174" text-anchor="middle" font-size="18" font-weight="700" fill="#263238" font-family="Arial">chồng lấn</text>
+            </svg>
+          </div>
+          <p class="caption">Dice bớt bị nền lớn lấn át vì nó tập trung vào quan hệ giữa vùng dự đoán và vùng đúng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Trọng số biên: tách các vật chạm nhau</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Trọng số biên trong U-Net">
+              <rect x="62" y="54" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="152" cy="156" r="62" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <circle cx="198" cy="156" r="62" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <path d="M174 98 C154 134 154 178 174 214" fill="none" stroke="#c62828" stroke-width="8"/>
+              <text x="172" y="312" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">vùng giữa hai vật có trọng số cao</text>
+
+              <rect x="370" y="54" width="180" height="220" rx="10" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+              <path d="M460 74 C424 112 424 214 460 254" fill="none" stroke="#c62828" stroke-width="16"/>
+              <path d="M460 74 C424 112 424 214 460 254" fill="none" stroke="#fff" stroke-width="5" opacity="0.85"/>
+              <text x="460" y="312" text-anchor="middle" font-size="16" fill="#c62828" font-family="Arial">phạt mạnh lỗi dính biên</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Bài toán</strong>
+                <p style="margin:0.35em 0 0;">Hai tế bào sát nhau có thể bị dự đoán thành một vùng liền mạch.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Ý tưởng trọng số</strong>
+                <p style="margin:0.35em 0 0;">Tăng phạt ở dải biên giữa các vật gần nhau để mô hình học tạo khe tách rõ.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Trong U-Net gốc, trọng số theo vị trí làm cho lỗi ở đường biên quan trọng hơn lỗi nền xa vật thể.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Huấn luyện từ mảnh ảnh: tận dụng dữ liệu ít</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Huấn luyện U-Net từ mảnh ảnh">
+              <defs>
+                <marker id="unet-patch-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="48" y="48" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="110" cy="110" r="22" fill="#ffcc80"/><circle cx="190" cy="148" r="28" fill="#ffcc80"/><circle cx="138" cy="218" r="18" fill="#ffcc80"/>
+              <rect x="88" y="86" width="96" height="96" fill="none" stroke="#1565c0" stroke-width="4"/>
+              <rect x="150" y="126" width="96" height="96" fill="none" stroke="#2e7d32" stroke-width="4"/>
+              <text x="158" y="306" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">một ảnh lớn sinh nhiều mảnh</text>
+              <path d="M286 156 L356 156" stroke="#555" stroke-width="3" marker-end="url(#unet-patch-arrow)"/>
+              <g transform="translate(382,72)">
+                <rect x="0" y="0" width="88" height="88" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="64" y="54" width="88" height="88" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="26" y="128" width="88" height="88" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              </g>
+              <text x="466" y="306" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">xoay, lật, biến dạng nhẹ</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Vì sao dùng mảnh ảnh?</strong>
+                <p style="margin:0.35em 0 0;">Ảnh y tế thường ít, lớn và tốn bộ nhớ; cắt mảnh giúp tăng số mẫu huấn luyện.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Tăng cường dữ liệu</strong>
+                <p style="margin:0.35em 0 0;">Xoay, lật và biến dạng nhẹ giúp mô hình bớt học thuộc hình dạng cố định.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Một lý do U-Net nổi bật là nó hoạt động tốt trong bối cảnh nhãn mặt nạ rất đắt và dữ liệu huấn luyện không lớn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh U-Net với FCN</h2>
+          <div class="seg-grid-2">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">FCN</strong>
+              <ul>
+                <li>Dùng CNN phân loại đổi thành toàn tích chập.</li>
+                <li>Phóng to điểm lớp từ đặc trưng sâu.</li>
+                <li>Liên kết tắt thường cộng bản đồ điểm lớp.</li>
+              </ul>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">U-Net</strong>
+              <ul>
+                <li>Thiết kế riêng cho phân vùng đầu cuối.</li>
+                <li>Bộ giải mã nhiều mức phục hồi độ phân giải dần.</li>
+                <li>Liên kết tắt ghép đặc trưng rồi học hòa trộn.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="seg-card" style="margin-top:0.75em; background:#fff3e0; border-left-color:#ef6c00;">
+            <strong style="color:#ef6c00;">Bước chuyển tư duy:</strong>
+            từ “dùng mạng phân loại để sinh bản đồ lớp” sang “thiết kế một đường dựng lại mặt nạ có kiểm soát”.
+          </div>
+          <p class="caption">U-Net không phủ nhận FCN; nó làm mạnh hơn đúng phần FCN yếu nhất: phục hồi chi tiết không gian.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Khi dùng U-Net cần nhìn vào ba điểm</h2>
+          <div class="seg-grid-3">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Độ phân giải</strong>
+              <p style="margin:0.35em 0 0;">Mặt nạ cuối có cần biên thật sắc không? Nếu có, đường lên và căn kích thước rất quan trọng.</p>
+            </div>
+            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Mất cân bằng lớp</strong>
+              <p style="margin:0.35em 0 0;">Nếu vật nhỏ, cần cân nhắc Dice, trọng số lớp hoặc trọng số theo biên.</p>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dữ liệu ít</strong>
+              <p style="margin:0.35em 0 0;">Cắt mảnh ảnh và tăng cường dữ liệu thường quan trọng ngang với đổi kiến trúc.</p>
+            </div>
+          </div>
+          <p class="caption">U-Net là một khuôn thiết kế mạnh, nhưng chất lượng thực tế phụ thuộc nhiều vào cách xử lý dữ liệu và mất mát.</p>
+        </section>
+
         <section style="font-size:0.78em;">
-          <h2>Khung phần U-Net</h2>
-          <div class="section-todo">Sẽ triển khai: bộ mã hóa, nút cổ chai, bộ giải mã, ghép liên kết tắt, mất mát cho dữ liệu mất cân bằng và so sánh với FCN.</div>
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> U-Net dùng đường xuống để lấy ngữ nghĩa, đường lên để phục hồi độ phân giải, và liên kết tắt để đưa chi tiết nông quay lại.
+          </div>
+          <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> nếu muốn giữ độ phân giải cao mà vẫn nhìn được ngữ cảnh rất rộng, có nhất thiết phải gộp xuống rồi phóng lên nhiều lần không?
+          </div>
+          <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo trả lời:</strong> DeepLab dùng tích chập rỗng và ASPP để mở rộng trường tiếp nhận mà ít làm thưa bản đồ đặc trưng.
+          </div>
         </section>
       </section>
 
