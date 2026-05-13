@@ -52,6 +52,21 @@
       text-align: center;
     }
 
+    .reveal .compact-pipeline {
+      flex-wrap: nowrap;
+      gap: 0.28em;
+      margin-top: 0.35em;
+    }
+
+    .reveal .compact-pipeline .stage {
+      width: 116px;
+      padding: 0.35em;
+    }
+
+    .reveal .compact-pipeline .arrow {
+      font-size: 1.15em;
+    }
+
     .reveal .mini {
       font-size: 0.78em;
       color: #555;
@@ -450,15 +465,615 @@
         </section>
       </section>
 
-      <!-- ===================== KHUNG CÁC PHẦN TIẾP THEO ===================== -->
+      <!-- ===================== PHẦN 2 ===================== -->
       <section>
         <section>
-          <h1><span class="text-light">2.</span><br />FCN</h1>
-          <p>Toàn tích chập · tích chập chuyển vị · dự đoán có liên kết tắt · mất mát theo điểm ảnh</p>
+          <h1><span class="text-light">2.</span><br />Phân vùng ngữ nghĩa: FCN</h1>
+          <p>Toàn tích chập · điểm lớp theo vị trí · phóng to đặc trưng · liên kết tắt</p>
         </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Phân vùng ngữ nghĩa trả lời một câu hỏi rất cụ thể</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Đầu vào và đầu ra của phân vùng ngữ nghĩa">
+              <defs>
+                <marker id="sem-task-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="42" y="62" width="200" height="180" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M42 168 C82 130 116 152 152 112 C190 70 218 84 242 64 L242 242 L42 242 Z" fill="#c8e6c9"/>
+              <circle cx="116" cy="140" r="32" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="178" cy="142" rx="26" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text x="142" y="286" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ảnh đầu vào</text>
+
+              <path d="M258 152 L342 152" stroke="#555" stroke-width="3" marker-end="url(#sem-task-arrow)"/>
+
+              <rect x="362" y="62" width="200" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+              <path d="M362 168 C402 130 436 152 472 112 C510 70 538 84 562 64 L562 242 L362 242 Z" fill="#81c784"/>
+              <circle cx="436" cy="140" r="32" fill="#ef6c00" opacity="0.78"/>
+              <ellipse cx="498" cy="142" rx="26" ry="42" fill="#1565c0" opacity="0.78"/>
+              <rect x="380" y="254" width="48" height="24" rx="4" fill="#81c784"/>
+              <text x="434" y="272" font-size="15" fill="#263238" font-family="Arial">cỏ</text>
+              <rect x="464" y="254" width="48" height="24" rx="4" fill="#ef6c00"/>
+              <text x="518" y="272" font-size="15" fill="#263238" font-family="Arial">vật</text>
+              <text x="462" y="306" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">bản đồ nhãn</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Đầu ra</strong>
+                <p style="margin:0.35em 0 0;">Một nhãn lớp cho mỗi điểm ảnh: đường, cây, xe, người, nền.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Không làm ở phần này</strong>
+                <p style="margin:0.35em 0 0;">Không tách xe #1 và xe #2. Hai vật cùng lớp có cùng màu nhãn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Phân vùng ngữ nghĩa biến bài toán nhận dạng ảnh thành bài toán nhận dạng tại mọi vị trí trong ảnh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bước chuyển từ phân loại ảnh sang phân vùng</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="So sánh phân loại ảnh và phân vùng ngữ nghĩa">
+              <defs>
+                <marker id="cls-seg-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(38,52)">
+                <rect x="0" y="0" width="230" height="214" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="26" y="32" width="78" height="112" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="124" y="58" width="58" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <path d="M188 88 L214 88" stroke="#555" stroke-width="3" marker-end="url(#cls-seg-arrow)"/>
+                <rect x="216" y="64" width="0" height="0" fill="none"/>
+                <text x="115" y="178" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">phân loại ảnh</text>
+                <text x="115" y="202" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">một véc-tơ lớp</text>
+              </g>
+              <g transform="translate(334,52)">
+                <rect x="0" y="0" width="230" height="214" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="26" y="32" width="78" height="112" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="124" y="58" width="58" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <path d="M182 88 L208 88" stroke="#555" stroke-width="3" marker-end="url(#cls-seg-arrow)"/>
+                <rect x="164" y="124" width="48" height="48" rx="6" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#1565c0" stroke-width="1.4">
+                  <line x1="180" y1="124" x2="180" y2="172"/><line x1="196" y1="124" x2="196" y2="172"/>
+                  <line x1="164" y1="140" x2="212" y2="140"/><line x1="164" y1="156" x2="212" y2="156"/>
+                </g>
+                <text x="115" y="178" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">phân vùng</text>
+                <text x="115" y="202" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">một bản đồ lớp</text>
+              </g>
+              <text x="300" y="320" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">Không được làm mất hoàn toàn trục không gian nếu muốn vẽ mặt nạ.</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Phân loại ảnh</strong>
+                <p style="margin:0.35em 0 0;">Cho phép nén toàn ảnh thành một véc-tơ vì chỉ cần một nhãn.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Phân vùng</strong>
+                <p style="margin:0.35em 0 0;">Cần biết vị trí nào thuộc lớp nào, nên phải giữ cấu trúc không gian.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">FCN ra đời từ đúng câu hỏi này: làm sao dùng lại CNN phân loại mà không phá mất bản đồ vị trí.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>FCN: tổng quan đường đi dữ liệu</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">3 x H x W</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">CNN</div><div class="stage-desc">đặc trưng thấp dần</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Tích chập 1x1</div><div class="stage-desc">điểm lớp thô</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Phóng to</div><div class="stage-desc">về H x W</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mặt nạ</div><div class="stage-desc">nhãn điểm ảnh</div></div>
+          </div>
+          <div class="seg-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 330" role="img" aria-label="Tổng quan kiến trúc FCN">
+              <defs>
+                <marker id="fcn-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .fcn-label{font:700 18px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .fcn-small{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .fcn-line{stroke:#555;stroke-width:3;marker-end:url(#fcn-overview-arrow)}
+                </style>
+              </defs>
+              <rect x="28" y="54" width="150" height="150" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M28 142 C58 112 88 128 114 94 C142 58 162 72 178 54 L178 204 L28 204 Z" fill="#c8e6c9"/>
+              <circle cx="86" cy="118" r="25" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="132" cy="122" rx="22" ry="36" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text class="fcn-label" x="103" y="250">Ảnh</text>
+              <text class="fcn-small" x="103" y="274">3 x H x W</text>
+
+              <line class="fcn-line" x1="190" y1="130" x2="246" y2="130"/>
+              <g transform="translate(266,58)">
+                <rect x="0" y="0" width="54" height="140" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="70" y="20" width="46" height="100" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="132" y="48" width="36" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text class="fcn-label" x="350" y="250">Bộ trích đặc trưng</text>
+              <text class="fcn-small" x="350" y="274">giảm độ phân giải</text>
+
+              <line class="fcn-line" x1="450" y1="130" x2="506" y2="130"/>
+              <g transform="translate(526,78)">
+                <rect x="0" y="0" width="110" height="94" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ef6c00" stroke-width="1.5" opacity="0.65">
+                  <line x1="27" y1="0" x2="27" y2="94"/><line x1="54" y1="0" x2="54" y2="94"/><line x1="81" y1="0" x2="81" y2="94"/>
+                  <line x1="0" y1="24" x2="110" y2="24"/><line x1="0" y1="48" x2="110" y2="48"/><line x1="0" y1="72" x2="110" y2="72"/>
+                </g>
+                <text x="55" y="126" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">C kênh lớp</text>
+              </g>
+
+              <line class="fcn-line" x1="650" y1="130" x2="706" y2="130"/>
+              <g transform="translate(726,62)">
+                <rect x="0" y="42" width="72" height="72" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <path d="M86 78 L130 78" stroke="#555" stroke-width="3" marker-end="url(#fcn-overview-arrow)"/>
+                <rect x="142" y="0" width="142" height="142" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="142" y="182" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">phóng to đặc trưng</text>
+              </g>
+              <text class="fcn-label" x="868" y="250">Bản đồ nhãn</text>
+              <text class="fcn-small" x="868" y="274">H x W</text>
+            </svg>
+          </div>
+          <p class="caption">FCN giữ mọi bước ở dạng bản đồ đặc trưng, nên có thể dự đoán dày đặc cho ảnh kích thước bất kỳ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 1: bỏ tầng kết nối đầy đủ</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="So sánh tầng kết nối đầy đủ và tích chập 1x1">
+              <g transform="translate(42,48)">
+                <rect x="0" y="0" width="220" height="236" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="26" y="38" width="78" height="78" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <path d="M112 78 L154 78" stroke="#555" stroke-width="3"/>
+                <circle cx="174" cy="48" r="6" fill="#ef6c00"/>
+                <circle cx="174" cy="78" r="6" fill="#ef6c00"/>
+                <circle cx="174" cy="108" r="6" fill="#ef6c00"/>
+                <circle cx="174" cy="138" r="6" fill="#ef6c00"/>
+                <text x="110" y="178" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">kết nối đầy đủ</text>
+                <text x="110" y="204" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">cần kích thước cố định</text>
+              </g>
+              <g transform="translate(338,48)">
+                <rect x="0" y="0" width="220" height="236" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="34" y="32" width="108" height="108" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="1.5">
+                  <line x1="70" y1="32" x2="70" y2="140"/><line x1="106" y1="32" x2="106" y2="140"/>
+                  <line x1="34" y1="68" x2="142" y2="68"/><line x1="34" y1="104" x2="142" y2="104"/>
+                </g>
+                <path d="M150 86 L184 86" stroke="#555" stroke-width="3"/>
+                <rect x="188" y="56" width="26" height="60" rx="4" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <text x="110" y="178" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">tích chập 1x1</text>
+                <text x="110" y="204" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">giữ trục không gian</text>
+              </g>
+              <text x="300" y="324" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">FCN thay phép “làm phẳng rồi phân loại” bằng phép “phân loại tại từng vị trí”.</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề của tầng kết nối đầy đủ</strong>
+                <p style="margin:0.35em 0 0;">Làm mất vị trí \(h,w\) và buộc ảnh đầu vào có kích thước cố định.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Cách của FCN</strong>
+                <p style="margin:0.35em 0 0;">Dùng tích chập 1x1 để biến mỗi véc-tơ đặc trưng tại một vị trí thành điểm lớp.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đây là bước chuyển tư duy chính: mạng không còn kết luận một lần cho cả ảnh, mà kết luận lặp lại tại mọi vị trí.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 2: tích chập 1x1 tạo điểm lớp</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Tích chập 1x1 tạo điểm lớp tại từng vị trí">
+              <defs>
+                <marker id="conv1-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="42" y="54" width="184" height="184" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <g stroke="#a5d6a7" stroke-width="2">
+                <line x1="88" y1="54" x2="88" y2="238"/><line x1="134" y1="54" x2="134" y2="238"/><line x1="180" y1="54" x2="180" y2="238"/>
+                <line x1="42" y1="100" x2="226" y2="100"/><line x1="42" y1="146" x2="226" y2="146"/><line x1="42" y1="192" x2="226" y2="192"/>
+              </g>
+              <rect x="88" y="100" width="46" height="46" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+              <text x="134" y="280" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">D số đặc trưng tại vị trí (h,w)</text>
+
+              <path d="M246 146 L318 146" stroke="#555" stroke-width="3" marker-end="url(#conv1-arrow)"/>
+
+              <g transform="translate(340,70)">
+                <rect x="0" y="0" width="180" height="50" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="0" y="68" width="180" height="50" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="136" width="180" height="50" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="90" y="31" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">điểm lớp đường</text>
+                <text x="90" y="99" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">điểm lớp người</text>
+                <text x="90" y="167" text-anchor="middle" font-size="17" fill="#6a1b9a" font-family="Arial">điểm lớp xe</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  z_{c,h,w}=W_c^\top f_{h,w}+b_c
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Ý nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Tại mỗi vị trí, cùng một bộ trọng số hỏi: đặc trưng này giống lớp nào?</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Đầu ra</strong>
+                <p style="margin:0.35em 0 0;">Tạo \(C\) bản đồ điểm lớp, mỗi bản đồ ứng với một lớp cần phân vùng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Tích chập 1x1 là bộ phân loại tuyến tính được áp dụng đồng nhất trên mọi vị trí không gian.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 3: đặc trưng sâu bị thô</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Độ phân giải đặc trưng giảm dần trong CNN">
+              <g transform="translate(42,58)">
+                <rect x="0" y="0" width="170" height="170" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="1.5">
+                  <line x1="42.5" y1="0" x2="42.5" y2="170"/><line x1="85" y1="0" x2="85" y2="170"/><line x1="127.5" y1="0" x2="127.5" y2="170"/>
+                  <line x1="0" y1="42.5" x2="170" y2="42.5"/><line x1="0" y1="85" x2="170" y2="85"/><line x1="0" y1="127.5" x2="170" y2="127.5"/>
+                </g>
+                <text x="85" y="212" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ảnh H x W</text>
+              </g>
+              <path d="M230 142 L290 142" stroke="#555" stroke-width="3" marker-end="url(#coarse-arrow)"/>
+              <defs>
+                <marker id="coarse-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(310,82)">
+                <rect x="0" y="0" width="110" height="110" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <g stroke="#a5d6a7" stroke-width="1.5">
+                  <line x1="55" y1="0" x2="55" y2="110"/><line x1="0" y1="55" x2="110" y2="55"/>
+                </g>
+                <text x="55" y="172" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">H/16 x W/16</text>
+              </g>
+              <path d="M438 142 L498 142" stroke="#555" stroke-width="3" marker-end="url(#coarse-arrow)"/>
+              <g transform="translate(516,108)">
+                <rect x="0" y="0" width="54" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="27" y="146" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">H/32</text>
+                <text x="27" y="170" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">x W/32</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Lợi ích</strong>
+                <p style="margin:0.35em 0 0;">Tầng sâu nhìn được ngữ cảnh lớn, nên phân biệt lớp tốt hơn.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Cái giá</strong>
+                <p style="margin:0.35em 0 0;">Mỗi ô đặc trưng sâu đại diện cho một vùng lớn, nên biên bị thô.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Nếu chỉ dùng tầng sâu nhất, mô hình hiểu đúng lớp nhưng khó vẽ biên chính xác.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 4: phóng to bản đồ điểm lớp</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Phóng to bản đồ điểm lớp">
+              <defs>
+                <marker id="up-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(54,92)">
+                <rect x="0" y="0" width="92" height="92" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ef6c00" stroke-width="1.5" opacity="0.65">
+                  <line x1="46" y1="0" x2="46" y2="92"/><line x1="0" y1="46" x2="92" y2="46"/>
+                </g>
+                <text x="46" y="132" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">thô</text>
+              </g>
+              <path d="M170 138 L254 138" stroke="#555" stroke-width="3" marker-end="url(#up-arrow)"/>
+              <g transform="translate(284,52)">
+                <rect x="0" y="0" width="190" height="190" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="1.2">
+                  <line x1="31.7" y1="0" x2="31.7" y2="190"/><line x1="63.4" y1="0" x2="63.4" y2="190"/><line x1="95.1" y1="0" x2="95.1" y2="190"/><line x1="126.8" y1="0" x2="126.8" y2="190"/><line x1="158.5" y1="0" x2="158.5" y2="190"/>
+                  <line x1="0" y1="31.7" x2="190" y2="31.7"/><line x1="0" y1="63.4" x2="190" y2="63.4"/><line x1="0" y1="95.1" x2="190" y2="95.1"/><line x1="0" y1="126.8" x2="190" y2="126.8"/><line x1="0" y1="158.5" x2="190" y2="158.5"/>
+                </g>
+                <text x="95" y="232" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">kích thước ảnh</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Nội suy cố định</strong>
+                <p style="margin:0.35em 0 0;">Phóng to bằng công thức có sẵn, không học từ dữ liệu.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Tích chập chuyển vị</strong>
+                <p style="margin:0.35em 0 0;">Dùng trọng số học được để biến bản đồ thô thành bản đồ lớn hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Phóng to đặc trưng là bước bắt buộc để biến điểm lớp thô thành mặt nạ cùng kích thước ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tích chập chuyển vị học cách phóng to</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Tích chập chuyển vị rải giá trị ra bản đồ lớn">
+              <defs>
+                <marker id="trans-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="54" y="82" width="112" height="112" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <g stroke="#ef6c00" stroke-width="2">
+                <line x1="110" y1="82" x2="110" y2="194"/><line x1="54" y1="138" x2="166" y2="138"/>
+              </g>
+              <circle cx="110" cy="138" r="12" fill="#ef6c00"/>
+              <text x="110" y="236" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">một giá trị thô</text>
+
+              <path d="M186 138 L270 138" stroke="#555" stroke-width="3" marker-end="url(#trans-arrow)"/>
+
+              <rect x="302" y="48" width="220" height="220" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="1.2">
+                <line x1="346" y1="48" x2="346" y2="268"/><line x1="390" y1="48" x2="390" y2="268"/><line x1="434" y1="48" x2="434" y2="268"/><line x1="478" y1="48" x2="478" y2="268"/>
+                <line x1="302" y1="92" x2="522" y2="92"/><line x1="302" y1="136" x2="522" y2="136"/><line x1="302" y1="180" x2="522" y2="180"/><line x1="302" y1="224" x2="522" y2="224"/>
+              </g>
+              <rect x="368" y="114" width="88" height="88" fill="#bbdefb" opacity="0.65" stroke="#1565c0" stroke-width="4"/>
+              <circle cx="412" cy="158" r="8" fill="#1565c0"/>
+              <text x="412" y="306" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">đóng góp vào nhiều ô đầu ra</text>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  H' = s(H-1)+k-2p
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Trực giác</strong>
+                <p style="margin:0.35em 0 0;">Mỗi ô đầu vào rải ảnh hưởng ra một vùng trên bản đồ đầu ra lớn hơn.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Điểm cần nhớ</strong>
+                <p style="margin:0.35em 0 0;">Đây là tầng học được, nên tốt hơn việc chỉ phóng to bằng công thức cố định.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Tích chập chuyển vị không “đảo ngược” CNN; nó là một tầng học cách tạo bản đồ lớn hơn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>FCN-32s: chỉ dùng tầng sâu nhất</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="FCN-32s phóng to từ bản đồ thô nhất">
+              <defs>
+                <marker id="fcn32-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="44" y="70" width="132" height="132" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <rect x="210" y="96" width="84" height="84" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <rect x="328" y="118" width="40" height="40" rx="7" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <path d="M184 136 L202 136" stroke="#555" stroke-width="3" marker-end="url(#fcn32-arrow)"/>
+              <path d="M302 136 L320 136" stroke="#555" stroke-width="3" marker-end="url(#fcn32-arrow)"/>
+              <path d="M380 136 L440 136" stroke="#555" stroke-width="3" marker-end="url(#fcn32-arrow)"/>
+              <rect x="456" y="70" width="132" height="132" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="489" y1="70" x2="489" y2="202"/><line x1="522" y1="70" x2="522" y2="202"/><line x1="555" y1="70" x2="555" y2="202"/>
+                <line x1="456" y1="103" x2="588" y2="103"/><line x1="456" y1="136" x2="588" y2="136"/><line x1="456" y1="169" x2="588" y2="169"/>
+              </g>
+              <text x="110" y="248" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">ảnh</text>
+              <text x="252" y="248" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">đặc trưng</text>
+              <text x="348" y="248" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">1/32</text>
+              <text x="522" y="248" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">phóng to 32 lần</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Ưu điểm</strong>
+                <p style="margin:0.35em 0 0;">Thiết kế đơn giản, dùng đặc trưng sâu có ngữ nghĩa mạnh.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Nhược điểm</strong>
+                <p style="margin:0.35em 0 0;">Phóng to từ lưới quá thưa, nên mặt nạ dễ bị thô và lệch biên.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">FCN-32s cho thấy CNN phân loại có thể làm phân vùng, nhưng chất lượng biên chưa đủ tốt.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Liên kết tắt: đưa chi tiết nông quay lại</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Liên kết tắt trong FCN">
+              <defs>
+                <marker id="skip-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="56" y="56" width="88" height="88" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="100" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng nông</text>
+              <rect x="236" y="82" width="66" height="66" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="269" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng giữa</text>
+              <rect x="394" y="106" width="42" height="42" rx="7" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="415" y="178" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tầng sâu</text>
+              <path d="M152 100 L226 114" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <path d="M310 116 L384 126" stroke="#555" stroke-width="3" marker-end="url(#skip-arrow)"/>
+              <path d="M415 154 C416 234 310 258 164 210" fill="none" stroke="#1565c0" stroke-width="4" marker-end="url(#skip-arrow)"/>
+              <path d="M269 154 C270 218 238 234 170 196" fill="none" stroke="#2e7d32" stroke-width="4" marker-end="url(#skip-arrow)"/>
+              <rect x="214" y="230" width="170" height="54" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+              <text x="299" y="263" text-anchor="middle" font-size="18" fill="#6a1b9a" font-family="Arial">cộng điểm lớp</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Tầng nông</strong>
+                <p style="margin:0.35em 0 0;">Giữ cạnh và vị trí tốt, nhưng ngữ nghĩa yếu.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Tầng sâu</strong>
+                <p style="margin:0.35em 0 0;">Hiểu lớp tốt, nhưng vị trí thô.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Cách ghép</strong>
+                <p style="margin:0.35em 0 0;">Tạo điểm lớp ở nhiều tầng, căn kích thước, rồi cộng lại.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Liên kết tắt của FCN là tiền thân trực tiếp của ý tưởng bộ mã hóa - bộ giải mã trong U-Net.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>FCN-16s và FCN-8s: mặt nạ mịn dần</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="So sánh FCN-32s FCN-16s FCN-8s">
+              <g transform="translate(42,42)">
+                <rect x="0" y="0" width="150" height="78" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="75" y="31" text-anchor="middle" font-size="18" fill="#b71c1c" font-family="Arial">FCN-32s</text>
+                <text x="75" y="56" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">chỉ tầng 1/32</text>
+                <rect x="0" y="106" width="150" height="78" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="75" y="137" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">FCN-16s</text>
+                <text x="75" y="162" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">thêm tầng 1/16</text>
+                <rect x="0" y="212" width="150" height="78" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="75" y="243" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">FCN-8s</text>
+                <text x="75" y="268" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">thêm tầng 1/8</text>
+              </g>
+              <g transform="translate(274,44)">
+                <rect x="0" y="0" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+                <path d="M0 126 C38 102 76 108 110 74 C150 34 186 42 220 20 L220 220 L0 220 Z" fill="#c8e6c9"/>
+                <path d="M72 72 C106 60 126 80 128 112 C130 146 104 168 70 154 C40 142 40 86 72 72 Z" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+                <path d="M142 74 C172 74 190 112 182 144 C176 172 144 176 130 148 C112 114 116 78 142 74 Z" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <rect x="18" y="240" width="54" height="26" rx="4" fill="#c62828"/><text x="45" y="259" text-anchor="middle" font-size="14" fill="#fff" font-family="Arial">thô</text>
+                <rect x="84" y="240" width="54" height="26" rx="4" fill="#ef6c00"/><text x="111" y="259" text-anchor="middle" font-size="14" fill="#fff" font-family="Arial">vừa</text>
+                <rect x="150" y="240" width="54" height="26" rx="4" fill="#2e7d32"/><text x="177" y="259" text-anchor="middle" font-size="14" fill="#fff" font-family="Arial">mịn</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Ý tưởng</strong>
+                <p style="margin:0.35em 0 0;">Mỗi lần thêm tầng nông hơn, mặt nạ có thêm thông tin vị trí.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Kết quả mong muốn</strong>
+                <p style="margin:0.35em 0 0;">Biên sắc hơn mà vẫn giữ ngữ nghĩa từ tầng sâu.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">FCN-8s thường tốt hơn FCN-32s vì nó không bắt tầng sâu một mình gánh cả ngữ nghĩa lẫn biên.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Căn kích thước không phải chi tiết phụ</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Căn chỉnh bản đồ đặc trưng trong FCN">
+              <rect x="72" y="62" width="150" height="150" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <rect x="98" y="88" width="150" height="150" rx="8" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="10 7"/>
+              <text x="160" y="270" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">lệch vài điểm ảnh</text>
+              <rect x="352" y="62" width="150" height="150" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <rect x="352" y="62" width="150" height="150" rx="8" fill="none" stroke="#1565c0" stroke-width="4"/>
+              <text x="427" y="270" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">đã căn đúng</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Nguồn lệch</strong>
+                <p style="margin:0.35em 0 0;">Gộp, đệm biên và phóng to có thể tạo sai khác kích thước hoặc lệch tâm.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Trong FCN</strong>
+                <p style="margin:0.35em 0 0;">Các bản đồ từ nhiều tầng phải được cắt và căn trước khi cộng điểm lớp.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Với phân vùng, lệch vài điểm ảnh ở bản đồ đặc trưng có thể thành biên sai trên mặt nạ cuối.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Mất mát của FCN: entropy chéo theo điểm ảnh</h2>
+          <div class="eqbox">
+            \[
+              L_{\text{FCN}}
+              =-\frac{1}{|\Omega|}
+              \sum_{(h,w)\in\Omega}
+              \log p(y_{h,w}\mid x)
+            \]
+          </div>
+          <div class="seg-grid-3" style="margin-top:0.75em;">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Tính trên mọi vị trí</strong>
+              <p style="margin:0.35em 0 0;">Mỗi điểm ảnh có một nhãn đúng và một phân phối dự đoán.</p>
+            </div>
+            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bỏ nhãn không chắc</strong>
+              <p style="margin:0.35em 0 0;">\(\Omega\) chỉ gồm các điểm ảnh được tính vào mất mát.</p>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Học đầu cuối</strong>
+              <p style="margin:0.35em 0 0;">Đạo hàm đi qua phóng to đặc trưng, tích chập 1x1 và CNN nền.</p>
+            </div>
+          </div>
+          <p class="caption">FCN không cần mất mát riêng cho biên; mọi tín hiệu học đến từ việc dự đoán đúng lớp tại từng điểm ảnh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Huấn luyện và suy luận trong FCN</h2>
+          <div class="seg-grid-2">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Khi huấn luyện</strong>
+              <ul>
+                <li>Đưa ảnh và bản đồ nhãn vào mạng.</li>
+                <li>Tính entropy chéo trên các điểm ảnh hợp lệ.</li>
+                <li>Cập nhật cả bộ trích đặc trưng và tầng phóng to.</li>
+              </ul>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Khi suy luận</strong>
+              <ul>
+                <li>Tạo \(C\) bản đồ điểm lớp cùng kích thước ảnh.</li>
+                <li>Lấy lớp có điểm cao nhất tại từng vị trí.</li>
+                <li>Có thể đánh giá bằng mIoU trên toàn bộ ảnh.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">FCN là một mô hình đầu cuối: từ ảnh vào đến mặt nạ ra không cần vùng ứng viên hay hậu xử lý phức tạp.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>FCN mạnh ở ý tưởng, yếu ở chi tiết biên</h2>
+          <div class="seg-grid-2">
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Điểm mạnh</strong>
+              <ul>
+                <li>Dùng lại CNN phân loại đã học tốt đặc trưng ảnh.</li>
+                <li>Xử lý ảnh kích thước bất kỳ.</li>
+                <li>Huấn luyện đầu cuối bằng mất mát theo điểm ảnh.</li>
+              </ul>
+            </div>
+            <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Điểm yếu</strong>
+              <ul>
+                <li>Phóng to từ đặc trưng thô dễ làm biên mờ.</li>
+                <li>Liên kết tắt chỉ cộng điểm lớp, chưa tái tạo chi tiết mạnh.</li>
+                <li>Khó xử lý vật nhỏ khi tầng sâu đã mất vị trí.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">FCN mở ra hướng phân vùng bằng học sâu, nhưng cũng đặt câu hỏi cho U-Net: có thể thiết kế bộ giải mã mạnh hơn không?</p>
+        </section>
+
         <section style="font-size:0.78em;">
-          <h2>Khung phần FCN</h2>
-          <div class="section-todo">Sẽ triển khai: chuyển bộ phân loại thành FCN, phóng to đặc trưng học được, FCN-32s/16s/8s, ưu nhược điểm và mất mát.</div>
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> FCN biến CNN phân loại thành mạng toàn tích chập để dự đoán lớp tại mọi vị trí.
+          </div>
+          <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> làm sao tái tạo biên sắc hơn thay vì chỉ phóng to và cộng vài bản đồ điểm lớp?
+          </div>
+          <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo trả lời:</strong> U-Net dùng bộ giải mã đối xứng và liên kết tắt giàu chi tiết hơn.
+          </div>
         </section>
       </section>
 
