@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide Text Style Editor"
+  short_description: "Chỉnh văn bản slide sang tiếng Việt tự nhiên, ngắn gọn."
+  default_prompt: "Chỉnh phần chữ trong các slide theo phong cách thuần Việt, súc tích và tự nhiên."

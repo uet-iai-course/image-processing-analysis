@@ -33,6 +33,17 @@ Chỉ cần hỏi nhanh 4 câu:
 
 Nếu bất kỳ câu nào trả lời là `không`, nên sửa slide trước khi sửa câu chữ chi tiết.
 
+### Khi mở rộng một section stub hoặc chủ đề kỹ thuật mới
+
+Đọc theo thứ tự:
+- `Tiêu chuẩn ở mức section`
+- `Tiêu chuẩn ở mức slide`
+- `Quy tắc về hình ảnh`
+- `Quy tắc về wording`
+- các section liên quan trước đó trong cùng lecture
+
+Mục tiêu là biến stub thành một chuỗi slide có mạch: từ vấn đề, tổng quan mô hình, từng thành phần chính, đến điểm khác so với mô hình trước.
+
 ## Phạm vi
 
 Tài liệu này quy định tiêu chuẩn thiết kế và rà soát slide cho môn **Phương pháp luận lập trình** tại **Viện Trí tuệ nhân tạo, Trường Đại học Công nghệ, Đại học Quốc gia Hà Nội**.
@@ -97,6 +108,21 @@ Hệ quả:
 5. **Visual language thống nhất**
 - màu sắc, spacing, caption, badge, hộp nhấn, tiêu đề phải cùng một hệ
 - pattern lặp lại nhiều thì đưa vào CSS chung
+
+6. **Chủ đề kỹ thuật quan trọng phải được bung thành chuỗi slide**
+- không gói một mô hình, thuật toán, kiến trúc hoặc bước chuyển tư duy lớn vào một slide tổng quan
+- mỗi chủ đề quan trọng cần đi từ vấn đề cần giải quyết, ý tưởng tổng thể, kiến trúc hoặc pipeline, từng thành phần chính, cách huấn luyện hoặc suy luận nếu có, điểm khác so với mô hình trước, rồi đến hạn chế và tình huống dễ lỗi
+- slide tổng quan chỉ là cửa vào; phần quan trọng nằm ở các slide giải phẫu cơ chế
+
+7. **Mỗi slide kỹ thuật nên có trung tâm trực quan**
+- với mô hình thị giác máy tính, mạng nơ-ron, pipeline xử lý ảnh, loss hoặc metric, mỗi slide nên có hình minh họa hợp lý
+- hình không được chỉ để trang trí; hình phải làm rõ dữ liệu đi đâu, tensor đổi hình dạng thế nào, module nào tác động lên thông tin nào, hoặc quyết định nào được tạo ra ở bước nào
+- nếu không có hình từ paper hoặc nguồn phù hợp, có thể dùng sơ đồ tự vẽ theo style của deck, miễn là chính xác và dễ đọc
+
+8. **Ngôn ngữ mặc định là thuần Việt**
+- viết câu tự nhiên bằng tiếng Việt
+- chỉ giữ nguyên công thức, ký hiệu toán học, tên mô hình, tên viết tắt chuẩn và thuật ngữ buộc phải giữ như `IoU`, `FPN`, `RoI`, `CNN`, `ViT`
+- khi cần dùng thuật ngữ tiếng Anh, ưu tiên viết tiếng Việt trước; thêm tiếng Anh trong ngoặc ở lần xuất hiện đầu nếu giúp người học tra cứu
 
 ## Những điều bị cấm hoặc nên tránh mạnh
 
@@ -334,6 +360,37 @@ Mỗi phần lớn phải trả lời được ba câu hỏi:
 2. Nó nối với phần trước ra sao?
 3. Sau phần này sinh viên phải nhớ điều gì?
 
+### Khi mở rộng một section stub hoặc chủ đề mới
+
+Một section mới không nên chỉ có 2-3 slide giới thiệu. Với mỗi kỹ thuật hoặc chủ đề quan trọng, hãy mở rộng thành một chuỗi slide đủ để người học nhìn thấy cơ chế bên trong.
+
+Chuỗi slide nên có:
+
+1. **Slide đặt vấn đề**
+- nêu giới hạn cụ thể của mô hình hoặc cách làm trước đó
+- chỉ rõ vì sao cần kỹ thuật mới
+
+2. **Slide trực giác tổng quan**
+- cho người học thấy bức tranh lớn: dữ liệu đầu vào, các khối chính, đầu ra
+- không dùng slide này để thay thế phần giải thích chi tiết
+
+3. **Các slide giải phẫu thành phần**
+- mỗi thành phần chính nên có ít nhất một slide riêng nếu nó quyết định hành vi của mô hình
+- với kiến trúc mạng, cần tách các khối như encoder, decoder, skip connection, attention, proposal, head, fusion, loss hoặc post-processing khi chúng có vai trò riêng
+- với thuật toán, cần tách các bước như tạo ứng viên, căn chỉnh đặc trưng, phân loại, hồi quy, gộp kết quả, lọc kết quả
+
+4. **Slide về bước chuyển tư duy**
+- bắt buộc có khi chủ đề mới thay đổi cách nhìn so với phần trước
+- ví dụ: từ phân loại ảnh sang dự đoán theo pixel, từ downsample rồi upsample sang giữ chi tiết bằng skip connection, từ convolution cục bộ sang attention toàn cục, từ semantic segmentation sang instance segmentation, từ instance/semantic riêng rẽ sang panoptic segmentation thống nhất
+
+5. **Slide về huấn luyện, suy luận hoặc hàm mất mát**
+- thêm khi cơ chế học hoặc cơ chế suy luận là lý do mô hình hoạt động
+- không chỉ ghi tên loss; cần nói loss kéo tham số theo hướng nào và lỗi nào sẽ bị phạt
+
+6. **Slide so sánh và nối mạch**
+- kết section bằng slide so sánh với các mô hình trước hoặc slide chốt lại trade-off
+- trong cùng một lecture, section mới phải tham chiếu mạch đã xây trước đó, ví dụ FCN -> U-Net -> DeepLab -> U-Net + ViT -> Mask R-CNN -> panoptic segmentation
+
 ### Slide mở phần phải làm gì
 
 Slide mở phần không chỉ để đánh số.
@@ -366,7 +423,28 @@ Một slide chỉ nên có **một thứ làm trung tâm**:
 
 Nếu slide có cả hình, cả công thức, cả code, cả 6 bullet, gần như chắc chắn cần tách.
 
-### 3. Dấu hiệu slide đang quá tải
+### 3. Slide kỹ thuật không được dừng ở mức tổng quan
+
+Một slide kỹ thuật đạt yêu cầu khi người học có thể chỉ vào hình hoặc công thức và giải thích được:
+- input là gì
+- output là gì
+- thành phần chính làm biến đổi thông tin theo cách nào
+- vì sao bước này giúp giải quyết lỗi hoặc giới hạn của mô hình trước
+
+Tránh các slide chỉ liệt kê ưu điểm / nhược điểm chung chung như "hiệu quả hơn", "chính xác hơn", "học đặc trưng tốt hơn" mà không chỉ ra cơ chế.
+
+### 4. Hình minh họa trên slide kỹ thuật
+
+Hình minh họa nên thuộc một trong các loại sau:
+- **sơ đồ pipeline**: dùng khi cần thấy luồng dữ liệu qua nhiều bước
+- **sơ đồ kiến trúc**: dùng khi cần thấy module, nhánh, skip connection, attention, head hoặc fusion
+- **ảnh ví dụ đầu vào / đầu ra**: dùng khi cần thấy bài toán và lỗi mô hình
+- **bản đồ đặc trưng hoặc mask**: dùng khi cần giải thích dự đoán theo không gian
+- **biểu đồ so sánh**: dùng khi cần nêu trade-off về độ chính xác, tốc độ, bộ nhớ hoặc loại lỗi
+
+Mỗi hình cần có nhãn đủ rõ để tự đứng được trong lúc giảng. Caption hoặc callout nên nói insight chính, không chỉ nhắc lại tên hình.
+
+### 5. Dấu hiệu slide đang quá tải
 
 Slide nên bị xem là quá tải nếu có một trong các dấu hiệu:
 - trên 3 bullet chính
@@ -382,7 +460,7 @@ Khi gặp các dấu hiệu này:
 - hoặc xác định một ý là phụ và bỏ đi
 - hoặc gắn `📚 Nâng cao` cho slide phụ
 
-### 4. Mật độ chữ
+### 6. Mật độ chữ
 
 #### Mức tốt
 - 1 câu mở đầu ngắn
@@ -402,6 +480,14 @@ Khi gặp các dấu hiệu này:
 - hình nhỏ ở góc
 
 ## Quy tắc về wording
+
+### 0. Thuần Việt nhưng không dịch máy móc
+
+- viết bằng tiếng Việt tự nhiên, ngắn và chính xác
+- không lạm dụng tiếng Anh khi tiếng Việt diễn đạt được rõ hơn
+- không dịch ép các viết tắt, tên mô hình, tên paper, ký hiệu toán học hoặc công thức
+- nếu một thuật ngữ tiếng Anh là chuẩn tra cứu, có thể giữ nguyên sau phần tiếng Việt, ví dụ: "căn chỉnh vùng quan tâm (`RoIAlign`)"
+- dùng cùng một cách gọi xuyên suốt deck; không đổi qua lại giữa nhiều bản dịch cho cùng một khái niệm
 
 ### 1. Viết như đang giảng, không như đang dịch
 
@@ -920,6 +1006,8 @@ Khi thêm/sửa thuật ngữ mới: chỉnh trực tiếp `glossaries.yaml`, kh
 2. Phần mới có được nối với phần trước không?
 3. Có bridge slide khi đổi chủ đề lớn không?
 4. Slide mở phần có giúp sinh viên chuẩn bị tâm trí không?
+5. Nếu section mở rộng một kỹ thuật quan trọng, nó có đủ chuỗi slide từ tổng quan đến thành phần chính không?
+6. Có slide làm rõ bước chuyển tư duy so với mô hình hoặc cách làm trước không?
 
 ### C. Ở mức slide
 
@@ -929,6 +1017,8 @@ Khi thêm/sửa thuật ngữ mới: chỉnh trực tiếp `glossaries.yaml`, kh
 4. Có thể bỏ bớt 30% chữ mà vẫn giữ ý không?
 5. Caption có thật sự nói điều hình đang chứng minh không?
 6. Code có data-trim chưa? Language class đúng chưa?
+7. Với slide kỹ thuật, hình minh họa có thật sự giải thích cơ chế không?
+8. Slide có trả lời được input, output, biến đổi chính và lý do kỹ thuật đó cần thiết không?
 
 ### D. Ở mức wording
 
@@ -936,6 +1026,7 @@ Khi thêm/sửa thuật ngữ mới: chỉnh trực tiếp `glossaries.yaml`, kh
 2. Có câu nào khẳng định quá mạnh không?
 3. Thuật ngữ có nhất quán với Translation table không?
 4. SV năm 2-3 có theo được câu này khi nghe trên lớp không?
+5. Ngôn ngữ có thuần Việt không, trừ công thức, ký hiệu, tên mô hình và viết tắt chuẩn?
 
 ### E. Ở mức visual
 
@@ -945,6 +1036,7 @@ Khi thêm/sửa thuật ngữ mới: chỉnh trực tiếp `glossaries.yaml`, kh
 4. Hộp nhấn có dùng đúng chỗ không?
 5. Code block có syntax color đúng không?
 6. Section structure (top-level vs vertical) có đúng không?
+7. Với mỗi kỹ thuật hoặc chủ đề quan trọng, đã có hình phù hợp cho các slide then chốt chưa?
 
 ### F. Ở mức kỹ thuật (PPLT-specific)
 
@@ -969,6 +1061,21 @@ Khi thêm/sửa thuật ngữ mới: chỉnh trực tiếp `glossaries.yaml`, kh
 3. Bỏ mọi ý không phục vụ câu chốt
 4. Viết wording ngắn và tự nhiên
 5. Kiểm tra xem có cần tách slide không
+
+### Khi mở rộng section stub
+
+1. Đọc các section liên quan trước đó để nắm mạch giảng, thuật ngữ, mức chi tiết và style hình minh họa
+2. Xác định các kỹ thuật hoặc thành phần quan trọng trong section mới
+3. Lập chuỗi slide:
+   - đặt vấn đề
+   - tổng quan mô hình hoặc pipeline
+   - từng thành phần chính
+   - bước chuyển tư duy so với mô hình trước
+   - huấn luyện / suy luận / loss nếu cần
+   - so sánh và chốt phần
+4. Viết nội dung bằng tiếng Việt tự nhiên; chỉ giữ công thức, viết tắt và tên chuẩn
+5. Chọn hoặc vẽ hình minh họa cho từng slide kỹ thuật quan trọng
+6. Soát lại để chắc chắn không có slide nào chỉ dừng ở mức "mô hình này tốt hơn" mà thiếu cơ chế
 
 ### Khi review slide cũ
 
