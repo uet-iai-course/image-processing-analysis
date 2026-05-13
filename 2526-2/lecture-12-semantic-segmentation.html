@@ -165,19 +165,19 @@
       <section>
         <section>
           <h1><span class="text-light">1.</span><br />Bài toán phân vùng</h1>
-          <p>Đầu ra theo điểm ảnh · nhãn khó · mất mát · độ đo · dữ liệu</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>Phân vùng là dự đoán dày đặc</h2>
-          <div class="seg-imgbox">
-            <img src="img/lec-12/dense-prediction-tensor.svg" alt="Ten-xơ dự đoán theo điểm ảnh" style="max-width:100%; max-height:64vh; object-fit:contain;" />
-          </div>
-          <p class="caption">Mạng không trả một nhãn cho cả ảnh, mà trả một phân phối lớp cho từng vị trí ảnh.</p>
+          <p>Đầu ra theo điểm ảnh · nhãn khó · mất mát · độ đo</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Đầu ra: điểm logit trước, mặt nạ sau</h2>
+          <h2>Phân vùng là dự đoán dày đặc</h2>
+          <div class="seg-imgbox">
+            <img src="img/lec-12/dense-prediction-tensor.svg" alt="Ten-xơ dự đoán theo điểm ảnh" style="max-width:100%; max-height:42vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Mỗi vị trí ảnh có một phân phối lớp.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Logit trước, mặt nạ sau</h2>
           <div class="seg-grid-2" style="align-items:center;">
             <div class="eqbox">
               \[
@@ -190,15 +190,15 @@
             <div>
               <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
                 <strong style="color:#1565c0;">Trong huấn luyện</strong>
-                <p style="margin:0.35em 0 0;">Dùng điểm logit và softmax để tính mất mát; không lấy argmax vì argmax không khả vi.</p>
+                <p style="margin:0.35em 0 0;">Tính mất mát trên logit + softmax; chưa dùng argmax vì không khả vi.</p>
               </div>
               <div class="seg-card" style="margin-top:0.6em; background:#e8f5e9; border-left-color:#2e7d32;">
                 <strong style="color:#2e7d32;">Khi suy luận</strong>
-                <p style="margin:0.35em 0 0;">Lấy lớp có xác suất cao nhất ở từng điểm ảnh để tạo mặt nạ rời rạc.</p>
+                <p style="margin:0.35em 0 0;">Lấy lớp xác suất cao nhất ở từng điểm ảnh để tạo mặt nạ.</p>
               </div>
             </div>
           </div>
-          <p class="caption">Mặt nạ là kết quả cuối để hiển thị; ten-xơ điểm logit mới là đối tượng mà mô hình học trực tiếp.</p>
+          <p class="caption">Mô hình học logit; mặt nạ là đầu ra để hiển thị.</p>
         </section>
 
         <section style="font-size:0.76em;">
@@ -206,26 +206,26 @@
           <div class="seg-grid-3">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Ngữ nghĩa</strong>
-              <p style="margin:0.35em 0 0;">Mỗi điểm ảnh có một lớp: đường, xe, người, nền. Hai xe cùng lớp bị gộp.</p>
+              <p style="margin:0.35em 0 0;">Một lớp cho mỗi điểm ảnh. Hai xe cùng lớp bị dính.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Theo đối tượng</strong>
-              <p style="margin:0.35em 0 0;">Mỗi vật đếm được có một mặt nạ riêng: xe #1, xe #2, người #1.</p>
+              <p style="margin:0.35em 0 0;">Một mặt nạ cho mỗi vật: xe #1, xe #2, người #1.</p>
             </div>
             <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
               <strong style="color:#7b1fa2;">Toàn cảnh</strong>
-              <p style="margin:0.35em 0 0;">Mỗi điểm ảnh có đúng một nhãn: hoặc một vật thể riêng, hoặc một vùng nền.</p>
+              <p style="margin:0.35em 0 0;">Một nhãn cuối cho mỗi điểm ảnh: vật riêng hoặc nền.</p>
             </div>
           </div>
           <div class="seg-card" style="margin-top:0.8em; background:#f7f7f7; border-left-color:#78909c;">
             <strong style="color:#455a64;">Vật thể và vùng nền:</strong>
-            <span>vật thể là đối tượng đếm được như người, xe; vùng nền là phần không tách từng đối tượng như trời, đường, cỏ.</span>
+            <span>vật thể đếm được như người, xe; vùng nền không tách riêng như trời, đường, cỏ.</span>
           </div>
-          <p class="caption">Cùng một mạng nền có thể dùng cho nhiều kiểu phân vùng; khác biệt chính nằm ở đầu dự đoán và cách gán nhãn.</p>
+          <p class="caption">Ba kiểu đầu ra khác nhau ở đầu dự đoán và quy ước nhãn.</p>
         </section>
 
         <section style="font-size:0.74em;">
-          <h2>Bước chuyển tư duy so với phát hiện đối tượng</h2>
+          <h2>Từ hộp bao sang mặt nạ</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Phát hiện đối tượng</strong>
@@ -238,25 +238,25 @@
             <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">Phân vùng</strong>
               <ul>
-                <li>Dự đoán nhãn cho từng điểm ảnh hoặc từng mặt nạ đối tượng.</li>
+                <li>Dự đoán nhãn cho từng điểm ảnh hoặc từng mặt nạ.</li>
                 <li>Biên, lỗ, phần mảnh và vùng mỏng đều quan trọng.</li>
-                <li>Mất mát phải nhìn được cả đúng lớp lẫn đúng hình dạng.</li>
+                <li>Mất mát phải nhìn được cả lớp và hình dạng.</li>
               </ul>
             </div>
           </div>
-          <p class="caption">Phân vùng không chỉ “chi tiết hơn phát hiện đối tượng”; nó đổi luôn đơn vị học từ vùng ứng viên sang lưới điểm ảnh.</p>
+          <p class="caption">Phân vùng đổi đơn vị học: từ vùng ứng viên sang lưới điểm ảnh.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Vấn đề lõi: ngữ nghĩa sâu và biên sắc mâu thuẫn nhau</h2>
+          <h2>Vấn đề lõi: hiểu lớp nhưng giữ biên</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Tầng sâu</strong>
-              <p style="margin:0.35em 0 0;">Nhìn ngữ cảnh rộng, biết “đây là người” hoặc “đây là đường”, nhưng bản đồ đặc trưng thô.</p>
+              <p style="margin:0.35em 0 0;">Nhìn ngữ cảnh rộng, biết “đây là người” hay “đây là đường”, nhưng bản đồ đặc trưng thô.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Tầng nông</strong>
-              <p style="margin:0.35em 0 0;">Giữ cạnh, góc, vân ảnh, nhưng chưa đủ ngữ nghĩa để phân biệt lớp khó.</p>
+              <p style="margin:0.35em 0 0;">Giữ cạnh, góc, vân ảnh, nhưng thiếu ngữ nghĩa để phân biệt lớp khó.</p>
             </div>
           </div>
           <div style="margin-top:0.75em;" class="eqbox">
@@ -264,11 +264,11 @@
             <span style="padding:0 20px;">↔</span>
             <span style="color:#ef6c00; font-weight:bold;">độ phân giải cao</span>
           </div>
-          <p class="caption">Hầu hết kiến trúc phân vùng là các cách khác nhau để hòa giải mâu thuẫn này.</p>
+          <p class="caption">Các kiến trúc phân vùng chủ yếu tìm cách cân bằng hai yêu cầu này.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Mất mát cơ bản: entropy chéo theo điểm ảnh</h2>
+          <h2>Entropy chéo từng điểm ảnh</h2>
           <div class="eqbox">
             \[
               L_{\text{CE}}
@@ -279,30 +279,30 @@
           <div class="seg-grid-3" style="margin-top:0.75em;">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">\(\Omega\)</strong>
-              <p style="margin:0.35em 0 0;">Tập điểm ảnh được tính mất mát, thường bỏ điểm ảnh không rõ nhãn.</p>
+              <p style="margin:0.35em 0 0;">Tập điểm ảnh được tính mất mát; bỏ điểm ảnh không rõ nhãn.</p>
             </div>
             <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">\(p(y_{h,w})\)</strong>
-              <p style="margin:0.35em 0 0;">Xác suất mô hình gán cho lớp đúng tại điểm ảnh đó.</p>
+              <p style="margin:0.35em 0 0;">Xác suất mô hình gán cho lớp đúng.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Điểm yếu</strong>
-              <p style="margin:0.35em 0 0;">Điểm ảnh nền nhiều có thể áp đảo lớp nhỏ hoặc lớp hiếm.</p>
+              <p style="margin:0.35em 0 0;">Nền quá nhiều có thể áp đảo lớp nhỏ hoặc lớp hiếm.</p>
             </div>
           </div>
-          <p class="caption">Entropy chéo theo điểm ảnh là nền tảng, nhưng chưa đủ khi vùng cần phân đoạn rất nhỏ hoặc mất cân bằng mạnh.</p>
+          <p class="caption">CE là nền tảng, nhưng yếu khi vùng nhỏ hoặc lớp mất cân bằng mạnh.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Khi lớp nhỏ bị chìm trong nền</h2>
+          <h2>Khi lớp nhỏ chìm trong nền</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
               <strong style="color:#c62828;">Hiện tượng</strong>
-              <p style="margin:0.35em 0 0;">Nếu 95% điểm ảnh là nền, mô hình có thể đạt mất mát thấp bằng cách rất tự tin vào nền.</p>
+              <p style="margin:0.35em 0 0;">Nếu 95% điểm ảnh là nền, mô hình có thể giảm mất mát bằng cách đoán nền.</p>
             </div>
             <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">Cách sửa phổ biến</strong>
-              <p style="margin:0.35em 0 0;">Gán trọng số lớp, lấy mẫu vùng khó, dùng mất mát Dice/IoU hoặc mất mát tập trung.</p>
+              <p style="margin:0.35em 0 0;">Gán trọng số lớp, lấy mẫu vùng khó, dùng Dice/IoU hoặc focal loss.</p>
             </div>
           </div>
           <div class="eqbox" style="margin-top:0.75em;">
@@ -311,19 +311,19 @@
               =-\frac{1}{|\Omega|}\sum_{(h,w)}\alpha_{y_{h,w}}\log p(y_{h,w})
             \]
           </div>
-          <p class="caption">Trọng số lớp nói cho mô hình rằng sai ở lớp hiếm không được coi nhẹ như sai ở nền lớn.</p>
+          <p class="caption">Trọng số lớp buộc mô hình xem lỗi ở lớp hiếm nghiêm trọng hơn lỗi ở nền lớn.</p>
         </section>
 
         <section style="font-size:0.76em;">
           <h2>Mất mát Dice và IoU nhìn theo vùng</h2>
           <div class="seg-imgbox">
-            <img src="img/lec-12/loss-metric-masks.svg" alt="Mất mát và độ đo trên mặt nạ" style="max-width:100%; max-height:60vh; object-fit:contain;" />
+            <img src="img/lec-12/loss-metric-masks.svg" alt="Mất mát và độ đo trên mặt nạ" style="max-width:100%; max-height:56vh; object-fit:contain;" />
           </div>
-          <p class="caption">Entropy chéo hỏi từng điểm ảnh đúng chưa; Dice/IoU hỏi cả vùng dự đoán có chồng lên vùng thật không.</p>
+          <p class="caption">Entropy chéo hỏi từng điểm ảnh đúng chưa; Dice/IoU hỏi vùng dự đoán chồng lên vùng thật đến đâu.</p>
         </section>
 
         <section style="font-size:0.72em;">
-          <h2>Mất mát Dice: phù hợp khi vật nhỏ</h2>
+          <h2>Mất mát Dice hợp với vật nhỏ</h2>
           <div class="seg-grid-2" style="align-items:center;">
             <div class="eqbox">
               \[
@@ -338,23 +338,23 @@
             <div>
               <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
                 <strong style="color:#2e7d32;">Trực giác</strong>
-                <p style="margin:0.35em 0 0;">Nếu vùng thật nhỏ, vài điểm ảnh đúng ở vùng đó vẫn tạo tín hiệu học đáng kể.</p>
+                <p style="margin:0.35em 0 0;">Vùng thật nhỏ vẫn tạo tín hiệu học rõ khi dự đoán chồng lên đúng vùng đó.</p>
               </div>
               <div class="seg-card" style="margin-top:0.6em; background:#fff3e0; border-left-color:#ef6c00;">
                 <strong style="color:#ef6c00;">Cẩn thận</strong>
-                <p style="margin:0.35em 0 0;">Mất mát Dice thường được cộng với CE để vừa ổn định từng điểm ảnh, vừa tối ưu vùng.</p>
+                <p style="margin:0.35em 0 0;">Dice thường đi cùng CE: CE ổn định từng điểm ảnh, Dice tối ưu vùng.</p>
               </div>
             </div>
           </div>
-          <p class="caption">Trong ảnh y tế, nơi tổn thương có thể rất nhỏ, mất mát Dice thường quan trọng hơn độ chính xác theo điểm ảnh.</p>
+          <p class="caption">Trong ảnh y tế, Dice thường hữu ích vì vùng tổn thương có thể rất nhỏ.</p>
         </section>
 
         <section style="font-size:0.72em;">
-          <h2>Độ đo: độ chính xác theo điểm ảnh dễ gây ảo tưởng</h2>
+          <h2>Độ chính xác dễ gây ảo tưởng</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
               <strong style="color:#c62828;">Độ chính xác theo điểm ảnh</strong>
-              <p style="margin:0.35em 0 0;">Dễ cao khi nền chiếm đa số. Một mô hình chỉ đoán nền vẫn có thể trông “tốt”.</p>
+              <p style="margin:0.35em 0 0;">Dễ cao khi nền chiếm đa số. Mô hình chỉ đoán nền vẫn có thể trông “tốt”.</p>
               <div class="eqbox" style="margin-top:0.6em; font-size:0.82em;">
                 \[
                   Acc=\frac{\# điểm\ ảnh\ đúng}{\# điểm\ ảnh}
@@ -363,7 +363,7 @@
             </div>
             <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">mIoU</strong>
-              <p style="margin:0.35em 0 0;">Tính IoU cho từng lớp rồi lấy trung bình; lớp nhỏ có tiếng nói riêng.</p>
+              <p style="margin:0.35em 0 0;">Tính IoU từng lớp rồi lấy trung bình; lớp nhỏ có tiếng nói riêng.</p>
               <div class="eqbox" style="margin-top:0.6em; font-size:0.82em;">
                 \[
                   mIoU=\frac{1}{C}\sum_c\frac{TP_c}{TP_c+FP_c+FN_c}
@@ -371,15 +371,15 @@
               </div>
             </div>
           </div>
-          <p class="caption">Khi báo kết quả phân vùng, mIoU thường đáng tin hơn độ chính xác vì nó phạt bỏ sót lớp nhỏ.</p>
+          <p class="caption">mIoU phạt lỗi bỏ sót lớp nhỏ tốt hơn accuracy.</p>
         </section>
 
         <section style="font-size:0.74em;">
-          <h2>Độ đo đường biên: khi biên là sản phẩm cuối</h2>
+          <h2>Độ đo đường biên</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Vì sao cần?</strong>
-              <p style="margin:0.35em 0 0;">Hai mặt nạ có mIoU gần nhau nhưng một mặt nạ có biên răng cưa, lệch cạnh hoặc thủng lỗ.</p>
+              <p style="margin:0.35em 0 0;">Hai mặt nạ có mIoU gần nhau, nhưng biên có thể răng cưa, lệch cạnh hoặc thủng lỗ.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Dùng ở đâu?</strong>
@@ -388,79 +388,79 @@
           </div>
           <div class="seg-card" style="margin-top:0.75em; background:#f7f7f7; border-left-color:#78909c;">
             <strong style="color:#455a64;">Thông điệp thiết kế:</strong>
-            mô hình phân vùng tốt không chỉ cần biết điểm ảnh này là lớp gì, mà còn phải giữ đúng đường biên giữa các lớp.
+            mô hình tốt phải biết lớp của điểm ảnh và giữ đúng biên giữa các lớp.
           </div>
-          <p class="caption">Đây là lý do U-Net, DeepLab và nhiều bộ giải mã hiện đại đều dành nhiều công sức cho độ phân giải và biên.</p>
+          <p class="caption">Biên quan trọng khi cần đo, ghép hoặc hậu xử lý hình học.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Dữ liệu phân vùng đắt hơn dữ liệu hộp</h2>
+          <h2>Dữ liệu phân vùng đắt hơn hộp bao</h2>
           <div class="seg-grid-3">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Cityscapes</strong>
-              <p style="margin:0.35em 0 0;">Cảnh đường phố, nhiều lớp vùng nền và vật thể, đánh giá phân vùng ngữ nghĩa/toàn cảnh.</p>
+              <p style="margin:0.35em 0 0;">Cảnh đường phố; dùng cho ngữ nghĩa và toàn cảnh.</p>
             </div>
             <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">PASCAL VOC / ADE20K</strong>
-              <p style="margin:0.35em 0 0;">Chuẩn phổ biến cho phân vùng ngữ nghĩa trên ảnh tự nhiên.</p>
+              <p style="margin:0.35em 0 0;">Bộ chuẩn phổ biến cho ảnh tự nhiên.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">COCO</strong>
-              <p style="margin:0.35em 0 0;">Mặt nạ theo đối tượng và toàn cảnh; nối trực tiếp với bài phát hiện đối tượng trước.</p>
+              <p style="margin:0.35em 0 0;">Mặt nạ theo đối tượng và toàn cảnh.</p>
             </div>
           </div>
           <div class="seg-card" style="margin-top:0.75em; background:#ffebee; border-left-color:#c62828;">
             <strong style="color:#c62828;">Khó khăn thực tế:</strong>
-            vẽ mặt nạ chính xác tốn thời gian, biên nhãn có nhiễu, và nhiều điểm ảnh bị bỏ qua vì người gán nhãn không chắc.
+            vẽ mặt nạ chính xác tốn thời gian; biên nhãn có nhiễu; nhiều điểm ảnh phải bỏ qua.
           </div>
-          <p class="caption">Phân vùng thường thiếu dữ liệu sạch hơn phân loại ảnh, nên kiến trúc và mất mát phải tận dụng dữ liệu hiệu quả.</p>
+          <p class="caption">Vì nhãn sạch ít, mô hình phải tận dụng dữ liệu hiệu quả.</p>
         </section>
 
-        <section style="font-size:0.76em;">
+        <section style="font-size:0.70em;">
           <h2>Nhãn bỏ qua không phải chi tiết phụ</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
               <strong style="color:#ef6c00;">Khi nào bỏ qua điểm ảnh?</strong>
               <ul>
-                <li>Biên quá mơ hồ giữa hai lớp.</li>
+                <li>Biên quá mơ hồ.</li>
                 <li>Vật bị che khuất hoặc quá nhỏ.</li>
-                <li>Vùng chưa được gán nhãn trong bộ dữ liệu.</li>
+                <li>Vùng chưa được gán nhãn.</li>
               </ul>
             </div>
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Trong mất mát</strong>
-              <p style="margin:0.35em 0 0;">Điểm ảnh bỏ qua không đóng góp đạo hàm. Nếu không xử lý, mô hình bị phạt bởi nhãn không đáng tin.</p>
+              <p style="margin:0.35em 0 0;">Điểm ảnh bỏ qua không góp đạo hàm; không phạt mô hình bằng nhãn không đáng tin.</p>
             </div>
           </div>
-          <div class="eqbox" style="margin-top:0.75em;">
+          <div class="eqbox" style="margin-top:0.55em;">
             \[
               \Omega=\{(h,w)\mid y_{h,w}\ne \text{ignore}\}
             \]
           </div>
-          <p class="caption">Một quy trình huấn luyện phân vùng nghiêm túc luôn định nghĩa rõ điểm ảnh nào được tính mất mát và độ đo.</p>
+          <p class="caption">Cần nói rõ điểm ảnh nào được tính mất mát và độ đo.</p>
         </section>
 
         <section style="font-size:0.78em;">
-          <h2>Bản đồ tư duy cho các kiến trúc phía sau</h2>
+          <h2>Bản đồ cho các kiến trúc phía sau</h2>
           <div style="display:grid; gap:0.45em;">
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">FCN:</strong> biến mạng phân loại thành mạng toàn tích chập, rồi phóng to đặc trưng để quay lại kích thước ảnh.</div>
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">U-Net:</strong> dùng bộ mã hóa và bộ giải mã đối xứng, cùng liên kết tắt để ghép ngữ nghĩa sâu với chi tiết nông.</div>
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">DeepLab:</strong> giữ độ phân giải bằng tích chập rỗng và gom ngữ cảnh đa tỉ lệ bằng ASPP.</div>
-            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Mask R-CNN / phân vùng toàn cảnh:</strong> chuyển từ “mỗi điểm ảnh một lớp” sang “mỗi vật một mặt nạ” rồi ghép với vùng nền.</div>
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">FCN:</strong> mạng toàn tích chập, rồi phóng to đặc trưng.</div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">U-Net:</strong> bộ mã hóa + giải mã + liên kết tắt giữ chi tiết.</div>
+            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">DeepLab:</strong> tích chập rỗng giữ phân giải; ASPP gom đa tỉ lệ.</div>
+            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Mask R-CNN / toàn cảnh:</strong> mỗi vật một mặt nạ; ghép thêm vùng nền.</div>
           </div>
-          <p class="caption">Các phần sau đều xoay quanh cùng một căng thẳng: nhìn đủ rộng để hiểu lớp, nhưng giữ đủ chi tiết để vẽ mặt nạ đúng.</p>
+          <p class="caption">Cùng một bài toán: hiểu lớp ở tầm rộng nhưng vẫn vẽ đúng biên.</p>
         </section>
 
         <section style="font-size:0.8em;">
           <h2>Nhìn lại và đi tiếp</h2>
           <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
-            <strong style="color:#2e7d32;">Ta vừa biết:</strong> phân vùng là dự đoán dày đặc với mất mát theo điểm ảnh/vùng và độ đo ưu tiên chồng lấn mặt nạ.
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> phân vùng là dự đoán dày đặc, học bằng mất mát theo điểm ảnh/vùng và đo bằng chồng lấn mặt nạ.
           </div>
           <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
-            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> nếu CNN phân loại làm mất độ phân giải, làm sao dùng nó để tạo mặt nạ kích thước ảnh?
+            <strong style="color:#c62828;">Câu hỏi còn lại:</strong> CNN phân loại làm mất độ phân giải; làm sao dùng nó để tạo mặt nạ cỡ ảnh?
           </div>
           <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
-            <strong style="color:#1565c0;">Phần tiếp theo trả lời:</strong> FCN bỏ tầng kết nối đầy đủ, dùng phóng to đặc trưng và liên kết tắt để tạo dự đoán dày đặc.
+            <strong style="color:#1565c0;">Phần tiếp theo:</strong> FCN bỏ tầng kết nối đầy đủ, phóng to đặc trưng và thêm liên kết tắt.
           </div>
         </section>
       </section>
