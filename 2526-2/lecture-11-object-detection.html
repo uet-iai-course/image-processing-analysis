@@ -2343,66 +2343,965 @@
       <section>
         <section>
           <h1><span class="text-light">5.</span><br />DETR</h1>
-          <p>Transformer · Object queries · Hungarian matching · Set loss</p>
+          <p>Bộ biến đổi · Truy vấn đối tượng · Ghép cặp tối ưu · Mất mát trên tập</p>
         </section>
 
-        <section style="font-size:0.78em;">
-          <h2>Động lực: bỏ hộp neo và NMS</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Detector cổ điển</strong>
-              <p style="margin:0.35em 0 0;">Dùng hộp neo/hộp mặc định, gán nhãn thủ công theo IoU, rồi NMS để xóa dự đoán trùng.</p>
-            </div>
-            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">DETR</strong>
-              <p style="margin:0.35em 0 0;">Xem detection là dự đoán trực tiếp một tập đối tượng, ghép mỗi dự đoán với tối đa một vật thật.</p>
+        <section style="font-size:0.72em;">
+          <h2>Động lực: dự đoán thẳng một tập đối tượng</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="DETR bỏ hộp neo và khử trùng lặp thủ công">
+              <defs>
+                <marker id="detr-motive-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(40,54)">
+                <rect x="0" y="0" width="210" height="210" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <ellipse cx="106" cy="104" rx="42" ry="58" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.7"/>
+                <rect x="60" y="40" width="94" height="136" fill="none" stroke="#1565c0" stroke-width="4"/>
+                <rect x="68" y="52" width="88" height="124" fill="none" stroke="#2e7d32" stroke-width="4"/>
+                <rect x="44" y="80" width="128" height="86" fill="none" stroke="#7b1fa2" stroke-width="4"/>
+                <text x="105" y="250" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">nhiều hộp trùng</text>
+              </g>
+              <path d="M270 156 L336 156" stroke="#555" stroke-width="3" marker-end="url(#detr-motive-arrow)"/>
+              <g transform="translate(358,54)">
+                <rect x="0" y="0" width="190" height="210" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <ellipse cx="96" cy="104" rx="42" ry="58" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.72"/>
+                <rect x="50" y="40" width="94" height="136" fill="none" stroke="#2e7d32" stroke-width="5"/>
+                <text x="95" y="250" text-anchor="middle" font-size="18" fill="#6a1b9a" font-family="Arial">một dự đoán cho một vật</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Mô hình dựa trên hộp neo</strong>
+                <p style="margin:0.35em 0 0;">Sinh rất nhiều hộp, gán nhãn theo độ chồng lấn, rồi khử trùng lặp sau cùng.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">DETR</strong>
+                <p style="margin:0.35em 0 0;">Học để mỗi vật thật được ghép với đúng một dự đoán trong một tập cố định.</p>
+              </div>
             </div>
           </div>
-          <p class="caption">DETR thay nhiều quy tắc thiết kế bằng một loss ghép cặp toàn cục.</p>
+          <p class="caption">DETR chuyển trọng tâm từ “lọc hộp trùng sau dự đoán” sang “học ghép một - một ngay khi huấn luyện”.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Bước chuyển tư duy: từ ứng viên dày đặc sang tập dự đoán</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="So sánh tư duy phát hiện đối tượng trước DETR và DETR">
+              <defs>
+                <marker id="detr-mindset-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .mind-label{font:700 17px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .mind-small{font:14px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+                </style>
+              </defs>
+              <g transform="translate(26,34)">
+                <rect x="0" y="0" width="270" height="258" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text class="mind-label" x="135" y="32" fill="#e65100">Trước DETR</text>
+                <rect x="32" y="58" width="76" height="58" rx="8" fill="#ffffff" stroke="#ef6c00" stroke-width="2"/>
+                <text class="mind-small" x="70" y="82">nhiều hộp</text>
+                <text class="mind-small" x="70" y="102">ứng viên</text>
+                <path d="M118 86 L152 86" stroke="#555" stroke-width="3" marker-end="url(#detr-mindset-arrow)"/>
+                <rect x="160" y="58" width="76" height="58" rx="8" fill="#ffffff" stroke="#ef6c00" stroke-width="2"/>
+                <text class="mind-small" x="198" y="82">chấm</text>
+                <text class="mind-small" x="198" y="102">điểm</text>
+                <path d="M198 126 L198 160" stroke="#555" stroke-width="3" marker-end="url(#detr-mindset-arrow)"/>
+                <rect x="84" y="170" width="108" height="58" rx="8" fill="#ffffff" stroke="#c62828" stroke-width="2"/>
+                <text class="mind-small" x="138" y="194">khử hộp</text>
+                <text class="mind-small" x="138" y="214">trùng</text>
+              </g>
+              <g transform="translate(344,34)">
+                <rect x="0" y="0" width="270" height="258" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text class="mind-label" x="135" y="32" fill="#6a1b9a">DETR</text>
+                <g transform="translate(30,62)">
+                  <rect x="0" y="0" width="42" height="44" rx="7" fill="#ffffff" stroke="#7b1fa2" stroke-width="2"/>
+                  <rect x="54" y="0" width="42" height="44" rx="7" fill="#ffffff" stroke="#7b1fa2" stroke-width="2"/>
+                  <rect x="108" y="0" width="42" height="44" rx="7" fill="#ffffff" stroke="#7b1fa2" stroke-width="2"/>
+                  <rect x="162" y="0" width="42" height="44" rx="7" fill="#ffffff" stroke="#7b1fa2" stroke-width="2" opacity="0.45"/>
+                  <text class="mind-small" x="102" y="74">N truy vấn học được</text>
+                </g>
+                <path d="M135 150 L135 178" stroke="#555" stroke-width="3" marker-end="url(#detr-mindset-arrow)"/>
+                <rect x="64" y="188" width="142" height="44" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="2"/>
+                <text class="mind-small" x="135" y="216">tập dự đoán một - một</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Cách cũ</strong>
+                <p style="margin:0.35em 0 0;">Đặt thật nhiều cơ hội quanh ảnh, sau đó dùng luật hậu xử lý để bỏ các dự đoán trùng nhau.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Cách của DETR</strong>
+                <p style="margin:0.35em 0 0;">Mỗi vị trí đầu ra là một “suất” dự đoán; huấn luyện buộc các suất tự chia nhau các vật thật.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Thay vì sinh thật nhiều rồi xóa bớt, DETR học để các dự đoán tự phân vai ngay trong huấn luyện.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>DETR: tổng quan đường đi của dữ liệu</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">đầu vào</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mạng tích chập</div><div class="stage-desc">đặc trưng ảnh</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Bộ mã hóa</div><div class="stage-desc">trộn ngữ cảnh</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Bộ giải mã</div><div class="stage-desc">truy vấn đối tượng</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Tập dự đoán</div><div class="stage-desc">lớp và hộp</div></div>
+          </div>
+          <div class="det-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 330" role="img" aria-label="Tổng quan kiến trúc DETR">
+              <defs>
+                <marker id="detr-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .detr-label{font:700 18px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .detr-small{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .detr-line{stroke:#555;stroke-width:3;marker-end:url(#detr-overview-arrow)}
+                </style>
+              </defs>
+              <rect x="28" y="58" width="150" height="160" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="82" cy="126" r="28" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="126" cy="150" rx="24" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text class="detr-label" x="103" y="258">Ảnh</text>
+
+              <line class="detr-line" x1="190" y1="140" x2="248" y2="140"/>
+              <g transform="translate(270,72)">
+                <rect x="0" y="0" width="48" height="132" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="62" y="16" width="42" height="100" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="118" y="38" width="34" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text class="detr-label" x="346" y="258">Mạng tích chập</text>
+
+              <line class="detr-line" x1="432" y1="140" x2="490" y2="140"/>
+              <g transform="translate(510,64)">
+                <rect x="0" y="0" width="126" height="150" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g fill="#1565c0" opacity="0.7">
+                  <circle cx="30" cy="38" r="5"/><circle cx="64" cy="38" r="5"/><circle cx="98" cy="38" r="5"/>
+                  <circle cx="30" cy="76" r="5"/><circle cx="64" cy="76" r="5"/><circle cx="98" cy="76" r="5"/>
+                  <circle cx="30" cy="114" r="5"/><circle cx="64" cy="114" r="5"/><circle cx="98" cy="114" r="5"/>
+                </g>
+              </g>
+              <text class="detr-label" x="573" y="258">Bộ mã hóa</text>
+              <text class="detr-small" x="573" y="282">đặc trưng biết ngữ cảnh</text>
+
+              <line class="detr-line" x1="650" y1="140" x2="708" y2="140"/>
+              <g transform="translate(728,58)">
+                <rect x="0" y="0" width="126" height="160" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <g fill="#7b1fa2">
+                  <rect x="24" y="26" width="78" height="18" rx="9"/>
+                  <rect x="24" y="62" width="78" height="18" rx="9"/>
+                  <rect x="24" y="98" width="78" height="18" rx="9"/>
+                  <rect x="24" y="134" width="78" height="18" rx="9"/>
+                </g>
+              </g>
+              <text class="detr-label" x="791" y="258">Bộ giải mã</text>
+              <text class="detr-small" x="791" y="282">truy vấn đối tượng</text>
+
+              <line class="detr-line" x1="868" y1="140" x2="928" y2="140"/>
+              <g transform="translate(946,72)">
+                <rect x="0" y="0" width="76" height="42" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="62" width="76" height="42" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="124" width="76" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+              </g>
+              <text class="detr-label" x="984" y="258">Tập đầu ra</text>
+            </svg>
+          </div>
+          <p class="caption">DETR vẫn dùng mạng tích chập để nhìn ảnh, nhưng dùng bộ biến đổi để dự đoán một tập đối tượng cùng lúc.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 1: biến ảnh thành chuỗi đặc trưng</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Mạng tích chập biến ảnh thành chuỗi đặc trưng cho DETR">
+              <defs>
+                <marker id="detr-seq-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="42" y="58" width="160" height="160" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="104" cy="126" r="30" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="148" cy="150" rx="24" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text x="122" y="258" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ảnh</text>
+              <path d="M214 138 L276 138" stroke="#555" stroke-width="3" marker-end="url(#detr-seq-arrow)"/>
+              <rect x="294" y="62" width="150" height="150" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="344" y1="62" x2="344" y2="212"/><line x1="394" y1="62" x2="394" y2="212"/>
+                <line x1="294" y1="112" x2="444" y2="112"/><line x1="294" y1="162" x2="444" y2="162"/>
+              </g>
+              <text x="369" y="258" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">bản đồ đặc trưng</text>
+              <path d="M456 138 L512 138" stroke="#555" stroke-width="3" marker-end="url(#detr-seq-arrow)"/>
+              <g transform="translate(526,58)">
+                <rect x="0" y="0" width="28" height="28" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                <rect x="0" y="38" width="28" height="28" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                <rect x="0" y="76" width="28" height="28" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                <rect x="0" y="114" width="28" height="28" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                <rect x="0" y="152" width="28" height="28" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                <text x="14" y="218" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">chuỗi</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Mạng tích chập</strong>
+                <p style="margin:0.35em 0 0;">Trích đặc trưng không gian, giống nhiều mô hình phát hiện trước đó.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Chuỗi đặc trưng</strong>
+                <p style="margin:0.35em 0 0;">Mỗi vị trí trên bản đồ đặc trưng trở thành một phần tử để bộ biến đổi xử lý.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DETR nối thế mạnh của mạng tích chập với khả năng trộn thông tin toàn cục của bộ biến đổi.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Chi tiết: vì sao phải làm phẳng bản đồ đặc trưng?</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Chiếu kênh và làm phẳng bản đồ đặc trưng trong DETR">
+              <defs>
+                <marker id="detr-flatten-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(38,58)">
+                <rect x="0" y="0" width="162" height="162" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="2">
+                  <line x1="54" y1="0" x2="54" y2="162"/><line x1="108" y1="0" x2="108" y2="162"/>
+                  <line x1="0" y1="54" x2="162" y2="54"/><line x1="0" y1="108" x2="162" y2="108"/>
+                </g>
+                <rect x="18" y="-16" width="162" height="162" rx="10" fill="none" stroke="#1565c0" stroke-width="2" opacity="0.35"/>
+                <rect x="36" y="-32" width="162" height="162" rx="10" fill="none" stroke="#1565c0" stroke-width="2" opacity="0.2"/>
+                <text x="82" y="216" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">H × W × C</text>
+              </g>
+              <path d="M238 138 L294 138" stroke="#555" stroke-width="3" marker-end="url(#detr-flatten-arrow)"/>
+              <g transform="translate(312,72)">
+                <rect x="0" y="0" width="112" height="132" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="56" y="42" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">chiếu</text>
+                <text x="56" y="70" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">1 × 1</text>
+                <text x="56" y="102" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">C → d</text>
+              </g>
+              <path d="M442 138 L498 138" stroke="#555" stroke-width="3" marker-end="url(#detr-flatten-arrow)"/>
+              <g transform="translate(520,42)">
+                <rect x="0" y="0" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <rect x="0" y="40" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <rect x="0" y="80" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <rect x="0" y="120" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <rect x="0" y="160" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <rect x="0" y="200" width="40" height="28" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                <text x="20" y="270" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">HW × d</text>
+              </g>
+              <text x="320" y="328" text-anchor="middle" font-size="19" fill="#263238" font-family="Arial">F: H × W × C → X: HW × d</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Chiếu kênh</strong>
+                <p style="margin:0.35em 0 0;">Đưa mỗi ô đặc trưng về cùng số chiều \(d\), đúng kích thước mà bộ biến đổi xử lý.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Làm phẳng không gian</strong>
+                <p style="margin:0.35em 0 0;">Mỗi ô trên lưới trở thành một phần tử chuỗi; thứ tự không gian sẽ được giữ bằng mã vị trí.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đây là lớp nối giữa mạng tích chập và bộ biến đổi: ảnh vẫn là lưới, nhưng được đưa vào dưới dạng chuỗi đặc trưng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 2: mã vị trí giữ lại “ở đâu”</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Mã vị trí trong DETR">
+              <rect x="52" y="58" width="180" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="97" y1="58" x2="97" y2="238"/><line x1="142" y1="58" x2="142" y2="238"/><line x1="187" y1="58" x2="187" y2="238"/>
+                <line x1="52" y1="103" x2="232" y2="103"/><line x1="52" y1="148" x2="232" y2="148"/><line x1="52" y1="193" x2="232" y2="193"/>
+              </g>
+              <circle cx="97" cy="103" r="6" fill="#ef6c00"/>
+              <circle cx="187" cy="193" r="6" fill="#7b1fa2"/>
+              <text x="142" y="276" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">đặc trưng theo vị trí</text>
+
+              <g transform="translate(326,60)">
+                <rect x="0" y="0" width="190" height="54" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="95" y="34" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">đặc trưng ảnh</text>
+                <text x="95" y="92" text-anchor="middle" font-size="24" fill="#455a64" font-family="Arial">+</text>
+                <rect x="0" y="112" width="190" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="95" y="146" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">mã vị trí</text>
+                <text x="95" y="204" text-anchor="middle" font-size="24" fill="#455a64" font-family="Arial">=</text>
+                <rect x="0" y="224" width="190" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="95" y="258" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">biết nội dung và tọa độ</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Vì sao cần?</strong>
+                <p style="margin:0.35em 0 0;">Bộ biến đổi tự nó xem chuỗi như một tập phần tử, nên cần thêm thông tin vị trí.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Ý nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Mỗi phần tử biết “mình thấy gì” và “mình nằm ở vùng nào trong ảnh”.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Mã vị trí giúp đặc trưng của ảnh không mất bố cục không gian khi đi vào bộ biến đổi.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Chi tiết: mã vị trí làm chú ý biết hướng và khoảng cách</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Tác dụng của mã vị trí trong chú ý của DETR">
+              <g transform="translate(36,54)">
+                <rect x="0" y="0" width="238" height="230" rx="10" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="119" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#b71c1c" font-family="Arial">Không có mã vị trí</text>
+                <rect x="52" y="72" width="46" height="46" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <rect x="142" y="142" width="46" height="46" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <text x="119" y="210" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">hai ô giống nội dung</text>
+                <text x="119" y="228" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">dễ bị xem như nhau</text>
+              </g>
+              <g transform="translate(366,54)">
+                <rect x="0" y="0" width="238" height="230" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="119" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1b5e20" font-family="Arial">Có mã vị trí</text>
+                <rect x="52" y="72" width="46" height="46" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <circle cx="75" cy="95" r="8" fill="#ef6c00"/>
+                <text x="75" y="132" text-anchor="middle" font-size="14" fill="#e65100" font-family="Arial">(2, 2)</text>
+                <rect x="142" y="142" width="46" height="46" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <circle cx="165" cy="165" r="8" fill="#7b1fa2"/>
+                <text x="165" y="202" text-anchor="middle" font-size="14" fill="#6a1b9a" font-family="Arial">(5, 4)</text>
+              </g>
+              <g transform="translate(84,312)">
+                <rect x="0" y="-28" width="472" height="54" rx="8" fill="#eceff1" stroke="#b0bec5" stroke-width="2"/>
+                <text x="236" y="-5" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">đặc trưng đưa vào chú ý</text>
+                <text x="236" y="15" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">= nội dung ảnh + vị trí trên lưới</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề</strong>
+                <p style="margin:0.35em 0 0;">Chú ý tự thân so sánh các véc-tơ. Nếu chỉ có nội dung, hai vùng giống nhau nhưng ở hai nơi khác nhau có thể khó phân biệt.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Cách sửa</strong>
+                <p style="margin:0.35em 0 0;">Mã vị trí được cộng vào đặc trưng, nên phép chú ý có thể học quan hệ “ở trên”, “bên cạnh”, “xa gần”.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Mã vị trí không vẽ hộp, nhưng cho mô hình biết mỗi đặc trưng đến từ vùng nào của ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 3: bộ mã hóa trộn ngữ cảnh toàn ảnh</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Bộ mã hóa của DETR dùng chú ý toàn cục">
+              <rect x="64" y="50" width="200" height="200" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g fill="#1565c0">
+                <circle cx="104" cy="90" r="7"/><circle cx="164" cy="90" r="7"/><circle cx="224" cy="90" r="7"/>
+                <circle cx="104" cy="150" r="7"/><circle cx="164" cy="150" r="7"/><circle cx="224" cy="150" r="7"/>
+                <circle cx="104" cy="210" r="7"/><circle cx="164" cy="210" r="7"/><circle cx="224" cy="210" r="7"/>
+              </g>
+              <g stroke="#7b1fa2" stroke-width="2" opacity="0.75">
+                <line x1="104" y1="90" x2="224" y2="210"/>
+                <line x1="224" y1="90" x2="104" y2="210"/>
+                <line x1="164" y1="90" x2="164" y2="210"/>
+                <line x1="104" y1="150" x2="224" y2="150"/>
+                <line x1="104" y1="210" x2="224" y2="90"/>
+              </g>
+              <text x="164" y="290" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">mỗi vị trí nhìn các vị trí khác</text>
+
+              <g transform="translate(360,66)">
+                <rect x="0" y="0" width="170" height="56" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="85" y="24" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">vật và bối cảnh</text>
+                <text x="85" y="45" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">được nhìn cùng lúc</text>
+                <rect x="0" y="88" width="170" height="56" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="85" y="112" text-anchor="middle" font-size="17" fill="#6a1b9a" font-family="Arial">quan hệ xa</text>
+                <text x="85" y="133" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">không bị giới hạn cục bộ</text>
+                <rect x="0" y="176" width="170" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="85" y="200" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">đặc trưng giàu ngữ cảnh</text>
+                <text x="85" y="221" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">cho bước giải mã</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Chú ý toàn cục</strong>
+                <p style="margin:0.35em 0 0;">Mỗi vị trí đặc trưng có thể lấy thông tin từ mọi vị trí khác trong ảnh.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Khác mạng tích chập thuần túy</strong>
+                <p style="margin:0.35em 0 0;">Quan hệ xa không phải đi qua nhiều lớp tích chập mới gặp nhau.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Bộ mã hóa tạo ra đặc trưng ảnh đã biết quan hệ giữa các vùng trong toàn ảnh.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Chi tiết: một lớp chú ý tự thân trong bộ mã hóa</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Cơ chế Q K V trong chú ý tự thân của bộ mã hóa DETR">
+              <defs>
+                <marker id="detr-attn-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(46,52)">
+                <rect x="0" y="0" width="252" height="206" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g fill="#1565c0">
+                  <circle cx="42" cy="56" r="8"/><circle cx="104" cy="56" r="8"/><circle cx="166" cy="56" r="8"/><circle cx="228" cy="56" r="8"/>
+                  <circle cx="42" cy="136" r="8"/><circle cx="104" cy="136" r="8"/><circle cx="166" cy="136" r="8"/><circle cx="228" cy="136" r="8"/>
+                </g>
+                <circle cx="104" cy="136" r="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+                <g stroke="#7b1fa2" stroke-width="3" opacity="0.75" marker-end="url(#detr-attn-arrow)">
+                  <path d="M104 136 C96 94 72 72 48 58"/>
+                  <path d="M104 136 C114 94 138 72 162 58"/>
+                  <path d="M104 136 C154 116 190 112 222 132"/>
+                  <path d="M104 136 C138 154 158 154 190 140"/>
+                </g>
+                <text x="126" y="240" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">một vị trí lấy thông tin</text>
+                <text x="126" y="260" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">từ nhiều vị trí khác</text>
+              </g>
+              <g transform="translate(356,34)">
+                <rect x="0" y="0" width="218" height="56" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="109" y="35" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">Q: tôi đang cần gì?</text>
+                <rect x="0" y="78" width="218" height="56" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="109" y="113" text-anchor="middle" font-size="17" fill="#6a1b9a" font-family="Arial">K: tôi có dấu hiệu gì?</text>
+                <rect x="0" y="156" width="218" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="109" y="191" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">V: nội dung đem về</text>
+              </g>
+              <text x="320" y="334" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">Attention(Q,K,V) = softmax(QK^T / sqrt(d)) V</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">So khớp bằng \(QK^T\)</strong>
+                <p style="margin:0.35em 0 0;">Vị trí đang xét hỏi các vị trí khác: “vùng nào có thông tin hữu ích cho tôi?”.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Cộng thông tin bằng \(V\)</strong>
+                <p style="margin:0.35em 0 0;">Các vùng liên quan đóng góp nhiều hơn, tạo ra đặc trưng mới đã biết bối cảnh toàn ảnh.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Sau nhiều lớp, mỗi vị trí không chỉ biết vùng nhỏ quanh nó mà còn biết các vùng khác liên quan thế nào.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 4: truy vấn đối tượng hỏi “có vật nào không?”</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Truy vấn đối tượng trong bộ giải mã DETR">
+              <defs>
+                <marker id="query-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(48,66)">
+                <rect x="0" y="0" width="180" height="170" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g fill="#1565c0" opacity="0.75">
+                  <circle cx="42" cy="46" r="6"/><circle cx="90" cy="46" r="6"/><circle cx="138" cy="46" r="6"/>
+                  <circle cx="42" cy="92" r="6"/><circle cx="90" cy="92" r="6"/><circle cx="138" cy="92" r="6"/>
+                  <circle cx="42" cy="138" r="6"/><circle cx="90" cy="138" r="6"/><circle cx="138" cy="138" r="6"/>
+                </g>
+                <text x="90" y="214" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">đặc trưng đã mã hóa</text>
+              </g>
+              <path d="M246 150 L314 150" stroke="#555" stroke-width="3" marker-end="url(#query-arrow)"/>
+              <g transform="translate(334,42)">
+                <rect x="0" y="0" width="150" height="226" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="36" y="28" width="78" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="36" y="70" width="78" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="36" y="112" width="78" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="36" y="154" width="78" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="36" y="196" width="78" height="18" rx="9" fill="#7b1fa2" opacity="0.35"/>
+                <text x="75" y="264" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">truy vấn học được</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Không phải hộp neo</strong>
+                <p style="margin:0.35em 0 0;">Truy vấn đối tượng không có vị trí hay kích thước cố định ban đầu.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Vai trò</strong>
+                <p style="margin:0.35em 0 0;">Mỗi truy vấn học cách lấy thông tin từ ảnh để trở thành một dự đoán đối tượng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Truy vấn đối tượng là các véc-tơ học được; ý nghĩa của chúng xuất hiện qua quá trình huấn luyện.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Truy vấn đối tượng: một “ô dự đoán” chưa có nội dung</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Truy vấn đối tượng là các ô dự đoán rỗng được học">
+              <defs>
+                <marker id="detr-query-slot-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,42)">
+                <rect x="0" y="0" width="220" height="236" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="110" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">Hộp neo</text>
+                <rect x="58" y="72" width="102" height="86" fill="none" stroke="#ef6c00" stroke-width="4"/>
+                <circle cx="110" cy="115" r="5" fill="#ef6c00"/>
+                <text x="110" y="188" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">có vị trí và tỉ lệ</text>
+                <text x="110" y="208" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">đặt trước trên ảnh</text>
+              </g>
+              <path d="M282 160 L350 160" stroke="#555" stroke-width="3" marker-end="url(#detr-query-slot-arrow)"/>
+              <g transform="translate(374,42)">
+                <rect x="0" y="0" width="220" height="236" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="110" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#6a1b9a" font-family="Arial">Truy vấn đối tượng</text>
+                <g transform="translate(42,70)">
+                  <rect x="0" y="0" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                  <rect x="56" y="0" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                  <rect x="112" y="0" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                  <rect x="0" y="62" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                  <rect x="56" y="62" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3" opacity="0.5"/>
+                  <rect x="112" y="62" width="44" height="44" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3" opacity="0.5"/>
+                </g>
+                <text x="110" y="188" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">chỉ là véc-tơ học được</text>
+                <text x="110" y="208" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">chưa gắn tọa độ cố định</text>
+              </g>
+              <text x="320" y="330" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">mỗi truy vấn là một suất để sinh ra tối đa một đối tượng</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Không phải câu hỏi bằng ngôn ngữ</strong>
+                <p style="margin:0.35em 0 0;">“Truy vấn” ở đây là véc-tơ tham số. Nó không chứa chữ, lớp hay hộp ban đầu.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Một suất dự đoán</strong>
+                <p style="margin:0.35em 0 0;">Nếu trong ảnh có vật phù hợp, suất này sẽ học lấy thông tin để dự đoán lớp và hộp.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Khác hộp neo, truy vấn đối tượng không bắt đầu từ một vùng ảnh cố định mà bắt đầu từ một véc-tơ cần học ý nghĩa.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Một truy vấn được cập nhật qua từng lớp giải mã</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 660 370" role="img" aria-label="Truy vấn đối tượng được cập nhật qua các lớp giải mã">
+              <defs>
+                <marker id="detr-query-update-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,74)">
+                <rect x="0" y="0" width="74" height="48" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="37" y="30" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">q⁰</text>
+                <path d="M88 24 L138 24" stroke="#555" stroke-width="3" marker-end="url(#detr-query-update-arrow)"/>
+                <rect x="152" y="0" width="74" height="48" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="189" y="30" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">q¹</text>
+                <path d="M240 24 L290 24" stroke="#555" stroke-width="3" marker-end="url(#detr-query-update-arrow)"/>
+                <rect x="304" y="0" width="74" height="48" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="341" y="30" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">q²</text>
+                <path d="M392 24 L442 24" stroke="#555" stroke-width="3" marker-end="url(#detr-query-update-arrow)"/>
+                <rect x="456" y="0" width="92" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="502" y="30" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">qᴸ</text>
+              </g>
+              <g transform="translate(122,170)">
+                <rect x="0" y="0" width="430" height="72" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g fill="#1565c0" opacity="0.75">
+                  <circle cx="42" cy="36" r="6"/><circle cx="92" cy="36" r="6"/><circle cx="142" cy="36" r="6"/><circle cx="192" cy="36" r="6"/>
+                  <circle cx="242" cy="36" r="6"/><circle cx="292" cy="36" r="6"/><circle cx="342" cy="36" r="6"/><circle cx="392" cy="36" r="6"/>
+                </g>
+                <text x="215" y="108" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">đặc trưng ảnh đã mã hóa</text>
+              </g>
+              <g stroke="#1565c0" stroke-width="2.5" opacity="0.65">
+                <path d="M231 126 C236 152 258 162 292 176" fill="none"/>
+                <path d="M383 126 C392 152 430 166 514 176" fill="none"/>
+                <path d="M535 126 C500 152 436 164 364 176" fill="none"/>
+              </g>
+              <text x="330" y="314" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">mỗi lớp giải mã làm truy vấn bớt “rỗng”</text>
+              <text x="330" y="336" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">và gần hơn với một dự đoán cụ thể</text>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.84em;">
+                \[
+                  q^{\ell} = \operatorname{DecoderLayer}(q^{\ell-1}, E)
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">\(E\) là đặc trưng ảnh đã mã hóa</strong>
+                <p style="margin:0.35em 0 0;">Ở mỗi lớp, truy vấn vừa trao đổi với các truy vấn khác, vừa lấy thêm bằng chứng từ ảnh.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Truy vấn đầu vào là tham số học được; truy vấn đầu ra là biểu diễn đã gom đủ thông tin để sinh lớp và hộp.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Chú ý chéo: truy vấn hỏi vùng nào trong ảnh liên quan?</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 660 370" role="img" aria-label="Chú ý chéo từ truy vấn đối tượng sang đặc trưng ảnh">
+              <defs>
+                <marker id="detr-cross-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,42)">
+                <rect x="0" y="0" width="124" height="58" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="62" y="35" text-anchor="middle" font-size="17" fill="#6a1b9a" font-family="Arial">truy vấn q</text>
+                <path d="M132 30 C190 20 224 48 264 88" stroke="#555" stroke-width="3" fill="none" marker-end="url(#detr-cross-arrow)"/>
+              </g>
+              <g transform="translate(270,42)">
+                <rect x="0" y="0" width="280" height="220" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g>
+                  <rect x="24" y="24" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="72" y="24" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="120" y="24" width="48" height="48" fill="#fff3e0" stroke="#90caf9"/>
+                  <rect x="168" y="24" width="48" height="48" fill="#ffe0b2" stroke="#90caf9"/>
+                  <rect x="216" y="24" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="24" y="72" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="72" y="72" width="48" height="48" fill="#ffe0b2" stroke="#90caf9"/>
+                  <rect x="120" y="72" width="48" height="48" fill="#ef6c00" stroke="#90caf9"/>
+                  <rect x="168" y="72" width="48" height="48" fill="#fb8c00" stroke="#90caf9"/>
+                  <rect x="216" y="72" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="24" y="120" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="72" y="120" width="48" height="48" fill="#fff3e0" stroke="#90caf9"/>
+                  <rect x="120" y="120" width="48" height="48" fill="#ffe0b2" stroke="#90caf9"/>
+                  <rect x="168" y="120" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="216" y="120" width="48" height="48" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="24" y="168" width="48" height="28" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="72" y="168" width="48" height="28" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="120" y="168" width="48" height="28" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="168" y="168" width="48" height="28" fill="#bbdefb" stroke="#90caf9"/>
+                  <rect x="216" y="168" width="48" height="28" fill="#bbdefb" stroke="#90caf9"/>
+                </g>
+                <text x="140" y="250" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">trọng số chú ý trên lưới đặc trưng</text>
+              </g>
+              <g transform="translate(64,146)">
+                <rect x="0" y="0" width="142" height="44" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="71" y="19" text-anchor="middle" font-size="14" fill="#e65100" font-family="Arial">vùng sáng hơn</text>
+                <text x="71" y="36" text-anchor="middle" font-size="14" fill="#e65100" font-family="Arial">chú ý mạnh hơn</text>
+              </g>
+              <g transform="translate(164,284)">
+                <rect x="0" y="0" width="320" height="42" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="160" y="27" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">tổng có trọng số → thông tin cho q</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Query đến từ truy vấn</strong>
+                <p style="margin:0.35em 0 0;">Truy vấn hiện tại quyết định mình đang tìm kiểu bằng chứng nào trong ảnh.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Key và value đến từ ảnh</strong>
+                <p style="margin:0.35em 0 0;">Các vị trí ảnh cạnh tranh để trả lời truy vấn; vùng liên quan đóng góp nhiều hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Chú ý chéo là cơ chế biến một truy vấn trừu tượng thành một dự đoán dựa trên bằng chứng trong ảnh.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Vai trò của truy vấn được tạo bởi ghép cặp huấn luyện</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Ghép cặp huấn luyện làm các truy vấn đối tượng chuyên môn hóa">
+              <defs>
+                <marker id="detr-query-role-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(38,44)">
+                <rect x="0" y="0" width="206" height="238" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="103" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1b5e20" font-family="Arial">Vật thật</text>
+                <rect x="54" y="70" width="98" height="42" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="3"/>
+                <text x="103" y="96" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">người</text>
+                <rect x="54" y="138" width="98" height="42" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="3"/>
+                <text x="103" y="164" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">xe</text>
+              </g>
+              <g transform="translate(396,28)">
+                <rect x="0" y="0" width="206" height="268" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="103" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#6a1b9a" font-family="Arial">Truy vấn đầu ra</text>
+                <rect x="54" y="58" width="98" height="38" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="103" y="82" text-anchor="middle" font-size="14" fill="#6a1b9a" font-family="Arial">q3</text>
+                <rect x="54" y="112" width="98" height="38" rx="8" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="103" y="136" text-anchor="middle" font-size="14" fill="#6a1b9a" font-family="Arial">q8</text>
+                <rect x="54" y="166" width="98" height="38" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="103" y="190" text-anchor="middle" font-size="13" fill="#b71c1c" font-family="Arial">không vật</text>
+                <rect x="54" y="220" width="98" height="28" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3" opacity="0.6"/>
+              </g>
+              <path d="M252 134 C300 78 338 74 388 76" stroke="#2e7d32" stroke-width="4" fill="none" marker-end="url(#detr-query-role-arrow)"/>
+              <path d="M252 202 C304 178 336 142 388 132" stroke="#2e7d32" stroke-width="4" fill="none" marker-end="url(#detr-query-role-arrow)"/>
+              <text x="320" y="320" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">một vật thật chỉ kéo một truy vấn</text>
+              <text x="320" y="342" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">các truy vấn khác bị đẩy về “không có vật”</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Không gán vai trò bằng tay</strong>
+                <p style="margin:0.35em 0 0;">Ta không nói trước truy vấn nào tìm người, xe hay vùng trái ảnh.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Vai trò xuất hiện từ lỗi huấn luyện</strong>
+                <p style="margin:0.35em 0 0;">Sau ghép cặp, truy vấn được chọn chịu lỗi lớp và hộp, nên dần học một cách “nhìn” ổn định.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Truy vấn đối tượng là cơ chế để DETR học phân công dự đoán, thay cho việc đặt hộp neo và luật gán nhãn thủ công.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Chi tiết: bộ giải mã vừa phân vai, vừa nhìn lại ảnh</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 660 370" role="img" aria-label="Bộ giải mã DETR dùng tự chú ý giữa truy vấn và chú ý chéo sang ảnh">
+              <defs>
+                <marker id="detr-dec-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(34,52)">
+                <rect x="0" y="0" width="124" height="210" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="28" y="26" width="68" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="28" y="68" width="68" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="28" y="110" width="68" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="28" y="152" width="68" height="18" rx="9" fill="#7b1fa2" opacity="0.45"/>
+                <text x="62" y="250" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">truy vấn</text>
+              </g>
+              <path d="M174 118 L224 118" stroke="#555" stroke-width="3" marker-end="url(#detr-dec-arrow)"/>
+              <g transform="translate(236,60)">
+                <rect x="0" y="0" width="132" height="86" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <path d="M38 56 C54 28 78 28 94 56" fill="none" stroke="#ef6c00" stroke-width="4"/>
+                <path d="M94 30 C78 58 54 58 38 30" fill="none" stroke="#ef6c00" stroke-width="4"/>
+                <text x="66" y="122" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">tự chú ý</text>
+              </g>
+              <path d="M382 118 L432 118" stroke="#555" stroke-width="3" marker-end="url(#detr-dec-arrow)"/>
+              <g transform="translate(444,40)">
+                <rect x="0" y="0" width="166" height="126" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g fill="#1565c0" opacity="0.75">
+                  <circle cx="38" cy="34" r="6"/><circle cx="82" cy="34" r="6"/><circle cx="126" cy="34" r="6"/>
+                  <circle cx="38" cy="72" r="6"/><circle cx="82" cy="72" r="6"/><circle cx="126" cy="72" r="6"/>
+                  <circle cx="38" cy="110" r="6"/><circle cx="82" cy="110" r="6"/><circle cx="126" cy="110" r="6"/>
+                </g>
+                <text x="83" y="166" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">chú ý sang ảnh</text>
+              </g>
+              <g stroke="#7b1fa2" stroke-width="3" opacity="0.7">
+                <path d="M302 188 C392 234 466 206 526 150" fill="none"/>
+                <path d="M290 198 C382 278 508 244 566 148" fill="none"/>
+              </g>
+              <g transform="translate(214,274)">
+                <rect x="0" y="0" width="220" height="42" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="110" y="27" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">truy vấn đã chuyên môn hóa</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Tự chú ý giữa truy vấn</strong>
+                <p style="margin:0.35em 0 0;">Các truy vấn nhìn nhau để tránh cùng học một vai; đây là bước giúp giảm dự đoán trùng.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Chú ý chéo sang ảnh</strong>
+                <p style="margin:0.35em 0 0;">Mỗi truy vấn dùng đặc trưng ảnh đã mã hóa để tìm bằng chứng cho một vật cụ thể.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Bộ giải mã là nơi các truy vấn cạnh tranh và chuyên môn hóa thành các vị trí dự đoán khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 5: mỗi truy vấn sinh một lớp và một hộp</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Đầu dự đoán của DETR">
+              <defs>
+                <marker id="detr-head-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(52,58)">
+                <rect x="0" y="0" width="110" height="200" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="26" y="26" width="58" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="26" y="66" width="58" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="26" y="106" width="58" height="18" rx="9" fill="#7b1fa2"/>
+                <rect x="26" y="146" width="58" height="18" rx="9" fill="#7b1fa2" opacity="0.35"/>
+                <text x="55" y="238" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">kết quả giải mã</text>
+              </g>
+              <path d="M178 150 L244 100" stroke="#555" stroke-width="3" marker-end="url(#detr-head-arrow)"/>
+              <path d="M178 166 L244 222" stroke="#555" stroke-width="3" marker-end="url(#detr-head-arrow)"/>
+              <rect x="262" y="64" width="134" height="76" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="329" y="94" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">dự đoán lớp</text>
+              <text x="329" y="118" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">có cả “không có vật”</text>
+              <rect x="262" y="186" width="134" height="76" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="329" y="216" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">dự đoán hộp</text>
+              <text x="329" y="240" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">tâm, rộng, cao</text>
+              <g transform="translate(458,70)">
+                <rect x="0" y="0" width="78" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="66" width="78" height="48" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="132" width="78" height="48" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="39" y="222" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">tập cố định</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Lớp “không có vật”</strong>
+                <p style="margin:0.35em 0 0;">Các truy vấn dư có thể học rằng mình không tương ứng với đối tượng nào.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Tập đầu ra cố định</strong>
+                <p style="margin:0.35em 0 0;">Mạng luôn sinh cùng số dự đoán, rồi giữ các dự đoán không phải “không có vật”.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DETR biến đầu ra có số vật thay đổi thành một tập dự đoán cố định có thêm lớp “không có vật”.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Chi tiết: truy vấn dư học lớp “không có vật”</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Các truy vấn dư của DETR học lớp không có vật">
+              <defs>
+                <marker id="detr-empty-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(44,60)">
+                <rect x="0" y="0" width="170" height="170" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+                <circle cx="70" cy="76" r="24" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+                <ellipse cx="112" cy="116" rx="24" ry="36" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+                <text x="85" y="214" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">ảnh có 2 vật</text>
+              </g>
+              <path d="M234 142 L286 142" stroke="#555" stroke-width="3" marker-end="url(#detr-empty-arrow)"/>
+              <g transform="translate(312,42)">
+                <rect x="0" y="0" width="236" height="238" rx="10" fill="#f8fafb" stroke="#cfd8dc" stroke-width="2"/>
+                <text x="118" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#263238" font-family="Arial">tập dự đoán cố định</text>
+                <g transform="translate(32,56)">
+                  <rect x="0" y="0" width="72" height="42" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                  <text x="36" y="27" text-anchor="middle" font-size="14" fill="#e65100" font-family="Arial">vật 1</text>
+                  <rect x="96" y="0" width="72" height="42" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                  <text x="132" y="27" text-anchor="middle" font-size="14" fill="#0d47a1" font-family="Arial">vật 2</text>
+                  <rect x="0" y="66" width="72" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                  <text x="36" y="92" text-anchor="middle" font-size="13" fill="#b71c1c" font-family="Arial">không vật</text>
+                  <rect x="96" y="66" width="72" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                  <text x="132" y="92" text-anchor="middle" font-size="13" fill="#b71c1c" font-family="Arial">không vật</text>
+                  <rect x="0" y="132" width="72" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3" opacity="0.6"/>
+                  <text x="36" y="158" text-anchor="middle" font-size="13" fill="#b71c1c" font-family="Arial">không vật</text>
+                  <rect x="96" y="132" width="72" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3" opacity="0.6"/>
+                  <text x="132" y="158" text-anchor="middle" font-size="13" fill="#b71c1c" font-family="Arial">không vật</text>
+                </g>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Số vật thay đổi</strong>
+                <p style="margin:0.35em 0 0;">Một ảnh có thể có 2 vật, ảnh khác có 12 vật, nhưng mạng vẫn sinh cùng \(N\) dự đoán.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Các vị trí thừa</strong>
+                <p style="margin:0.35em 0 0;">Dự đoán không được ghép với vật thật sẽ bị học về lớp “không có vật”.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đầu ra cố định không mâu thuẫn với số vật thay đổi vì các vị trí thừa được học thành “không có vật”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 6: ghép cặp một - một khi huấn luyện</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Ghép cặp một - một trong DETR">
+              <defs>
+                <marker id="match-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(58,48)">
+                <rect x="0" y="0" width="130" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="72" width="130" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="144" width="130" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="65" y="254" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">vật thật</text>
+              </g>
+              <g transform="translate(386,28)">
+                <rect x="0" y="0" width="130" height="44" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="0" y="58" width="130" height="44" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="0" y="116" width="130" height="44" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <rect x="0" y="174" width="130" height="44" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <rect x="0" y="232" width="130" height="44" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="65" y="314" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">dự đoán</text>
+              </g>
+              <path d="M198 70 C260 30 314 46 380 50" stroke="#2e7d32" stroke-width="4" fill="none" marker-end="url(#match-arrow)"/>
+              <path d="M198 142 C264 142 314 142 380 144" stroke="#2e7d32" stroke-width="4" fill="none" marker-end="url(#match-arrow)"/>
+              <path d="M198 214 C264 258 314 258 380 260" stroke="#2e7d32" stroke-width="4" fill="none" marker-end="url(#match-arrow)"/>
+              <text x="292" y="318" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">mỗi vật thật nhận tối đa một dự đoán</text>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  \hat{\sigma}=\arg\min_{\sigma}\sum_i
+                  \mathcal{C}(y_i,\hat{y}_{\sigma(i)})
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Chi phí ghép</strong>
+                <p style="margin:0.35em 0 0;">Kết hợp sai lớp và sai hộp để chọn cách ghép có tổng chi phí nhỏ nhất.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Ghép cặp một - một là lý do DETR không cần bước khử hộp trùng sau khi dự đoán.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Chi tiết: chi phí ghép gồm lớp và hộp</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 660 380" role="img" aria-label="Bảng chi phí ghép cặp trong DETR">
+              <g transform="translate(48,42)">
+                <text x="42" y="24" text-anchor="middle" font-size="15" fill="#2e7d32" font-family="Arial">vật thật</text>
+                <text x="250" y="24" text-anchor="middle" font-size="15" fill="#7b1fa2" font-family="Arial">dự đoán</text>
+                <g font-family="Arial" font-size="14" text-anchor="middle" fill="#263238">
+                  <text x="100" y="58">p1</text><text x="150" y="58">p2</text><text x="200" y="58">p3</text><text x="250" y="58">p4</text><text x="300" y="58">p5</text>
+                  <text x="42" y="100">g1</text><text x="42" y="150">g2</text><text x="42" y="200">g3</text>
+                </g>
+                <g transform="translate(75,72)" font-family="Arial" font-size="15" text-anchor="middle">
+                  <rect x="0" y="0" width="50" height="50" fill="#e8f5e9" stroke="#cfd8dc"/><text x="25" y="31" fill="#1b5e20">0.8</text>
+                  <rect x="50" y="0" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="75" y="31" fill="#455a64">3.1</text>
+                  <rect x="100" y="0" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="125" y="31" fill="#455a64">2.4</text>
+                  <rect x="150" y="0" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="175" y="31" fill="#455a64">4.2</text>
+                  <rect x="200" y="0" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="225" y="31" fill="#455a64">3.5</text>
+
+                  <rect x="0" y="50" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="25" y="81" fill="#455a64">2.7</text>
+                  <rect x="50" y="50" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="75" y="81" fill="#455a64">1.9</text>
+                  <rect x="100" y="50" width="50" height="50" fill="#e8f5e9" stroke="#cfd8dc"/><text x="125" y="81" fill="#1b5e20">0.6</text>
+                  <rect x="150" y="50" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="175" y="81" fill="#455a64">2.9</text>
+                  <rect x="200" y="50" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="225" y="81" fill="#455a64">2.3</text>
+
+                  <rect x="0" y="100" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="25" y="131" fill="#455a64">3.0</text>
+                  <rect x="50" y="100" width="50" height="50" fill="#e8f5e9" stroke="#cfd8dc"/><text x="75" y="131" fill="#1b5e20">0.9</text>
+                  <rect x="100" y="100" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="125" y="131" fill="#455a64">1.4</text>
+                  <rect x="150" y="100" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="175" y="131" fill="#455a64">2.1</text>
+                  <rect x="200" y="100" width="50" height="50" fill="#ffffff" stroke="#cfd8dc"/><text x="225" y="131" fill="#455a64">1.8</text>
+                </g>
+                <text x="202" y="262" text-anchor="middle" font-size="15" fill="#263238" font-family="Arial">chọn các ô xanh: không trùng hàng, không trùng cột</text>
+              </g>
+              <g transform="translate(414,50)">
+                <rect x="0" y="0" width="198" height="62" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="99" y="27" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">đúng lớp</text>
+                <text x="99" y="48" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">xác suất lớp cao</text>
+                <rect x="0" y="88" width="198" height="62" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="99" y="115" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">hộp gần</text>
+                <text x="99" y="136" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">sai số tọa độ nhỏ</text>
+                <rect x="0" y="176" width="198" height="62" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="99" y="203" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">chồng lấn tốt</text>
+                <text x="99" y="224" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">GIoU cao</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.78em;">
+                \[
+                  \mathcal{C}(y_i,\hat{y}_j)=
+                  -\hat{p}_j(c_i)
+                  +\lambda_1\|b_i-\hat{b}_j\|_1
+                  +\lambda_2(1-\operatorname{GIoU}(b_i,\hat{b}_j))
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Tối ưu toàn cục</strong>
+                <p style="margin:0.35em 0 0;">Không chọn từng hộp tham lam; thuật toán ghép tìm tổ hợp có tổng chi phí nhỏ nhất.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Cách ghép tốt nhất không chỉ chọn hộp gần nhất; nó cân bằng đúng lớp và đúng vị trí.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>Kiến trúc DETR</h2>
-          <div class="det-imgbox">
-            <img src="img/lec-11/detr-architecture.svg" alt="Kiến trúc DETR" style="max-width:100%; max-height:65vh; object-fit:contain;" />
-          </div>
-          <p class="caption">Object queries là các vector học được; mỗi query có cơ hội trở thành một đối tượng trong ảnh.</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>Object queries không phải hộp neo</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Hộp neo</strong>
-              <p style="margin:0.35em 0 0;">Có nghĩa hình học ban đầu: vị trí, tỉ lệ, kích thước.</p>
-            </div>
-            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">Object query</strong>
-              <p style="margin:0.35em 0 0;">Là vector học được trong decoder; ý nghĩa xuất hiện qua huấn luyện và attention.</p>
-            </div>
-          </div>
-          <p class="caption">DETR không cần biết trước các mẫu hộp, nhưng cần matching để mỗi query học một vai trò riêng.</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>Hungarian matching</h2>
-          <div class="det-grid-2" style="align-items:center;">
-            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Bài toán ghép cặp</strong>
-              <p style="margin:0.35em 0 0;">Có \(N\) dự đoán và \(M\) vật thật. Chọn cách ghép một - một có tổng chi phí nhỏ nhất.</p>
-            </div>
-            <div class="eqbox">
-              \[
-                \hat{\sigma}=\arg\min_{\sigma}\sum_i
-                \mathcal{C}(y_i,\hat{y}_{\sigma(i)})
-              \]
-            </div>
-          </div>
-          <p class="caption">Nhờ ghép một - một, hai prediction không nên cùng nhận một ground truth.</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>Loss của DETR</h2>
+          <h2>Hàm mất mát của DETR</h2>
           <div class="eqbox">
             \[
               L = L_{\text{cls}} + \lambda_1 L_1(b,\hat{b}) + \lambda_2 L_{\text{GIoU}}(b,\hat{b})
@@ -2410,39 +3309,108 @@
           </div>
           <div class="det-grid-3" style="margin-top:0.7em;">
             <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Class</strong>
-              <p style="margin:0.35em 0 0;">Có thêm lớp “không có đối tượng”.</p>
+              <strong style="color:#1565c0;">Mất mát phân loại</strong>
+              <p style="margin:0.35em 0 0;">Phạt sai lớp, gồm cả lớp “không có vật”.</p>
             </div>
             <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">L1</strong>
-              <p style="margin:0.35em 0 0;">Kéo tọa độ box về gần ground truth.</p>
+              <strong style="color:#ef6c00;">Sai số tọa độ</strong>
+              <p style="margin:0.35em 0 0;">Kéo tâm, rộng và cao của hộp về gần hộp thật.</p>
             </div>
             <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">GIoU</strong>
-              <p style="margin:0.35em 0 0;">Đo chất lượng chồng lấn tốt hơn khi box không giao nhau.</p>
+              <strong style="color:#2e7d32;">Độ chồng lấn tổng quát</strong>
+              <p style="margin:0.35em 0 0;">Đánh giá chất lượng hộp cả khi hai hộp chưa giao nhau.</p>
             </div>
           </div>
+          <p class="caption">Hàm mất mát chỉ tính sau khi đã ghép mỗi vật thật với một dự đoán phù hợp nhất.</p>
         </section>
 
-        <section style="font-size:0.78em;">
-          <h2>DETR mạnh và khó ở đâu?</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Mạnh</strong>
-              <ul>
-                <li>Thiết kế gọn: không hộp neo, không NMS.</li>
-                <li>Attention toàn cục mô hình hóa quan hệ giữa đối tượng.</li>
-              </ul>
-            </div>
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Khó</strong>
-              <ul>
-                <li>Huấn luyện lâu hơn detector CNN cổ điển.</li>
-                <li>Phiên bản đầu yếu hơn với vật nhỏ, cần cải tiến đa tỉ lệ.</li>
-              </ul>
+        <section style="font-size:0.70em;">
+          <h2>Suy luận: không còn bước ghép cặp</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 640 360" role="img" aria-label="Huấn luyện và suy luận trong DETR">
+              <defs>
+                <marker id="detr-infer-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,48)">
+                <rect x="0" y="0" width="244" height="228" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="122" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">Khi huấn luyện</text>
+                <rect x="34" y="64" width="76" height="42" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="72" y="90" text-anchor="middle" font-size="14" fill="#1b5e20" font-family="Arial">vật thật</text>
+                <rect x="134" y="64" width="76" height="42" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="172" y="90" text-anchor="middle" font-size="14" fill="#6a1b9a" font-family="Arial">dự đoán</text>
+                <path d="M72 116 L72 146 L172 146 L172 116" fill="none" stroke="#555" stroke-width="3" marker-end="url(#detr-infer-arrow)"/>
+                <rect x="54" y="162" width="136" height="42" rx="8" fill="#ffffff" stroke="#ef6c00" stroke-width="2"/>
+                <text x="122" y="180" text-anchor="middle" font-size="14" fill="#263238" font-family="Arial">ghép một - một</text>
+                <text x="122" y="198" text-anchor="middle" font-size="14" fill="#263238" font-family="Arial">rồi tính lỗi</text>
+              </g>
+              <g transform="translate(354,48)">
+                <rect x="0" y="0" width="244" height="228" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="122" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1b5e20" font-family="Arial">Khi suy luận</text>
+                <rect x="30" y="64" width="54" height="42" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="96" y="64" width="54" height="42" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="162" y="64" width="54" height="42" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <path d="M122 122 L122 154" stroke="#555" stroke-width="3" marker-end="url(#detr-infer-arrow)"/>
+                <rect x="42" y="166" width="160" height="42" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="2"/>
+                <text x="122" y="180" text-anchor="middle" font-size="14" fill="#263238" font-family="Arial">giữ dự đoán</text>
+                <text x="122" y="198" text-anchor="middle" font-size="14" fill="#263238" font-family="Arial">không phải “không vật”</text>
+              </g>
+              <text x="320" y="326" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">không cần sinh hộp neo, không cần khử trùng lặp thủ công</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Ghép cặp chỉ dùng lúc học</strong>
+                <p style="margin:0.35em 0 0;">Nó dạy mô hình phân vai: mỗi vật thật ứng với một dự đoán, phần còn lại là “không có vật”.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Khi dùng mô hình</strong>
+                <p style="margin:0.35em 0 0;">Chạy mạng một lần, bỏ các dự đoán “không có vật” hoặc điểm thấp, rồi lấy tập còn lại.</p>
+              </div>
             </div>
           </div>
-          <p class="caption">DETR quan trọng vì thay đổi cách đặt bài toán, không chỉ thêm một backbone mới.</p>
+          <p class="caption">DETR đưa sự ràng buộc “mỗi vật một dự đoán” vào huấn luyện, nên suy luận trở thành bước lọc tập đầu ra.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>DETR mạnh và khó ở đâu?</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Điểm mạnh và điểm khó của DETR">
+              <g transform="translate(44,54)">
+                <rect x="0" y="0" width="210" height="210" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="56" y="50" width="98" height="112" fill="none" stroke="#2e7d32" stroke-width="5"/>
+                <path d="M66 108 L96 138 L150 70" fill="none" stroke="#2e7d32" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="105" y="250" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">thiết kế gọn</text>
+              </g>
+              <g transform="translate(346,54)">
+                <rect x="0" y="0" width="210" height="210" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <circle cx="82" cy="96" r="17" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+                <circle cx="116" cy="116" r="14" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+                <circle cx="142" cy="92" r="12" fill="#c8e6c9" stroke="#2e7d32" stroke-width="4"/>
+                <rect x="60" y="70" width="104" height="72" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="8 6"/>
+                <text x="105" y="250" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">vật nhỏ còn khó</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Mạnh</strong>
+                <ul>
+                  <li>Không cần hộp neo.</li>
+                  <li>Không cần khử trùng lặp thủ công.</li>
+                  <li>Mô hình hóa quan hệ toàn ảnh.</li>
+                </ul>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Khó</strong>
+                <ul>
+                  <li>Huấn luyện chậm hơn nhiều mô hình phát hiện trước đó.</li>
+                  <li>Phiên bản đầu yếu với vật nhỏ.</li>
+                  <li>Cần cải tiến đa tỉ lệ trong thực tế.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DETR quan trọng vì thay đổi cách đặt bài toán phát hiện đối tượng, không chỉ thay một mạng nền mới.</p>
         </section>
       </section>
 
@@ -2457,7 +3425,7 @@
             <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Dựa trên hộp neo:</strong> tạo nhiều ứng viên cố định, học phân loại và chỉnh hộp.</div>
             <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Hai giai đoạn:</strong> lọc proposal trước, rồi phân loại từng RoI kỹ hơn.</div>
             <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Một giai đoạn:</strong> dự đoán dày đặc để đổi độ chính xác lấy tốc độ và đơn giản.</div>
-            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">DETR:</strong> dùng matching để dự đoán trực tiếp một tập, giảm thủ thuật hậu xử lý.</div>
+            <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">DETR:</strong> dùng ghép cặp để dự đoán trực tiếp một tập, giảm thủ thuật hậu xử lý.</div>
           </div>
         </section>
 
@@ -2467,7 +3435,7 @@
             <thead>
               <tr style="background:#eceff1;">
                 <th style="padding:8px; border:1px solid #cfd8dc;">Cách tiếp cận</th>
-                <th style="padding:8px; border:1px solid #cfd8dc;">Box ứng viên</th>
+                <th style="padding:8px; border:1px solid #cfd8dc;">Hộp ứng viên</th>
                 <th style="padding:8px; border:1px solid #cfd8dc;">Lọc trùng</th>
                 <th style="padding:8px; border:1px solid #cfd8dc;">Điểm mạnh</th>
               </tr>
@@ -2477,7 +3445,7 @@
                 <td style="padding:8px; border:1px solid #cfd8dc;">Faster R-CNN</td>
                 <td style="padding:8px; border:1px solid #cfd8dc;">mạng đề xuất vùng + hộp neo</td>
                 <td style="padding:8px; border:1px solid #cfd8dc;">NMS</td>
-                <td style="padding:8px; border:1px solid #cfd8dc;">chính xác, head RoI mạnh</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">chính xác, đầu dự đoán vùng quan tâm mạnh</td>
               </tr>
               <tr>
                 <td style="padding:8px; border:1px solid #cfd8dc;">YOLO / SSD</td>
@@ -2489,19 +3457,19 @@
                 <td style="padding:8px; border:1px solid #cfd8dc;">RetinaNet</td>
                 <td style="padding:8px; border:1px solid #cfd8dc;">hộp neo trên FPN</td>
                 <td style="padding:8px; border:1px solid #cfd8dc;">NMS</td>
-                <td style="padding:8px; border:1px solid #cfd8dc;">Focal Loss xử lý mất cân bằng</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">hàm mất mát tập trung xử lý mất cân bằng</td>
               </tr>
               <tr>
                 <td style="padding:8px; border:1px solid #cfd8dc;">DETR</td>
-                <td style="padding:8px; border:1px solid #cfd8dc;">object queries</td>
-                <td style="padding:8px; border:1px solid #cfd8dc;">matching, không NMS</td>
-                <td style="padding:8px; border:1px solid #cfd8dc;">thiết kế gọn, set prediction</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">truy vấn đối tượng</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">ghép cặp, không khử trùng lặp</td>
+                <td style="padding:8px; border:1px solid #cfd8dc;">thiết kế gọn, dự đoán tập</td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        <section style="font-size:0.74em;">
+        <!-- <section style="font-size:0.74em;">
           <h2>Gợi ý hình minh họa đã chuẩn bị</h2>
           <div style="display:grid; gap:6px;">
             <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>detection-task.svg:</strong> phân biệt classification, localization, detection, segmentation.</div>
@@ -2510,7 +3478,7 @@
             <div class="det-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong>one-stage-detectors.svg, focal-loss.svg, detr-architecture.svg:</strong> YOLO/SSD/RetinaNet và DETR.</div>
           </div>
           <p class="caption">Các file nằm trong thư mục <span class="inline-code">2526-2/img/lec-11/</span>; có thể thay bằng ảnh mở nếu cần ví dụ ảnh thật.</p>
-        </section>
+        </section> -->
 
         <section style="font-size:0.72em;">
           <h2>Tài liệu tham khảo</h2>
