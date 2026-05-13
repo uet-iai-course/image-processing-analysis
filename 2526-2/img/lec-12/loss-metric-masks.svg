@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="Minh họa mất mát và IoU trên mặt nạ">
+  <defs>
+    <style>
+      .t{font:700 28px Arial,sans-serif;fill:#263238}
+      .l{font:700 21px Arial,sans-serif;fill:#263238}
+      .s{font:17px Arial,sans-serif;fill:#455a64}
+      .w{font:700 18px Arial,sans-serif;fill:#fff}
+      .eq{font:20px Arial,sans-serif;fill:#263238}
+    </style>
+  </defs>
+  <text x="600" y="42" text-anchor="middle" class="t">Mất mát học từng điểm ảnh, độ đo đánh giá vùng chồng lấn</text>
+
+  <g transform="translate(72 95)">
+    <rect x="0" y="0" width="265" height="245" rx="12" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="42" y="36" width="180" height="150" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <circle cx="120" cy="108" r="48" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+    <rect x="42" y="198" width="76" height="29" rx="5" fill="#ef6c00"/><text x="80" y="219" text-anchor="middle" class="w">vật</text>
+    <rect x="132" y="198" width="76" height="29" rx="5" fill="#90a4ae"/><text x="170" y="219" text-anchor="middle" class="w">nền</text>
+    <text x="132" y="285" text-anchor="middle" class="l">Mặt nạ thật</text>
+  </g>
+
+  <g transform="translate(468 95)">
+    <rect x="0" y="0" width="265" height="245" rx="12" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="42" y="36" width="180" height="150" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <circle cx="138" cy="115" r="50" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+    <circle cx="120" cy="108" r="48" fill="#ffcc80" opacity="0.38" stroke="#2e7d32" stroke-width="4" stroke-dasharray="9 7"/>
+    <text x="132" y="214" text-anchor="middle" class="s">lệch biên → mất mát tăng</text>
+    <text x="132" y="285" text-anchor="middle" class="l">Mặt nạ dự đoán</text>
+  </g>
+
+  <g transform="translate(850 85)">
+    <rect x="0" y="0" width="275" height="320" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="26" y="28" width="222" height="70" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="137" y="57" text-anchor="middle" class="l">Entropy chéo</text>
+    <text x="137" y="83" text-anchor="middle" class="s">đúng lớp từng điểm ảnh</text>
+    <rect x="26" y="124" width="222" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="137" y="153" text-anchor="middle" class="l">Mất mát Dice / IoU</text>
+    <text x="137" y="179" text-anchor="middle" class="s">khớp hình dạng vùng</text>
+    <rect x="26" y="220" width="222" height="70" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="137" y="249" text-anchor="middle" class="l">mIoU / Dice</text>
+    <text x="137" y="275" text-anchor="middle" class="s">đánh giá trên mặt nạ</text>
+  </g>
+
+  <g transform="translate(210 426)">
+    <rect x="0" y="0" width="780" height="54" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+    <text x="390" y="35" text-anchor="middle" class="eq">IoU = vùng giao / vùng hợp; Dice = 2 × vùng giao / tổng diện tích hai mặt nạ</text>
+  </g>
+</svg>

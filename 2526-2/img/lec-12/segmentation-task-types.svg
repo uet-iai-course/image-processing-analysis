@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="So sánh phân vùng ngữ nghĩa, phân vùng theo đối tượng và phân vùng toàn cảnh">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 22px Arial,sans-serif;fill:#263238}
+      .small{font:18px Arial,sans-serif;fill:#455a64}
+      .cap{font:700 18px Arial,sans-serif;fill:#fff}
+    </style>
+  </defs>
+  <text x="600" y="42" text-anchor="middle" class="title">Ba cách đặt bài toán phân vùng</text>
+
+  <g transform="translate(38 82)">
+    <rect x="0" y="0" width="340" height="330" rx="12" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="34" y="48" width="272" height="178" rx="10" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <path d="M34 151 C80 116 122 132 158 96 C205 51 253 70 306 42 L306 226 L34 226 Z" fill="#c8e6c9"/>
+    <circle cx="115" cy="130" r="36" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <ellipse cx="212" cy="126" rx="34" ry="48" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <rect x="74" y="238" width="86" height="30" rx="5" fill="#ef6c00"/><text x="117" y="259" text-anchor="middle" class="cap">mèo</text>
+    <rect x="182" y="238" width="86" height="30" rx="5" fill="#ef6c00"/><text x="225" y="259" text-anchor="middle" class="cap">mèo</text>
+    <text x="170" y="296" text-anchor="middle" class="label">Phân vùng ngữ nghĩa</text>
+    <text x="170" y="322" text-anchor="middle" class="small">cùng lớp → cùng màu</text>
+  </g>
+
+  <g transform="translate(430 82)">
+    <rect x="0" y="0" width="340" height="330" rx="12" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="34" y="48" width="272" height="178" rx="10" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <path d="M34 151 C80 116 122 132 158 96 C205 51 253 70 306 42 L306 226 L34 226 Z" fill="#c8e6c9"/>
+    <circle cx="115" cy="130" r="36" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <ellipse cx="212" cy="126" rx="34" ry="48" fill="#ce93d8" stroke="#7b1fa2" stroke-width="3"/>
+    <rect x="70" y="238" width="94" height="30" rx="5" fill="#ef6c00"/><text x="117" y="259" text-anchor="middle" class="cap">mèo #1</text>
+    <rect x="178" y="238" width="94" height="30" rx="5" fill="#7b1fa2"/><text x="225" y="259" text-anchor="middle" class="cap">mèo #2</text>
+    <text x="170" y="296" text-anchor="middle" class="label">Phân vùng theo đối tượng</text>
+    <text x="170" y="322" text-anchor="middle" class="small">cùng lớp nhưng khác vật → khác mặt nạ</text>
+  </g>
+
+  <g transform="translate(822 82)">
+    <rect x="0" y="0" width="340" height="330" rx="12" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <rect x="34" y="48" width="272" height="178" rx="10" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <path d="M34 151 C80 116 122 132 158 96 C205 51 253 70 306 42 L306 226 L34 226 Z" fill="#a5d6a7" stroke="#2e7d32" stroke-width="3"/>
+    <circle cx="115" cy="130" r="36" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <ellipse cx="212" cy="126" rx="34" ry="48" fill="#ce93d8" stroke="#7b1fa2" stroke-width="3"/>
+    <rect x="42" y="238" width="72" height="30" rx="5" fill="#2e7d32"/><text x="78" y="259" text-anchor="middle" class="cap">cỏ</text>
+    <rect x="124" y="238" width="78" height="30" rx="5" fill="#ef6c00"/><text x="163" y="259" text-anchor="middle" class="cap">mèo #1</text>
+    <rect x="212" y="238" width="78" height="30" rx="5" fill="#7b1fa2"/><text x="251" y="259" text-anchor="middle" class="cap">mèo #2</text>
+    <text x="170" y="296" text-anchor="middle" class="label">Phân vùng toàn cảnh</text>
+    <text x="170" y="322" text-anchor="middle" class="small">vật đếm được + nền không đếm được</text>
+  </g>
+
+  <text x="600" y="472" text-anchor="middle" class="small">Điểm khác nhau không nằm ở mạng nền, mà nằm ở ý nghĩa của mỗi điểm ảnh đầu ra.</text>
+</svg>

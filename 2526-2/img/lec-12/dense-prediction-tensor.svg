@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="Từ ảnh sang ten-xơ điểm logit theo điểm ảnh">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#555"/>
+    </marker>
+    <style>
+      .t{font:700 27px Arial,sans-serif;fill:#263238}
+      .l{font:700 20px Arial,sans-serif;fill:#263238}
+      .s{font:17px Arial,sans-serif;fill:#455a64}
+      .eq{font:20px Arial,sans-serif;fill:#263238}
+    </style>
+  </defs>
+  <text x="600" y="42" text-anchor="middle" class="t">Dự đoán dày đặc: mỗi điểm ảnh cần một phân phối lớp</text>
+
+  <g transform="translate(50 96)">
+    <rect x="0" y="0" width="230" height="230" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M0 150 C44 115 83 135 120 94 C158 53 198 70 230 46 L230 230 L0 230 Z" fill="#c8e6c9"/>
+    <circle cx="92" cy="122" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <ellipse cx="160" cy="120" rx="28" ry="44" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <text x="115" y="275" text-anchor="middle" class="l">Ảnh đầu vào</text>
+    <text x="115" y="302" text-anchor="middle" class="s">3 × H × W</text>
+  </g>
+
+  <path d="M310 210 L390 210" stroke="#555" stroke-width="4" marker-end="url(#arr)"/>
+  <g transform="translate(410 112)">
+    <rect x="0" y="24" width="78" height="190" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <rect x="98" y="54" width="70" height="130" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <rect x="188" y="82" width="58" height="74" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text x="123" y="275" text-anchor="middle" class="l">Bộ mã hóa</text>
+    <text x="123" y="302" text-anchor="middle" class="s">giảm H, W; tăng ngữ nghĩa</text>
+  </g>
+
+  <path d="M685 210 L765 210" stroke="#555" stroke-width="4" marker-end="url(#arr)"/>
+  <g transform="translate(790 96)">
+    <rect x="0" y="0" width="230" height="230" rx="12" fill="#f7f7f7" stroke="#78909c" stroke-width="2"/>
+    <g transform="translate(42 44)">
+      <rect x="0" y="0" width="128" height="128" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+      <rect x="18" y="-16" width="128" height="128" fill="#fff3e0" stroke="#ef6c00" stroke-width="3" opacity="0.86"/>
+      <rect x="36" y="-32" width="128" height="128" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3" opacity="0.86"/>
+      <text x="170" y="0" class="s">lớp 1</text>
+      <text x="188" y="28" class="s">lớp 2</text>
+      <text x="205" y="56" class="s">...</text>
+      <text x="214" y="84" class="s">lớp C</text>
+    </g>
+    <text x="115" y="275" text-anchor="middle" class="l">Điểm logit theo điểm ảnh</text>
+    <text x="115" y="302" text-anchor="middle" class="s">C × H × W</text>
+  </g>
+
+  <g transform="translate(210 420)">
+    <rect x="0" y="0" width="780" height="54" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="390" y="35" text-anchor="middle" class="eq">softmax theo chiều lớp: p(y=c | điểm ảnh i) = exp zᵢ,c / Σₖ exp zᵢ,k</text>
+  </g>
+</svg>
