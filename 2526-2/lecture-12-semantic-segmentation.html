@@ -1736,9 +1736,683 @@
           <h1><span class="text-light">4.</span><br />DeepLab</h1>
           <p>Tích chập rỗng · trường tiếp nhận · ASPP · CRF · DeepLabv3+</p>
         </section>
+
         <section style="font-size:0.78em;">
-          <h2>Khung phần DeepLab</h2>
-          <div class="section-todo">Sẽ triển khai: vì sao gộp làm mất biên, tích chập rỗng hoạt động thế nào, ASPP gom ngữ cảnh đa tỉ lệ và bộ giải mã nhẹ của DeepLabv3+.</div>
+          <h2>DeepLab đổi câu hỏi sau U-Net</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="So sánh tư duy U-Net và DeepLab">
+              <defs>
+                <marker id="dl-mind-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(38,58)">
+                <rect x="0" y="0" width="230" height="210" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="34" y="34" width="56" height="122" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="100" y="58" width="40" height="76" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="150" y="34" width="56" height="122" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+                <path d="M62 28 C96 0 150 0 178 28" fill="none" stroke="#1565c0" stroke-width="3" stroke-dasharray="8 6"/>
+                <text x="115" y="178" text-anchor="middle" font-size="18" font-weight="700" fill="#1b5e20" font-family="Arial">U-Net</text>
+                <text x="115" y="202" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">nén rồi dựng lại</text>
+              </g>
+              <path d="M286 164 L338 164" stroke="#555" stroke-width="3" marker-end="url(#dl-mind-arrow)"/>
+              <g transform="translate(354,58)">
+                <rect x="0" y="0" width="230" height="210" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="28" y="56" width="74" height="98" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="116" y="56" width="74" height="98" rx="8" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ef6c00" stroke-width="3">
+                  <circle cx="142" cy="88" r="3"/><circle cx="158" cy="88" r="3"/><circle cx="174" cy="88" r="3"/>
+                  <circle cx="142" cy="120" r="3"/><circle cx="158" cy="120" r="3"/><circle cx="174" cy="120" r="3"/>
+                </g>
+                <text x="115" y="178" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">DeepLab</text>
+                <text x="115" y="202" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">giữ dày, nhìn rộng</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">U-Net</strong>
+                <p style="margin:0.35em 0 0;">Chấp nhận nén mạnh, rồi dùng bộ giải mã và liên kết tắt để phục hồi chi tiết.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">DeepLab</strong>
+                <p style="margin:0.35em 0 0;">Hạn chế làm thưa bản đồ đặc trưng, nhưng vẫn mở rộng vùng nhìn bằng tích chập rỗng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Bước chuyển của DeepLab là giữ nhiều vị trí dự đoán hơn ngay trong mạng nền, thay vì phụ thuộc hoàn toàn vào đường giải mã.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>DeepLab: tổng quan đường đi dữ liệu</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">H x W</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mạng nền</div><div class="stage-desc">bớt gộp sâu</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Tích chập rỗng</div><div class="stage-desc">nhìn rộng</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">ASPP</div><div class="stage-desc">đa tỉ lệ</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mặt nạ</div><div class="stage-desc">H x W</div></div>
+          </div>
+          <div class="seg-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 330" role="img" aria-label="Tổng quan kiến trúc DeepLab">
+              <defs>
+                <marker id="dl-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="34" y="70" width="130" height="130" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M34 142 C62 112 92 126 114 96 C136 70 150 82 164 70 L164 200 L34 200 Z" fill="#c8e6c9"/>
+              <circle cx="92" cy="126" r="22" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+              <text x="99" y="244" text-anchor="middle" font-size="18" font-weight="700" fill="#263238" font-family="Arial">Ảnh</text>
+
+              <path d="M176 136 L232 136" stroke="#555" stroke-width="3" marker-end="url(#dl-overview-arrow)"/>
+              <g transform="translate(252,54)">
+                <rect x="0" y="0" width="58" height="150" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="74" y="18" width="52" height="114" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+                <rect x="142" y="40" width="48" height="74" rx="8" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+                <text x="95" y="190" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">mạng nền</text>
+              </g>
+
+              <path d="M456 136 L512 136" stroke="#555" stroke-width="3" marker-end="url(#dl-overview-arrow)"/>
+              <g transform="translate(532,74)">
+                <rect x="0" y="0" width="120" height="120" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g fill="#ef6c00">
+                  <circle cx="28" cy="28" r="5"/><circle cx="60" cy="28" r="5"/><circle cx="92" cy="28" r="5"/>
+                  <circle cx="28" cy="60" r="5"/><circle cx="60" cy="60" r="5"/><circle cx="92" cy="60" r="5"/>
+                  <circle cx="28" cy="92" r="5"/><circle cx="60" cy="92" r="5"/><circle cx="92" cy="92" r="5"/>
+                </g>
+                <text x="60" y="160" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">tích chập rỗng</text>
+              </g>
+
+              <path d="M668 136 L724 136" stroke="#555" stroke-width="3" marker-end="url(#dl-overview-arrow)"/>
+              <g transform="translate(744,52)">
+                <rect x="0" y="6" width="48" height="132" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="64" y="28" width="48" height="88" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="128" y="50" width="48" height="44" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="88" y="182" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">ASPP</text>
+              </g>
+
+              <path d="M932 136 L982 136" stroke="#555" stroke-width="3" marker-end="url(#dl-overview-arrow)"/>
+              <rect x="994" y="70" width="36" height="130" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="1012" y="244" text-anchor="middle" font-size="18" font-weight="700" fill="#263238" font-family="Arial">điểm lớp</text>
+            </svg>
+          </div>
+          <p class="caption">DeepLab giữ khung dự đoán dày đặc của FCN, nhưng thay phần giữa bằng cơ chế nhìn rộng đa tỉ lệ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nút thắt: gộp nhiều thì bản đồ quá thưa</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Bản đồ đặc trưng bị thưa khi gộp nhiều">
+              <defs>
+                <marker id="dl-pool-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="48" y="52" width="170" height="170" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="1.4">
+                <line x1="90" y1="52" x2="90" y2="222"/><line x1="132" y1="52" x2="132" y2="222"/><line x1="175" y1="52" x2="175" y2="222"/>
+                <line x1="48" y1="95" x2="218" y2="95"/><line x1="48" y1="137" x2="218" y2="137"/><line x1="48" y1="180" x2="218" y2="180"/>
+              </g>
+              <text x="133" y="260" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">nhiều vị trí</text>
+              <path d="M240 138 L354 138" stroke="#555" stroke-width="3" marker-end="url(#dl-pool-arrow)"/>
+              <text x="297" y="116" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">gộp / stride</text>
+              <rect x="386" y="90" width="86" height="86" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+              <g stroke="#ef9a9a" stroke-width="1.5">
+                <line x1="429" y1="90" x2="429" y2="176"/><line x1="386" y1="133" x2="472" y2="133"/>
+              </g>
+              <text x="429" y="260" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">ít vị trí</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Gộp giúp gì?</strong>
+                <p style="margin:0.35em 0 0;">Tăng trường tiếp nhận và giảm chi phí tính toán cho mạng sâu.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Gộp hại gì?</strong>
+                <p style="margin:0.35em 0 0;">Mỗi ô đại diện vùng quá lớn, nên biên và vật nhỏ bị mất trước khi dự đoán.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DeepLab bắt đầu từ câu hỏi: có thể tăng vùng nhìn mà không tiếp tục làm thưa bản đồ đặc trưng không?</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bước nhảy đầu ra: đo độ thưa của bản đồ</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <div>
+              <div class="eqbox">
+                \[
+                  OS=\frac{H_{\text{ảnh}}}{H_{\text{đặc trưng}}}
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">OS nhỏ</strong>
+                <p style="margin:0.35em 0 0;">Bản đồ dày hơn, giữ vị trí tốt hơn, nhưng tốn bộ nhớ hơn.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">OS lớn</strong>
+                <p style="margin:0.35em 0 0;">Bản đồ thưa hơn, rẻ hơn, nhưng mặt nạ cuối dễ thô.</p>
+              </div>
+            </div>
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="So sánh bước nhảy đầu ra">
+              <g transform="translate(70,60)">
+                <rect x="0" y="0" width="138" height="138" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <g stroke="#a5d6a7" stroke-width="1.2">
+                  <line x1="34" y1="0" x2="34" y2="138"/><line x1="69" y1="0" x2="69" y2="138"/><line x1="104" y1="0" x2="104" y2="138"/>
+                  <line x1="0" y1="34" x2="138" y2="34"/><line x1="0" y1="69" x2="138" y2="69"/><line x1="0" y1="104" x2="138" y2="104"/>
+                </g>
+                <text x="69" y="184" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">OS=8</text>
+                <text x="69" y="208" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">dày hơn</text>
+              </g>
+              <g transform="translate(360,84)">
+                <rect x="0" y="0" width="92" height="92" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <g stroke="#ef9a9a" stroke-width="1.3">
+                  <line x1="46" y1="0" x2="46" y2="92"/><line x1="0" y1="46" x2="92" y2="46"/>
+                </g>
+                <text x="46" y="160" text-anchor="middle" font-size="18" fill="#b71c1c" font-family="Arial">OS=32</text>
+                <text x="46" y="184" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">thưa hơn</text>
+              </g>
+            </svg>
+          </div>
+          <p class="caption">DeepLab thường chọn OS=16 hoặc OS=8 để cân bằng giữa chi tiết không gian và chi phí tính toán.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tích chập rỗng: nhìn xa mà không gộp thêm</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Tích chập thường và tích chập rỗng">
+              <g transform="translate(70,62)">
+                <rect x="0" y="0" width="150" height="150" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="1.2">
+                  <line x1="30" y1="0" x2="30" y2="150"/><line x1="60" y1="0" x2="60" y2="150"/><line x1="90" y1="0" x2="90" y2="150"/><line x1="120" y1="0" x2="120" y2="150"/>
+                  <line x1="0" y1="30" x2="150" y2="30"/><line x1="0" y1="60" x2="150" y2="60"/><line x1="0" y1="90" x2="150" y2="90"/><line x1="0" y1="120" x2="150" y2="120"/>
+                </g>
+                <rect x="30" y="30" width="90" height="90" fill="none" stroke="#1565c0" stroke-width="5"/>
+                <text x="75" y="198" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">rate=1</text>
+              </g>
+              <g transform="translate(370,62)">
+                <rect x="0" y="0" width="150" height="150" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ffcc80" stroke-width="1.2">
+                  <line x1="30" y1="0" x2="30" y2="150"/><line x1="60" y1="0" x2="60" y2="150"/><line x1="90" y1="0" x2="90" y2="150"/><line x1="120" y1="0" x2="120" y2="150"/>
+                  <line x1="0" y1="30" x2="150" y2="30"/><line x1="0" y1="60" x2="150" y2="60"/><line x1="0" y1="90" x2="150" y2="90"/><line x1="0" y1="120" x2="150" y2="120"/>
+                </g>
+                <g fill="#ef6c00">
+                  <circle cx="15" cy="15" r="6"/><circle cx="75" cy="15" r="6"/><circle cx="135" cy="15" r="6"/>
+                  <circle cx="15" cy="75" r="6"/><circle cx="75" cy="75" r="6"/><circle cx="135" cy="75" r="6"/>
+                  <circle cx="15" cy="135" r="6"/><circle cx="75" cy="135" r="6"/><circle cx="135" cy="135" r="6"/>
+                </g>
+                <rect x="15" y="15" width="120" height="120" fill="none" stroke="#ef6c00" stroke-width="5"/>
+                <text x="75" y="198" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">rate=2</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Tích chập thường</strong>
+                <p style="margin:0.35em 0 0;">Các trọng số lấy mẫu những vị trí liền kề trong cửa sổ nhỏ.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Tích chập rỗng</strong>
+                <p style="margin:0.35em 0 0;">Chèn khoảng trống giữa các điểm lấy mẫu, nên cửa sổ nhìn rộng hơn mà số tham số không đổi.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Tích chập rỗng mở rộng trường tiếp nhận bằng cách lấy mẫu thưa trong vùng lớn hơn, không cần giảm độ phân giải.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Rate điều khiển khoảng cách lấy mẫu</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  y[i]=\sum_k x[i+r\cdot k]\,w[k]
+                \]
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">\(r=1\)</strong>
+                <p style="margin:0.35em 0 0;">Lấy mẫu liên tiếp; giống tích chập thường.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">\(r>1\)</strong>
+                <p style="margin:0.35em 0 0;">Bỏ qua một số vị trí ở giữa, làm vùng nhìn rộng hơn.</p>
+              </div>
+            </div>
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Các rate khác nhau trong tích chập rỗng">
+              <g transform="translate(54,70)">
+                <text x="70" y="-18" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">r=1</text>
+                <g fill="#1565c0">
+                  <circle cx="24" cy="70" r="7"/><circle cx="54" cy="70" r="7"/><circle cx="84" cy="70" r="7"/>
+                  <circle cx="114" cy="70" r="7"/><circle cx="144" cy="70" r="7"/>
+                </g>
+                <line x1="24" y1="70" x2="144" y2="70" stroke="#90caf9" stroke-width="3"/>
+              </g>
+              <g transform="translate(54,180)">
+                <text x="70" y="-18" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">r=2</text>
+                <g fill="#ef6c00">
+                  <circle cx="24" cy="70" r="7"/><circle cx="84" cy="70" r="7"/><circle cx="144" cy="70" r="7"/>
+                </g>
+                <g fill="#b0bec5">
+                  <circle cx="54" cy="70" r="4"/><circle cx="114" cy="70" r="4"/>
+                </g>
+                <line x1="24" y1="70" x2="144" y2="70" stroke="#ffcc80" stroke-width="3"/>
+              </g>
+              <g transform="translate(330,124)">
+                <rect x="0" y="0" width="190" height="118" rx="8" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+                <text x="95" y="38" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">số trọng số không đổi</text>
+                <text x="95" y="70" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">vùng nhìn tăng theo rate</text>
+              </g>
+            </svg>
+          </div>
+          <p class="caption">Rate là núm điều khiển chính của DeepLab: tăng rate để nhìn xa hơn mà vẫn giữ cùng kích thước bản đồ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thay stride bằng rate: giữ dày nhưng vẫn sâu</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Thay stride bằng tích chập rỗng">
+              <defs>
+                <marker id="dl-stride-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,54)">
+                <rect x="0" y="0" width="210" height="100" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <rect x="20" y="26" width="48" height="48" rx="6" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+                <path d="M76 50 L130 50" stroke="#555" stroke-width="3" marker-end="url(#dl-stride-arrow)"/>
+                <rect x="146" y="36" width="34" height="34" rx="6" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+                <text x="105" y="132" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">stride tiếp tục giảm bản đồ</text>
+              </g>
+              <g transform="translate(42,210)">
+                <rect x="0" y="0" width="210" height="100" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="20" y="26" width="48" height="48" rx="6" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+                <path d="M76 50 L130 50" stroke="#555" stroke-width="3" marker-end="url(#dl-stride-arrow)"/>
+                <rect x="146" y="26" width="48" height="48" rx="6" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+                <text x="105" y="132" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">rate giữ kích thước bản đồ</text>
+              </g>
+              <g transform="translate(344,102)">
+                <rect x="0" y="0" width="218" height="142" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="109" y="44" text-anchor="middle" font-size="18" font-weight="700" fill="#e65100" font-family="Arial">DeepLab</text>
+                <text x="109" y="78" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">bỏ một số bước giảm mẫu</text>
+                <text x="109" y="106" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">tăng rate ở các tầng sau</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Nếu chỉ bỏ stride</strong>
+                <p style="margin:0.35em 0 0;">Bản đồ dày hơn, nhưng các tầng sau nhìn vùng nhỏ hơn dự kiến.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Cách của DeepLab</strong>
+                <p style="margin:0.35em 0 0;">Bỏ bớt giảm mẫu, rồi tăng rate để bù lại trường tiếp nhận bị thiếu.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đây là mẹo kiến trúc quan trọng: giữ bản đồ dày nhưng không làm mạng mất khả năng nhìn ngữ cảnh rộng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Rate quá lớn có thể tạo lỗ lấy mẫu</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Hiện tượng lấy mẫu rời rạc khi rate lớn">
+              <g transform="translate(74,48)">
+                <rect x="0" y="0" width="190" height="190" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <g stroke="#ffcdd2" stroke-width="1.1">
+                  <line x1="38" y1="0" x2="38" y2="190"/><line x1="76" y1="0" x2="76" y2="190"/><line x1="114" y1="0" x2="114" y2="190"/><line x1="152" y1="0" x2="152" y2="190"/>
+                  <line x1="0" y1="38" x2="190" y2="38"/><line x1="0" y1="76" x2="190" y2="76"/><line x1="0" y1="114" x2="190" y2="114"/><line x1="0" y1="152" x2="190" y2="152"/>
+                </g>
+                <g fill="#c62828">
+                  <circle cx="19" cy="19" r="6"/><circle cx="95" cy="19" r="6"/><circle cx="171" cy="19" r="6"/>
+                  <circle cx="19" cy="95" r="6"/><circle cx="95" cy="95" r="6"/><circle cx="171" cy="95" r="6"/>
+                  <circle cx="19" cy="171" r="6"/><circle cx="95" cy="171" r="6"/><circle cx="171" cy="171" r="6"/>
+                </g>
+                <text x="95" y="232" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">nhiều điểm ở giữa không được nhìn trực tiếp</text>
+              </g>
+              <g transform="translate(384,92)">
+                <rect x="0" y="0" width="160" height="112" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="80" y="34" text-anchor="middle" font-size="17" font-weight="700" fill="#0d47a1" font-family="Arial">Cách giảm rủi ro</text>
+                <text x="80" y="66" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">dùng nhiều rate</text>
+                <text x="80" y="92" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">trộn qua ASPP</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề</strong>
+                <p style="margin:0.35em 0 0;">Rate lớn làm mẫu lấy từ các vị trí cách xa nhau; chi tiết nằm giữa có thể bị bỏ sót.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Hệ quả thiết kế</strong>
+                <p style="margin:0.35em 0 0;">Không nên chỉ chọn một rate lớn; cần nhiều vùng nhìn khác nhau để bù cho nhau.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">ASPP xuất hiện vì một rate duy nhất không đủ ổn định cho mọi kích thước vật và mọi kiểu biên.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>ASPP: nhìn cùng một vị trí ở nhiều tỉ lệ</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Vật thể nhiều tỉ lệ trong ảnh phân vùng">
+              <rect x="64" y="48" width="230" height="230" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="124" cy="118" r="20" fill="#ef6c00"/>
+              <circle cx="206" cy="166" r="54" fill="#1565c0" opacity="0.78"/>
+              <rect x="92" y="210" width="46" height="30" rx="6" fill="#2e7d32"/>
+              <text x="179" y="314" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">vật nhỏ, vừa, lớn trong cùng ảnh</text>
+              <g transform="translate(380,68)">
+                <rect x="0" y="0" width="150" height="54" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="75" y="35" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">rate nhỏ</text>
+                <rect x="0" y="78" width="150" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="75" y="113" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">rate vừa</text>
+                <rect x="0" y="156" width="150" height="54" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="75" y="191" text-anchor="middle" font-size="17" fill="#6a1b9a" font-family="Arial">rate lớn</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Rate nhỏ</strong>
+                <p style="margin:0.35em 0 0;">Giữ chi tiết cục bộ tốt, phù hợp vật nhỏ và biên gần.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Rate lớn</strong>
+                <p style="margin:0.35em 0 0;">Nhìn ngữ cảnh rộng, hữu ích cho vật lớn hoặc vùng nền rộng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">ASPP cho mô hình nhiều cách nhìn cùng một bản đồ đặc trưng, thay vì ép mọi lớp dùng một kích thước ngữ cảnh.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Cấu trúc ASPP trong DeepLab</h2>
+          <div class="seg-imgbox" style="padding:4px;">
+            <svg width="100%" viewBox="0 0 1040 340" role="img" aria-label="Cấu trúc ASPP">
+              <defs>
+                <marker id="dl-aspp-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="34" y="94" width="118" height="118" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="93" y="244" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">đặc trưng vào</text>
+              <path d="M160 153 L222 153" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <g transform="translate(238,38)">
+                <rect x="0" y="0" width="150" height="42" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="75" y="28" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">1x1</text>
+                <rect x="0" y="62" width="150" height="42" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="75" y="90" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">3x3, rate 6</text>
+                <rect x="0" y="124" width="150" height="42" rx="8" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+                <text x="75" y="152" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">3x3, rate 12</text>
+                <rect x="0" y="186" width="150" height="42" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="75" y="214" text-anchor="middle" font-size="15" fill="#6a1b9a" font-family="Arial">3x3, rate 18</text>
+                <rect x="0" y="248" width="150" height="42" rx="8" fill="#e0f2f1" stroke="#00796b" stroke-width="3"/>
+                <text x="75" y="276" text-anchor="middle" font-size="15" fill="#00695c" font-family="Arial">gộp toàn ảnh</text>
+              </g>
+              <path d="M398 59 C470 59 470 153 542 153" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <path d="M398 121 C468 121 470 153 542 153" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <path d="M398 183 C468 183 470 153 542 153" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <path d="M398 245 C470 245 470 153 542 153" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <path d="M398 307 C470 307 470 153 542 153" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <rect x="558" y="70" width="120" height="166" rx="8" fill="#f7f7f7" stroke="#78909c" stroke-width="3"/>
+              <text x="618" y="146" text-anchor="middle" font-size="17" font-weight="700" fill="#455a64" font-family="Arial">ghép kênh</text>
+              <text x="618" y="174" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">concat</text>
+              <path d="M690 153 L760 153" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+              <rect x="776" y="104" width="130" height="98" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="841" y="144" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">1x1</text>
+              <text x="841" y="172" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">trộn nhánh</text>
+              <path d="M918 153 L988 153" stroke="#555" stroke-width="3" marker-end="url(#dl-aspp-arrow)"/>
+            </svg>
+          </div>
+          <p class="caption">ASPP chạy nhiều nhánh song song trên cùng bản đồ đặc trưng, rồi ghép và học cách trộn các tỉ lệ ngữ cảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nhánh gộp toàn ảnh đưa ngữ cảnh toàn cục vào ASPP</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Nhánh gộp toàn ảnh trong ASPP">
+              <defs>
+                <marker id="dl-imagepool-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="56" y="64" width="158" height="158" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <path d="M56 152 C88 124 118 140 146 104 C176 68 196 82 214 64 L214 222 L56 222 Z" fill="#c8e6c9"/>
+              <circle cx="132" cy="138" r="28" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+              <text x="135" y="266" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">bản đồ đặc trưng</text>
+              <path d="M234 144 L330 144" stroke="#555" stroke-width="3" marker-end="url(#dl-imagepool-arrow)"/>
+              <rect x="350" y="116" width="74" height="58" rx="8" fill="#e0f2f1" stroke="#00796b" stroke-width="3"/>
+              <text x="387" y="151" text-anchor="middle" font-size="16" fill="#00695c" font-family="Arial">1x1xC</text>
+              <path d="M444 144 L536 144" stroke="#555" stroke-width="3" marker-end="url(#dl-imagepool-arrow)"/>
+              <rect x="548" y="64" width="34" height="158" rx="6" fill="#e0f2f1" stroke="#00796b" stroke-width="3"/>
+              <text x="565" y="266" text-anchor="middle" font-size="17" fill="#00695c" font-family="Arial">phóng lại</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e0f2f1; border-left-color:#00796b;">
+                <strong style="color:#00695c;">Vì sao cần?</strong>
+                <p style="margin:0.35em 0 0;">Một điểm ảnh có thể cần biết toàn cảnh: ảnh đang là đường phố, nội soi hay vệ tinh.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Cách làm</strong>
+                <p style="margin:0.35em 0 0;">Gộp toàn bản đồ thành véc-tơ ngữ cảnh, biến đổi kênh, rồi phóng lại để ghép với các nhánh khác.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Nhánh gộp toàn ảnh giúp ASPP có cả ngữ cảnh cục bộ, ngữ cảnh vùng rộng và ngữ cảnh toàn cục.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đầu ra ASPP vẫn cần phục hồi biên</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Đầu ra ASPP vẫn thô ở biên">
+              <rect x="72" y="58" width="202" height="202" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M72 158 C112 120 158 136 188 96 C226 54 252 74 274 58 L274 260 L72 260 Z" fill="#c8e6c9"/>
+              <circle cx="150" cy="144" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+              <path d="M112 112 L188 112 L188 188 L112 188 Z" fill="none" stroke="#c62828" stroke-width="5" stroke-dasharray="10 7"/>
+              <text x="173" y="304" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">ngữ nghĩa đúng nhưng biên còn thô</text>
+              <g transform="translate(380,92)">
+                <rect x="0" y="0" width="160" height="112" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="80" y="38" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">ASPP</text>
+                <text x="80" y="70" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">mạnh về ngữ cảnh</text>
+                <text x="80" y="94" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">chưa đủ sắc biên</text>
+              </g>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">ASPP giải quyết</strong>
+                <p style="margin:0.35em 0 0;">Điểm ảnh cần bao nhiêu ngữ cảnh để phân loại đúng.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">ASPP chưa giải quyết hết</strong>
+                <p style="margin:0.35em 0 0;">Biên nhỏ và chi tiết cục bộ vẫn cần đặc trưng nông hoặc hậu xử lý.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DeepLabv3+ thêm bộ giải mã nhẹ để đưa chi tiết tầng nông quay lại, nhưng không dùng đường chữ U nặng như U-Net.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>DeepLabv3+: bộ giải mã nhẹ cho biên</h2>
+          <div class="seg-imgbox" style="padding:4px;">
+            <svg width="100%" viewBox="0 0 1040 340" role="img" aria-label="Bộ giải mã DeepLabv3+">
+              <defs>
+                <marker id="dl-v3p-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(42,58)">
+                <rect x="0" y="0" width="120" height="120" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="60" y="154" text-anchor="middle" font-size="15" fill="#263238" font-family="Arial">đặc trưng sâu</text>
+                <text x="60" y="176" text-anchor="middle" font-size="13" fill="#607d8b" font-family="Arial">qua ASPP</text>
+              </g>
+              <path d="M176 118 L260 118" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+              <rect x="276" y="76" width="112" height="84" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="332" y="110" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">phóng to</text>
+              <text x="332" y="134" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">4 lần</text>
+
+              <g transform="translate(42,224)">
+                <rect x="0" y="0" width="180" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="90" y="36" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">đặc trưng nông</text>
+              </g>
+              <path d="M232 253 L316 253" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+              <rect x="332" y="224" width="112" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="388" y="259" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">1x1 giảm kênh</text>
+
+              <path d="M402 118 C490 118 490 182 560 182" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+              <path d="M458 253 C512 253 512 190 560 190" fill="none" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+              <rect x="576" y="122" width="128" height="118" rx="8" fill="#f7f7f7" stroke="#78909c" stroke-width="3"/>
+              <text x="640" y="174" text-anchor="middle" font-size="17" font-weight="700" fill="#455a64" font-family="Arial">ghép kênh</text>
+              <text x="640" y="202" text-anchor="middle" font-size="14" fill="#607d8b" font-family="Arial">sâu + nông</text>
+              <path d="M716 182 L790 182" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+              <rect x="806" y="128" width="128" height="108" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="870" y="168" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">3x3 + 3x3</text>
+              <text x="870" y="194" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">lọc biên</text>
+              <path d="M946 182 L1000 182" stroke="#555" stroke-width="3" marker-end="url(#dl-v3p-arrow)"/>
+            </svg>
+          </div>
+          <p class="caption">DeepLabv3+ chỉ đưa một tầng nông quan trọng quay lại, giảm kênh trước khi ghép để bộ giải mã nhẹ và tập trung vào biên.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tích chập tách chiều sâu giảm chi phí cho DeepLabv3+</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Tích chập tách chiều sâu">
+              <defs>
+                <marker id="dl-sep-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="48" y="86" width="110" height="130" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <text x="103" y="258" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">đặc trưng</text>
+              <path d="M172 152 L246 152" stroke="#555" stroke-width="3" marker-end="url(#dl-sep-arrow)"/>
+              <rect x="262" y="92" width="104" height="56" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="314" y="126" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">lọc từng kênh</text>
+              <rect x="262" y="170" width="104" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="314" y="204" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">trộn kênh 1x1</text>
+              <path d="M380 152 L468 152" stroke="#555" stroke-width="3" marker-end="url(#dl-sep-arrow)"/>
+              <rect x="484" y="86" width="74" height="130" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+              <text x="521" y="258" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">đầu ra</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Tách hai việc</strong>
+                <p style="margin:0.35em 0 0;">Một bước lọc không gian trong từng kênh, rồi một bước 1x1 để trộn thông tin giữa kênh.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Lợi ích</strong>
+                <p style="margin:0.35em 0 0;">Giảm số phép tính, nên có thể dùng bản đồ đặc trưng dày hơn hoặc rate lớn hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">DeepLabv3+ dùng tích chập tách chiều sâu để giữ thiết kế đủ nhẹ khi phân vùng ở độ phân giải cao.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>CRF: hậu xử lý dùng cạnh ảnh để sửa biên</h2>
+          <div class="seg-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="CRF làm sắc biên mặt nạ">
+              <defs>
+                <marker id="dl-crf-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="52" y="64" width="160" height="160" rx="10" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+              <path d="M96 100 C144 86 184 126 170 174 C154 226 78 204 82 148 C84 124 88 108 96 100 Z" fill="#ef9a9a"/>
+              <text x="132" y="266" text-anchor="middle" font-size="16" fill="#b71c1c" font-family="Arial">mặt nạ mềm / lệch biên</text>
+              <path d="M236 144 L344 144" stroke="#555" stroke-width="3" marker-end="url(#dl-crf-arrow)"/>
+              <rect x="366" y="64" width="160" height="160" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <path d="M410 100 C452 96 486 130 478 172 C466 216 398 206 394 148 C392 124 398 106 410 100 Z" fill="#a5d6a7" stroke="#1b5e20" stroke-width="4"/>
+              <path d="M392 148 C410 130 452 126 480 144" fill="none" stroke="#263238" stroke-width="3"/>
+              <text x="446" y="266" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">biên bám cạnh ảnh hơn</text>
+            </svg>
+            <div>
+              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Tư duy</strong>
+                <p style="margin:0.35em 0 0;">Hai điểm ảnh gần nhau và màu giống nhau nên có xu hướng cùng nhãn.</p>
+              </div>
+              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Vai trò lịch sử</strong>
+                <p style="margin:0.35em 0 0;">DeepLab đời đầu dùng CRF để làm sắc biên sau khi mạng đã dự đoán điểm lớp.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">CRF không thay mạng phân vùng; nó dùng tín hiệu cạnh và màu của ảnh gốc để chỉnh mặt nạ ở bước hậu xử lý.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Huấn luyện và suy luận trong DeepLab</h2>
+          <div class="seg-grid-2">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Khi huấn luyện</strong>
+              <ul>
+                <li>Tạo điểm lớp ở bản đồ đặc trưng dày hơn FCN-32s.</li>
+                <li>Phóng về kích thước nhãn để tính entropy chéo theo điểm ảnh.</li>
+                <li>Cập nhật mạng nền, tích chập rỗng, ASPP và bộ giải mã nếu có.</li>
+              </ul>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Khi suy luận</strong>
+              <ul>
+                <li>Chạy ảnh qua mạng một lần để lấy bản đồ điểm lớp.</li>
+                <li>Phóng to điểm lớp về kích thước ảnh.</li>
+                <li>Có thể dùng CRF hoặc không, tùy yêu cầu biên và tốc độ.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">DeepLab vẫn là mô hình phân vùng ngữ nghĩa đầu cuối; CRF chỉ là lựa chọn hậu xử lý trong một số phiên bản.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh DeepLab với FCN và U-Net</h2>
+          <div class="seg-grid-3">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">FCN</strong>
+              <p style="margin:0.35em 0 0;">Biến CNN phân loại thành dự đoán dày đặc, nhưng phóng từ tầng sâu còn thô.</p>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">U-Net</strong>
+              <p style="margin:0.35em 0 0;">Dựng lại độ phân giải bằng đường lên nhiều mức và liên kết tắt giàu chi tiết.</p>
+            </div>
+            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">DeepLab</strong>
+              <p style="margin:0.35em 0 0;">Giữ bản đồ đặc trưng dày hơn, dùng tích chập rỗng và ASPP để nhìn rộng đa tỉ lệ.</p>
+            </div>
+          </div>
+          <div class="seg-card" style="margin-top:0.75em; background:#f3e5f5; border-left-color:#7b1fa2;">
+            <strong style="color:#7b1fa2;">Bước chuyển tư duy:</strong>
+            từ “mất chi tiết rồi khôi phục” sang “đừng làm mất quá nhiều chi tiết, nhưng vẫn phải nhìn đủ rộng”.
+          </div>
+          <p class="caption">DeepLab mạnh vì xử lý đồng thời hai nhu cầu tưởng như mâu thuẫn: bản đồ dày để giữ biên và ngữ cảnh rộng để hiểu lớp.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Khi dùng DeepLab cần chỉnh ba núm</h2>
+          <div class="seg-grid-3">
+            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bước nhảy đầu ra</strong>
+              <p style="margin:0.35em 0 0;">OS=8 giữ chi tiết hơn nhưng tốn bộ nhớ; OS=16 thường cân bằng hơn.</p>
+            </div>
+            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Các rate trong ASPP</strong>
+              <p style="margin:0.35em 0 0;">Rate phải phù hợp kích thước vật và độ phân giải bản đồ đặc trưng.</p>
+            </div>
+            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Bộ giải mã / CRF</strong>
+              <p style="margin:0.35em 0 0;">Dùng khi sản phẩm cần biên sắc; bỏ bớt khi ưu tiên tốc độ.</p>
+            </div>
+          </div>
+          <p class="caption">DeepLab không phải một lớp duy nhất, mà là một bộ quyết định về độ phân giải, ngữ cảnh và hậu xử lý biên.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> DeepLab giữ bản đồ đặc trưng dày bằng cách giảm bớt stride, dùng tích chập rỗng để bù trường tiếp nhận, và dùng ASPP để gom ngữ cảnh đa tỉ lệ.
+          </div>
+          <div style="margin-top:0.6em; background:#ffebee; padding:10px; border-radius:8px; border-left:5px solid #c62828;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải được:</strong> nếu muốn ngữ cảnh toàn cục thật mạnh hơn CNN, có thể dùng cơ chế tự chú ý thay cho một phần mạng nền không?
+          </div>
+          <div style="margin-top:0.6em; background:#e3f2fd; padding:10px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo trả lời:</strong> U-Net + ViT đưa bộ mã hóa dựa trên tự chú ý vào phân vùng, rồi dùng bộ giải mã để phục hồi độ phân giải.
+          </div>
         </section>
       </section>
 

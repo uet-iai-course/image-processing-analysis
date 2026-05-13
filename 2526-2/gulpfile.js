@@ -24,6 +24,25 @@ const root = yargs.argv.root || '.'
 const port = yargs.argv.port || 8000
 const host = yargs.argv.host || 'localhost'
 
+const hasRevealSource = [
+    './js/index.js',
+    './css/reveal.scss',
+    './css/theme/source'
+].every( path => fs.existsSync( path ) );
+
+const bundledBuildFiles = [
+    './revealjs/dist/reveal.js',
+    './revealjs/dist/reveal.css',
+    './revealjs/dist/reset.css',
+    './revealjs/dist/theme/white.css',
+    './plugin/highlight/plugin.js',
+    './plugin/markdown/plugin.js',
+    './plugin/notes/plugin.js',
+    './plugin/math/plugin.js',
+    './lecture-style.css',
+    './index.html'
+];
+
 const cssLicense = `
 reveal.js ${pkg.version}
 ${pkg.homepage}
@@ -271,9 +290,23 @@ gulp.task('eslint', () => gulp.src(['./js/**', 'gulpfile.js'])
 
 gulp.task('test', gulp.series( 'eslint', 'qunit' ))
 
-gulp.task('default', gulp.series(gulp.parallel('js', 'css', 'plugins'), 'test'))
+gulp.task('build-bundled', async () => {
 
-gulp.task('build', gulp.parallel('js', 'css', 'plugins'))
+    const missingFiles = bundledBuildFiles.filter( path => !fs.existsSync( path ) );
+
+    if( missingFiles.length > 0 ) {
+        throw new Error(`Missing bundled presentation assets:\n${missingFiles.join('\n')}`);
+    }
+
+    console.log('Using bundled Reveal assets from revealjs/dist; source build is not available in this deck-only layout.');
+
+})
+
+const buildTask = hasRevealSource ? gulp.parallel('js', 'css', 'plugins') : gulp.series('build-bundled')
+
+gulp.task('default', gulp.series(buildTask, 'test'))
+
+gulp.task('build', buildTask)
 
 gulp.task('package', gulp.series(async () => {
 
