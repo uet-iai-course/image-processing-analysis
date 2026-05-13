@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="560" viewBox="0 0 1150 560" role="img" aria-label="Kiến trúc DETR">
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <style>
+      .h{font:700 28px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .t{font:700 19px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .s{font:15px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .box{stroke-width:2;rx:10}
+      .line{stroke:#555;stroke-width:2;marker-end:url(#ar)}
+    </style>
+  </defs>
+  <rect width="1150" height="560" fill="#fafafa"/>
+  <text class="h" x="575" y="42">DETR: phát hiện đối tượng như dự đoán một tập</text>
+  <rect class="box" x="45" y="175" width="130" height="110" fill="#e3f2fd" stroke="#1565c0"/>
+  <text class="t" x="110" y="220">Ảnh</text>
+  <text class="s" x="110" y="246">H×W×3</text>
+  <line class="line" x1="175" y1="230" x2="230" y2="230"/>
+
+  <rect class="box" x="240" y="155" width="160" height="150" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text class="t" x="320" y="205">CNN backbone</text>
+  <text class="s" x="320" y="232">feature map</text>
+  <text class="s" x="320" y="255">+ positional encoding</text>
+  <line class="line" x1="400" y1="230" x2="460" y2="230"/>
+
+  <rect class="box" x="470" y="120" width="180" height="220" fill="#fff3e0" stroke="#ef6c00"/>
+  <text class="t" x="560" y="176">Transformer</text>
+  <text class="t" x="560" y="202">encoder</text>
+  <text class="s" x="560" y="232">self-attention</text>
+  <text class="s" x="560" y="255">toàn cục trên ảnh</text>
+  <line class="line" x1="650" y1="230" x2="715" y2="230"/>
+
+  <rect class="box" x="725" y="120" width="180" height="220" fill="#f3e5f5" stroke="#7b1fa2"/>
+  <text class="t" x="815" y="176">Transformer</text>
+  <text class="t" x="815" y="202">decoder</text>
+  <text class="s" x="815" y="232">N object queries</text>
+  <text class="s" x="815" y="255">học vai trò phát hiện</text>
+  <g transform="translate(740,294)">
+    <rect x="0" y="0" width="28" height="28" rx="5" fill="#ede7f6" stroke="#7b1fa2"/>
+    <rect x="38" y="0" width="28" height="28" rx="5" fill="#ede7f6" stroke="#7b1fa2"/>
+    <rect x="76" y="0" width="28" height="28" rx="5" fill="#ede7f6" stroke="#7b1fa2"/>
+    <rect x="114" y="0" width="28" height="28" rx="5" fill="#ede7f6" stroke="#7b1fa2"/>
+    <rect x="152" y="0" width="28" height="28" rx="5" fill="#ede7f6" stroke="#7b1fa2"/>
+  </g>
+  <line class="line" x1="905" y1="230" x2="960" y2="230"/>
+
+  <rect class="box" x="970" y="155" width="140" height="150" fill="#ffebee" stroke="#c62828"/>
+  <text class="t" x="1040" y="203">Heads</text>
+  <text class="s" x="1040" y="230">class / no-object</text>
+  <text class="s" x="1040" y="253">box normalized</text>
+
+  <rect x="300" y="390" width="550" height="74" rx="10" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="s" x="575" y="418">Hungarian matching ghép từng prediction với từng ground truth</text>
+  <text class="s" x="575" y="443">Loss = phân loại + L1 box + GIoU, không cần hộp neo và NMS</text>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="So sánh R-CNN, Fast R-CNN và Faster R-CNN">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <style>
+      .title{font:700 28px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .head{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .txt{font:17px Arial,sans-serif;fill:#37474f;text-anchor:middle}
+      .small{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .panel{fill:#fff;stroke:#cfd8dc;stroke-width:2;rx:12}
+      .stage{stroke-width:2;rx:9}
+      .line{stroke:#555;stroke-width:2;marker-end:url(#arr)}
+    </style>
+  </defs>
+  <rect width="1200" height="560" fill="#fafafa"/>
+  <text class="title" x="600" y="42">Gia đình R-CNN: cùng ý tưởng vùng ứng viên, khác chỗ chia sẻ tính toán</text>
+
+  <g transform="translate(35,86)">
+    <rect class="panel" x="0" y="0" width="350" height="400"/>
+    <text class="head" x="175" y="38">R-CNN</text>
+    <rect class="stage" x="25" y="80" width="95" height="70" fill="#e3f2fd" stroke="#1565c0"/>
+    <text class="txt" x="72" y="108">Ảnh</text><text class="small" x="72" y="130">gốc</text>
+    <line class="line" x1="120" y1="115" x2="146" y2="115"/>
+    <rect class="stage" x="150" y="80" width="110" height="70" fill="#fff3e0" stroke="#ef6c00"/>
+    <text class="txt" x="205" y="106">Selective</text><text class="small" x="205" y="128">Search</text>
+    <line class="line" x1="205" y1="150" x2="205" y2="178"/>
+    <rect class="stage" x="115" y="182" width="180" height="70" fill="#ffebee" stroke="#c62828"/>
+    <text class="txt" x="205" y="210">CNN chạy</text><text class="small" x="205" y="232">cho từng crop</text>
+    <line class="line" x1="205" y1="252" x2="205" y2="278"/>
+    <rect class="stage" x="92" y="282" width="226" height="70" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text class="txt" x="205" y="310">SVM + bbox reg</text><text class="small" x="205" y="332">huấn luyện nhiều bước</text>
+  </g>
+
+  <g transform="translate(425,86)">
+    <rect class="panel" x="0" y="0" width="350" height="400"/>
+    <text class="head" x="175" y="38">Fast R-CNN</text>
+    <rect class="stage" x="25" y="80" width="95" height="70" fill="#e3f2fd" stroke="#1565c0"/>
+    <text class="txt" x="72" y="108">Ảnh</text><text class="small" x="72" y="130">gốc</text>
+    <line class="line" x1="120" y1="115" x2="146" y2="115"/>
+    <rect class="stage" x="150" y="80" width="120" height="70" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text class="txt" x="210" y="106">CNN</text><text class="small" x="210" y="128">một lần</text>
+    <line class="line" x1="210" y1="150" x2="210" y2="178"/>
+    <rect class="stage" x="112" y="182" width="196" height="70" fill="#fff3e0" stroke="#ef6c00"/>
+    <text class="txt" x="210" y="210">RoI Pooling</text><text class="small" x="210" y="232">trên feature map</text>
+    <line class="line" x1="210" y1="252" x2="210" y2="278"/>
+    <rect class="stage" x="92" y="282" width="236" height="70" fill="#f3e5f5" stroke="#7b1fa2"/>
+    <text class="txt" x="210" y="310">Softmax + bbox reg</text><text class="small" x="210" y="332">multi-task loss</text>
+    <text class="small" x="175" y="374">Vẫn cần Selective Search bên ngoài</text>
+  </g>
+
+  <g transform="translate(815,86)">
+    <rect class="panel" x="0" y="0" width="350" height="400"/>
+    <text class="head" x="175" y="38">Faster R-CNN</text>
+    <rect class="stage" x="25" y="80" width="95" height="70" fill="#e3f2fd" stroke="#1565c0"/>
+    <text class="txt" x="72" y="108">Ảnh</text><text class="small" x="72" y="130">gốc</text>
+    <line class="line" x1="120" y1="115" x2="146" y2="115"/>
+    <rect class="stage" x="150" y="80" width="120" height="70" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text class="txt" x="210" y="106">Backbone</text><text class="small" x="210" y="128">chia sẻ</text>
+    <line class="line" x1="210" y1="150" x2="210" y2="178"/>
+    <rect class="stage" x="70" y="182" width="120" height="70" fill="#fff3e0" stroke="#ef6c00"/>
+    <text class="txt" x="130" y="210">RPN</text><text class="small" x="130" y="232">proposal</text>
+    <rect class="stage" x="220" y="182" width="100" height="70" fill="#e1f5fe" stroke="#0288d1"/>
+    <text class="txt" x="270" y="210">RoI</text><text class="small" x="270" y="232">Align/Pool</text>
+    <line class="line" x1="190" y1="217" x2="216" y2="217"/>
+    <line class="line" x1="270" y1="252" x2="270" y2="278"/>
+    <rect class="stage" x="170" y="282" width="160" height="70" fill="#f3e5f5" stroke="#7b1fa2"/>
+    <text class="txt" x="250" y="310">Head</text><text class="small" x="250" y="332">class + box</text>
+    <text class="small" x="175" y="374">Proposal cũng do mạng học</text>
+  </g>
+</svg>

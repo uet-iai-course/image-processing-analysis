@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Đánh đổi tốc độ và độ chính xác trong object detection">
+  <rect width="900" height="520" fill="#fafafa"/>
+  <style>
+    .h{font:700 27px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    .axis{stroke:#455a64;stroke-width:2}
+    .lab{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+    .pt{font:700 17px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    .note{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+  </style>
+  <text class="h" x="450" y="42">Không có detector “tốt nhất” cho mọi bài toán</text>
+  <g transform="translate(95,80)">
+    <line class="axis" x1="0" y1="350" x2="700" y2="350"/>
+    <line class="axis" x1="0" y1="350" x2="0" y2="30"/>
+    <text class="lab" x="350" y="405">tốc độ / độ trễ tốt hơn</text>
+    <text class="lab" x="-45" y="180" transform="rotate(-90 -45 180)">độ chính xác tốt hơn</text>
+    <circle cx="185" cy="105" r="46" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="pt" x="185" y="101">Faster</text><text class="pt" x="185" y="123">R-CNN</text>
+    <circle cx="450" cy="180" r="44" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="pt" x="450" y="177">RetinaNet</text>
+    <circle cx="580" cy="235" r="42" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="pt" x="580" y="232">YOLO</text><text class="pt" x="580" y="252">/ SSD</text>
+    <circle cx="320" cy="142" r="42" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <text class="pt" x="320" y="139">DETR</text>
+    <path d="M145 298 C280 235 420 175 650 96" fill="none" stroke="#90a4ae" stroke-width="3" stroke-dasharray="8 8"/>
+    <text class="note" x="350" y="455">Vị trí chỉ là trực giác: backbone, kích thước ảnh, dữ liệu và phần cứng có thể đổi kết luận.</text>
+  </g>
+</svg>

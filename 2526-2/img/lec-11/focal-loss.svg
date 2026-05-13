@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-label="So sánh cross entropy và focal loss">
+  <rect width="1000" height="520" fill="#fafafa"/>
+  <style>
+    .h{font:700 28px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    .axis{stroke:#455a64;stroke-width:2}
+    .grid{stroke:#cfd8dc;stroke-width:1}
+    .lab{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+    .legend{font:18px Arial,sans-serif;fill:#263238}
+  </style>
+  <text class="h" x="500" y="42">Focal Loss giảm trọng số của mẫu dễ</text>
+  <g transform="translate(95,70)">
+    <line class="axis" x1="0" y1="370" x2="820" y2="370"/>
+    <line class="axis" x1="0" y1="370" x2="0" y2="30"/>
+    <text class="lab" x="410" y="420">p_t: xác suất mô hình gán cho lớp đúng</text>
+    <text class="lab" x="-45" y="200" transform="rotate(-90 -45 200)">loss</text>
+    <line class="grid" x1="164" y1="30" x2="164" y2="370"/>
+    <line class="grid" x1="328" y1="30" x2="328" y2="370"/>
+    <line class="grid" x1="492" y1="30" x2="492" y2="370"/>
+    <line class="grid" x1="656" y1="30" x2="656" y2="370"/>
+    <text class="lab" x="0" y="394">0</text><text class="lab" x="164" y="394">0.2</text><text class="lab" x="328" y="394">0.4</text><text class="lab" x="492" y="394">0.6</text><text class="lab" x="656" y="394">0.8</text><text class="lab" x="820" y="394">1.0</text>
+    <path d="M25 55 C85 105 150 150 220 190 C315 245 440 295 580 333 C680 360 765 368 812 370" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <path d="M25 65 C100 132 180 200 270 256 C370 318 505 354 660 367 C735 371 785 370 812 370" fill="none" stroke="#ef6c00" stroke-width="5"/>
+    <rect x="565" y="58" width="230" height="72" rx="8" fill="#fff" stroke="#cfd8dc"/>
+    <line x1="584" y1="84" x2="636" y2="84" stroke="#1565c0" stroke-width="5"/>
+    <text class="legend" x="650" y="91">Cross entropy</text>
+    <line x1="584" y1="112" x2="636" y2="112" stroke="#ef6c00" stroke-width="5"/>
+    <text class="legend" x="650" y="119">Focal Loss</text>
+    <rect x="610" y="250" width="170" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00"/>
+    <text class="lab" x="695" y="273">p_t cao</text>
+    <text class="lab" x="695" y="294">loss gần 0 hơn</text>
+  </g>
+</svg>

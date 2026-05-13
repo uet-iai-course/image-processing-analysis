@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="540" viewBox="0 0 1100 540" role="img" aria-label="Cấu trúc Faster R-CNN và RPN">
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <style>
+      .h{font:700 28px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .t{font:700 19px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .s{font:15px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .box{stroke-width:2;rx:10}
+      .line{stroke:#555;stroke-width:2;marker-end:url(#a)}
+      .thin{stroke:#78909c;stroke-width:1.5;fill:none}
+    </style>
+  </defs>
+  <rect width="1100" height="540" fill="#fafafa"/>
+  <text class="h" x="550" y="42">Faster R-CNN: RPN đề xuất vùng, head quyết định lớp cuối</text>
+  <rect class="box" x="40" y="128" width="150" height="120" fill="#e3f2fd" stroke="#1565c0"/>
+  <text class="t" x="115" y="178">Ảnh</text>
+  <text class="s" x="115" y="202">H×W×3</text>
+  <line class="line" x1="190" y1="188" x2="240" y2="188"/>
+
+  <rect class="box" x="250" y="112" width="170" height="150" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text class="t" x="335" y="162">Backbone CNN</text>
+  <text class="s" x="335" y="188">VGG / ResNet</text>
+  <text class="s" x="335" y="212">feature map</text>
+  <line class="line" x1="420" y1="188" x2="475" y2="188"/>
+
+  <rect class="box" x="485" y="72" width="210" height="150" fill="#fff3e0" stroke="#ef6c00"/>
+  <text class="t" x="590" y="112">Region Proposal Network</text>
+  <text class="s" x="590" y="140">trượt 3×3 trên feature map</text>
+  <text class="s" x="590" y="164">mỗi vị trí có k hộp neo</text>
+  <text class="s" x="590" y="188">objectness + bbox offset</text>
+  <line class="line" x1="695" y1="147" x2="760" y2="147"/>
+
+  <rect class="box" x="770" y="82" width="135" height="130" fill="#ffebee" stroke="#c62828"/>
+  <text class="t" x="837" y="128">NMS</text>
+  <text class="s" x="837" y="154">lọc proposal</text>
+  <text class="s" x="837" y="178">~300 RoI</text>
+  <line class="line" x1="837" y1="212" x2="837" y2="280"/>
+
+  <rect class="box" x="595" y="300" width="180" height="125" fill="#e1f5fe" stroke="#0288d1"/>
+  <text class="t" x="685" y="346">RoI Pool/Align</text>
+  <text class="s" x="685" y="372">cắt feature theo RoI</text>
+  <text class="s" x="685" y="396">chuẩn hóa kích thước</text>
+  <path class="thin" d="M420 224 C480 300 530 348 590 362"/>
+  <line class="line" x1="775" y1="362" x2="835" y2="362"/>
+
+  <rect class="box" x="845" y="300" width="200" height="125" fill="#f3e5f5" stroke="#7b1fa2"/>
+  <text class="t" x="945" y="342">Detection head</text>
+  <text class="s" x="945" y="370">softmax: C+1 lớp</text>
+  <text class="s" x="945" y="394">bbox reg theo lớp</text>
+
+  <rect x="485" y="452" width="560" height="54" rx="10" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="s" x="765" y="475">Loss tổng = loss RPN + loss detection</text>
+  <text class="s" x="765" y="496">mỗi phần có phân loại và hồi quy hộp</text>
+</svg>

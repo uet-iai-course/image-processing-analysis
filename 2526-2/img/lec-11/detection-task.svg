@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-label="So sánh phân loại ảnh, định vị, phát hiện đối tượng và phân vùng">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#555"/>
+    </marker>
+    <style>
+      .title{font:700 28px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .box{fill:#fff;stroke:#cfd8dc;stroke-width:2;rx:14}
+      .cat{fill:#ffe0b2;stroke:#ef6c00;stroke-width:5}
+      .dog{fill:#bbdefb;stroke:#1565c0;stroke-width:5}
+      .tree{fill:#c8e6c9;stroke:#2e7d32;stroke-width:5}
+      .bbox-cat{fill:none;stroke:#ef6c00;stroke-width:5}
+      .bbox-dog{fill:none;stroke:#1565c0;stroke-width:5}
+    </style>
+  </defs>
+  <rect width="1100" height="520" fill="#fafafa"/>
+  <text class="title" x="550" y="45">Bốn mức hiểu ảnh khác nhau</text>
+
+  <g transform="translate(35,80)">
+    <rect class="box" x="0" y="0" width="240" height="360"/>
+    <text class="label" x="120" y="38">Phân loại ảnh</text>
+    <rect x="42" y="70" width="156" height="170" rx="14" fill="#eceff1"/>
+    <circle class="cat" cx="88" cy="145" r="36"/>
+    <ellipse class="dog" cx="150" cy="160" rx="38" ry="46"/>
+    <rect class="tree" x="82" y="206" width="82" height="24" rx="10"/>
+    <path d="M80 250 L160 250" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="55" y="278" width="130" height="44" rx="8" fill="#e3f2fd" stroke="#1565c0"/>
+    <text class="small" x="120" y="306">có mèo</text>
+    <text class="tiny" x="120" y="342">1 nhãn cho cả ảnh</text>
+  </g>
+
+  <g transform="translate(300,80)">
+    <rect class="box" x="0" y="0" width="240" height="360"/>
+    <text class="label" x="120" y="38">Định vị</text>
+    <rect x="42" y="70" width="156" height="170" rx="14" fill="#eceff1"/>
+    <circle class="cat" cx="118" cy="150" r="46"/>
+    <rect class="bbox-cat" x="69" y="101" width="98" height="98" rx="4"/>
+    <path d="M80 250 L160 250" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="38" y="278" width="164" height="44" rx="8" fill="#fff3e0" stroke="#ef6c00"/>
+    <text class="small" x="120" y="306">mèo + 1 box</text>
+    <text class="tiny" x="120" y="342">thường một đối tượng chính</text>
+  </g>
+
+  <g transform="translate(565,80)">
+    <rect class="box" x="0" y="0" width="240" height="360"/>
+    <text class="label" x="120" y="38">Phát hiện</text>
+    <rect x="42" y="70" width="156" height="170" rx="14" fill="#eceff1"/>
+    <circle class="cat" cx="88" cy="145" r="36"/>
+    <ellipse class="dog" cx="150" cy="160" rx="38" ry="46"/>
+    <rect class="bbox-cat" x="50" y="106" width="76" height="76" rx="4"/>
+    <rect class="bbox-dog" x="111" y="109" width="78" height="100" rx="4"/>
+    <path d="M80 250 L160 250" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="26" y="278" width="188" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text class="small" x="120" y="306">nhiều box + nhãn</text>
+    <text class="tiny" x="120" y="342">đầu ra là một tập đối tượng</text>
+  </g>
+
+  <g transform="translate(830,80)">
+    <rect class="box" x="0" y="0" width="240" height="360"/>
+    <text class="label" x="120" y="38">Phân vùng</text>
+    <rect x="42" y="70" width="156" height="170" rx="14" fill="#eceff1"/>
+    <path d="M68 130 C75 92 124 88 139 128 C157 122 186 133 183 166 C181 202 136 211 104 195 C72 205 46 186 55 153 C58 143 62 135 68 130 Z" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <path d="M122 125 C148 88 201 114 184 166 C175 195 133 200 112 177 C98 160 105 139 122 125 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <path d="M80 214 C112 198 154 201 174 220 L174 235 L80 235 Z" fill="#a5d6a7" stroke="#2e7d32" stroke-width="3"/>
+    <path d="M80 250 L160 250" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="38" y="278" width="164" height="44" rx="8" fill="#f3e5f5" stroke="#7b1fa2"/>
+    <text class="small" x="120" y="306">mặt nạ pixel</text>
+    <text class="tiny" x="120" y="342">ranh giới chi tiết hơn box</text>
+  </g>
+</svg>

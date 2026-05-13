@@ -1538,94 +1538,578 @@
           <p>YOLO · SSD · RetinaNet · Focal Loss · Tốc độ và độ chính xác</p>
         </section>
 
+        <section style="font-size:0.7em;">
+          <h2>Từ vùng đề xuất thưa sang dự đoán dày đặc</h2>
+          <div class="det-imgbox" style="padding:4px;">
+            <img src="img/lec-11/one-stage-detectors.svg" alt="YOLO SSD RetinaNet" style="max-width:100%; max-height:54vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Một giai đoạn bỏ bước đề xuất vùng tách rời: mỗi vị trí đặc trưng trực tiếp dự đoán hộp và lớp.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>YOLO: một mạng, một lần nhìn ảnh</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">toàn cảnh</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Backbone</div><div class="stage-desc">đặc trưng chung</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Lưới dự đoán</div><div class="stage-desc">mỗi ô sinh hộp</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Tensor đầu ra</div><div class="stage-desc">hộp, tin cậy, lớp</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">NMS</div><div class="stage-desc">lọc hộp cuối</div></div>
+          </div>
+          <div class="det-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 330" role="img" aria-label="Tổng quan quy trình YOLO">
+              <defs>
+                <marker id="yolo-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .yolo-label{font:700 18px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .yolo-small{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .yolo-line{stroke:#555;stroke-width:3;marker-end:url(#yolo-overview-arrow)}
+                </style>
+              </defs>
+              <rect x="28" y="54" width="170" height="170" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="94" cy="125" r="30" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="144" cy="150" rx="28" ry="46" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text class="yolo-label" x="113" y="260">Ảnh gốc</text>
+
+              <line class="yolo-line" x1="210" y1="140" x2="270" y2="140"/>
+              <g transform="translate(292,68)">
+                <rect x="0" y="0" width="54" height="140" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="70" y="18" width="46" height="104" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="130" y="40" width="38" height="62" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text class="yolo-label" x="376" y="260">CNN</text>
+              <text class="yolo-small" x="376" y="284">chạy đúng một lần</text>
+
+              <line class="yolo-line" x1="472" y1="140" x2="532" y2="140"/>
+              <rect x="548" y="54" width="170" height="170" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="582" y1="54" x2="582" y2="224"/><line x1="616" y1="54" x2="616" y2="224"/><line x1="650" y1="54" x2="650" y2="224"/><line x1="684" y1="54" x2="684" y2="224"/>
+                <line x1="548" y1="88" x2="718" y2="88"/><line x1="548" y1="122" x2="718" y2="122"/><line x1="548" y1="156" x2="718" y2="156"/><line x1="548" y1="190" x2="718" y2="190"/>
+              </g>
+              <circle cx="616" cy="122" r="7" fill="#ef6c00"/>
+              <rect x="588" y="92" width="72" height="62" fill="none" stroke="#ef6c00" stroke-width="4"/>
+              <text class="yolo-label" x="633" y="260">Lưới S x S</text>
+              <text class="yolo-small" x="633" y="284">mỗi ô dự đoán cục bộ</text>
+
+              <line class="yolo-line" x1="732" y1="140" x2="792" y2="140"/>
+              <g transform="translate(812,74)">
+                <rect x="0" y="0" width="142" height="38" rx="6" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="52" width="142" height="38" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="104" width="142" height="38" rx="6" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="71" y="25" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">box</text>
+                <text x="71" y="77" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">confidence</text>
+                <text x="71" y="129" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">class</text>
+              </g>
+              <text class="yolo-label" x="883" y="260">Tensor đầu ra</text>
+
+              <line class="yolo-line" x1="966" y1="140" x2="1018" y2="140"/>
+              <rect x="1024" y="94" width="16" height="92" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+            </svg>
+          </div>
+          <p class="caption">YOLO đổi “tìm vùng rồi phân loại” thành “dự đoán dày đặc mọi hộp trong một forward pass”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 1: chia ảnh thành lưới</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Ảnh YOLO được chia thành lưới">
+              <rect x="42" y="36" width="260" height="260" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <g stroke="#cfd8dc" stroke-width="2">
+                <line x1="94" y1="36" x2="94" y2="296"/><line x1="146" y1="36" x2="146" y2="296"/><line x1="198" y1="36" x2="198" y2="296"/><line x1="250" y1="36" x2="250" y2="296"/>
+                <line x1="42" y1="88" x2="302" y2="88"/><line x1="42" y1="140" x2="302" y2="140"/><line x1="42" y1="192" x2="302" y2="192"/><line x1="42" y1="244" x2="302" y2="244"/>
+              </g>
+              <rect x="94" y="88" width="52" height="52" fill="#fff3e0" opacity="0.85" stroke="#ef6c00" stroke-width="4"/>
+              <rect x="198" y="140" width="52" height="52" fill="#e3f2fd" opacity="0.85" stroke="#1565c0" stroke-width="4"/>
+              <circle cx="124" cy="118" r="28" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="224" cy="168" rx="27" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <circle cx="124" cy="118" r="6" fill="#c62828"/>
+              <circle cx="224" cy="168" r="6" fill="#c62828"/>
+              <text x="172" y="326" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ô chứa tâm vật được giao trách nhiệm</text>
+
+              <g transform="translate(360,54)">
+                <rect x="0" y="0" width="168" height="56" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="84" y="24" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">tâm nằm trong ô</text>
+                <text x="84" y="45" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">ô đó học dự đoán vật</text>
+                <rect x="0" y="88" width="168" height="56" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="84" y="112" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">tâm không nằm trong ô</text>
+                <text x="84" y="133" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">ô đó xem là nền</text>
+                <rect x="0" y="176" width="168" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="84" y="200" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">toàn ảnh vẫn đi qua CNN</text>
+                <text x="84" y="221" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">không cắt từng vùng</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Luật gán đơn giản</strong>
+                <p style="margin:0.35em 0 0;">Vật thật thuộc về ô chứa tâm của vật, không thuộc về mọi ô mà hộp đi qua.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Hệ quả</strong>
+                <p style="margin:0.35em 0 0;">Nếu nhiều vật nhỏ có tâm rơi vào cùng một ô, YOLO đời đầu dễ bị quá tải.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Lưới là cách YOLO biến số lượng vật thay đổi thành số vị trí dự đoán cố định.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 2: mỗi ô dự đoán vài hộp</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Một ô YOLO dự đoán nhiều hộp ứng viên">
+              <defs>
+                <marker id="yolo-cell-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="54" y="58" width="180" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="114" y1="58" x2="114" y2="238"/><line x1="174" y1="58" x2="174" y2="238"/>
+                <line x1="54" y1="118" x2="234" y2="118"/><line x1="54" y1="178" x2="234" y2="178"/>
+              </g>
+              <rect x="114" y="118" width="60" height="60" fill="#fff3e0" opacity="0.85" stroke="#ef6c00" stroke-width="4"/>
+              <circle cx="144" cy="148" r="7" fill="#c62828"/>
+              <text x="144" y="280" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">một ô lưới</text>
+
+              <path d="M248 148 L320 148" stroke="#555" stroke-width="3" marker-end="url(#yolo-cell-arrow)"/>
+              <g transform="translate(338,54)">
+                <rect x="18" y="20" width="108" height="84" fill="none" stroke="#ef6c00" stroke-width="5"/>
+                <rect x="4" y="50" width="146" height="72" fill="none" stroke="#1565c0" stroke-width="5"/>
+                <rect x="38" y="6" width="82" height="132" fill="none" stroke="#2e7d32" stroke-width="5"/>
+                <circle cx="76" cy="76" r="34" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.78"/>
+                <text x="76" y="184" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">B dự đoán hộp</text>
+                <text x="76" y="210" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">cùng xuất phát từ ô này</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  \text{mỗi ô} \rightarrow B \text{ hộp}
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Vì sao cần nhiều hộp?</strong>
+                <p style="margin:0.35em 0 0;">Cùng một ô có thể cần dự đoán vật rộng, vật cao hoặc vật lệch tâm khác nhau.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">YOLO đời đầu</strong>
+                <p style="margin:0.35em 0 0;">Các hộp là dự đoán trực tiếp; các đời sau dùng anchor để ổn định hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Một ô lưới không chỉ trả ra một hộp; nó thử nhiều hình học rồi để loss chọn hộp khớp nhất.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 3: tensor đầu ra của YOLO</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 620 350" role="img" aria-label="Tensor đầu ra của YOLO">
+              <rect x="34" y="60" width="170" height="170" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="68" y1="60" x2="68" y2="230"/><line x1="102" y1="60" x2="102" y2="230"/><line x1="136" y1="60" x2="136" y2="230"/><line x1="170" y1="60" x2="170" y2="230"/>
+                <line x1="34" y1="94" x2="204" y2="94"/><line x1="34" y1="128" x2="204" y2="128"/><line x1="34" y1="162" x2="204" y2="162"/><line x1="34" y1="196" x2="204" y2="196"/>
+              </g>
+              <text x="119" y="270" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">S x S ô</text>
+
+              <g transform="translate(268,52)">
+                <rect x="0" y="0" width="280" height="56" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="140" y="35" text-anchor="middle" font-size="20" fill="#e65100" font-family="Arial">B x (x, y, w, h, conf)</text>
+                <rect x="0" y="82" width="280" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="140" y="117" text-anchor="middle" font-size="20" fill="#1b5e20" font-family="Arial">C xác suất lớp</text>
+                <rect x="0" y="164" width="280" height="56" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="140" y="199" text-anchor="middle" font-size="20" fill="#6a1b9a" font-family="Arial">vector của một ô</text>
+              </g>
+              <text x="408" y="310" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ghép tất cả ô thành tensor đầu ra</text>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.95em;">
+                \[
+                  S \times S \times (B\cdot 5 + C)
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">5 số của một hộp</strong>
+                <p style="margin:0.35em 0 0;">Tâm, kích thước và độ tin cậy: \((x,y,w,h,\text{conf})\).</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">C số lớp</strong>
+                <p style="margin:0.35em 0 0;">YOLO đời đầu dự đoán phân phối lớp ở mức ô, rồi ghép với confidence của hộp.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Tensor cố định là cầu nối giữa mạng neural và đầu ra dạng tập hộp biến thiên.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 4: confidence không chỉ là xác suất có vật</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Confidence trong YOLO liên quan đến IoU">
+              <rect x="48" y="50" width="240" height="210" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <ellipse cx="168" cy="154" rx="44" ry="62" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.75"/>
+              <rect x="114" y="78" width="112" height="144" fill="none" stroke="#2e7d32" stroke-width="5"/>
+              <rect x="132" y="96" width="118" height="122" fill="none" stroke="#1565c0" stroke-width="5"/>
+              <text x="116" y="288" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">ground truth</text>
+              <text x="230" y="288" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">dự đoán</text>
+
+              <g transform="translate(346,70)">
+                <rect x="0" y="0" width="204" height="64" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="102" y="27" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">có vật?</text>
+                <text x="102" y="50" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">Pr(object)</text>
+                <text x="102" y="112" text-anchor="middle" font-size="24" fill="#455a64" font-family="Arial">x</text>
+                <rect x="0" y="132" width="204" height="64" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="102" y="159" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">hộp khớp tốt?</text>
+                <text x="102" y="182" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">IoU(pred, truth)</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  \text{confidence} \approx Pr(\text{object}) \cdot IoU
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Trong ô có vật</strong>
+                <p style="margin:0.35em 0 0;">Hộp chịu trách nhiệm nên có confidence cao nếu bám sát ground truth.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Trong ô nền</strong>
+                <p style="margin:0.35em 0 0;">Confidence nên gần 0, dù mô hình vẫn sinh ra hộp ứng viên.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Confidence kết hợp hai ý: hộp có chứa vật không, và hộp đó định vị vật tốt đến đâu.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 5: từ tensor thành hộp cuối</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Hậu xử lý YOLO bằng ngưỡng điểm và NMS">
+              <defs>
+                <marker id="yolo-post-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="34" y="54" width="170" height="170" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <ellipse cx="120" cy="142" rx="38" ry="56" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.75"/>
+              <rect x="74" y="76" width="96" height="126" fill="none" stroke="#2e7d32" stroke-width="5"/>
+              <rect x="82" y="86" width="94" height="116" fill="none" stroke="#1565c0" stroke-width="4"/>
+              <rect x="56" y="118" width="126" height="76" fill="none" stroke="#7b1fa2" stroke-width="4"/>
+              <rect x="38" y="176" width="76" height="38" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="8 6"/>
+              <text x="119" y="260" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">nhiều hộp thô</text>
+
+              <path d="M216 142 L276 142" stroke="#555" stroke-width="3" marker-end="url(#yolo-post-arrow)"/>
+              <rect x="294" y="70" width="120" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="354" y="102" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">ngưỡng điểm</text>
+              <rect x="294" y="156" width="120" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="354" y="188" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">NMS</text>
+              <path d="M428 142 L488 142" stroke="#555" stroke-width="3" marker-end="url(#yolo-post-arrow)"/>
+              <rect x="504" y="78" width="72" height="118" fill="none" stroke="#2e7d32" stroke-width="6"/>
+              <ellipse cx="540" cy="140" rx="32" ry="52" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.72"/>
+              <text x="540" y="260" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">hộp cuối</text>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Bước 1</strong>
+                <p style="margin:0.35em 0 0;">Nhân confidence với xác suất lớp để có điểm cho từng lớp.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Bước 2</strong>
+                <p style="margin:0.35em 0 0;">Bỏ hộp điểm thấp, rồi dùng NMS để xóa các hộp trùng nhau.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">YOLO là một mạng duy nhất, nhưng đầu ra vẫn cần bước lọc để trở thành danh sách đối tượng gọn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Loss của YOLO cân bằng bốn vai trò</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Các thành phần loss của YOLO">
+              <g transform="translate(54,40)">
+                <rect x="0" y="0" width="190" height="54" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="95" y="34" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">định vị hộp</text>
+                <rect x="0" y="76" width="190" height="54" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <text x="95" y="110" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">confidence có vật</text>
+                <rect x="0" y="152" width="190" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="95" y="186" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">phân loại</text>
+                <rect x="0" y="228" width="190" height="54" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="95" y="262" text-anchor="middle" font-size="18" fill="#b71c1c" font-family="Arial">confidence nền</text>
+              </g>
+              <g transform="translate(330,50)">
+                <rect x="0" y="0" width="180" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="2">
+                  <line x1="36" y1="0" x2="36" y2="180"/><line x1="72" y1="0" x2="72" y2="180"/><line x1="108" y1="0" x2="108" y2="180"/><line x1="144" y1="0" x2="144" y2="180"/>
+                  <line x1="0" y1="36" x2="180" y2="36"/><line x1="0" y1="72" x2="180" y2="72"/><line x1="0" y1="108" x2="180" y2="108"/><line x1="0" y1="144" x2="180" y2="144"/>
+                </g>
+                <rect x="72" y="72" width="36" height="36" fill="#fff3e0" opacity="0.9" stroke="#ef6c00" stroke-width="4"/>
+                <g fill="#c62828" opacity="0.8">
+                  <circle cx="18" cy="18" r="4"/><circle cx="54" cy="18" r="4"/><circle cx="126" cy="18" r="4"/><circle cx="162" cy="18" r="4"/>
+                  <circle cx="18" cy="54" r="4"/><circle cx="162" cy="54" r="4"/><circle cx="18" cy="126" r="4"/><circle cx="162" cy="126" r="4"/>
+                  <circle cx="18" cy="162" r="4"/><circle cx="54" cy="162" r="4"/><circle cx="126" cy="162" r="4"/><circle cx="162" cy="162" r="4"/>
+                </g>
+                <text x="90" y="222" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">rất nhiều ô nền</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.86em;">
+                \[
+                  L = L_{\text{tọa độ}} + L_{\text{conf}} + L_{\text{lớp}}
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Vấn đề cân bằng</strong>
+                <p style="margin:0.35em 0 0;">Ô nền nhiều hơn ô có vật, nên loss nền thường phải giảm trọng số.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Ý nghĩa</strong>
+                <p style="margin:0.35em 0 0;">Mô hình học đồng thời “ở đâu”, “có đáng tin không” và “là lớp nào”.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Loss của YOLO phản ánh đúng ba đầu ra chính: định vị hộp, confidence và phân loại.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>YOLO nhanh, nhưng có giả định mạnh</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Điểm mạnh và điểm yếu của YOLO">
+              <g transform="translate(44,46)">
+                <rect x="0" y="0" width="210" height="210" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <path d="M60 146 L100 74 L138 146 Z" fill="#a5d6a7" stroke="#2e7d32" stroke-width="4"/>
+                <circle cx="100" cy="118" r="18" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="105" y="246" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">nhanh cho thời gian thực</text>
+              </g>
+              <g transform="translate(346,46)">
+                <rect x="0" y="0" width="210" height="210" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ffcc80" stroke-width="2">
+                  <line x1="70" y1="0" x2="70" y2="210"/><line x1="140" y1="0" x2="140" y2="210"/>
+                  <line x1="0" y1="70" x2="210" y2="70"/><line x1="0" y1="140" x2="210" y2="140"/>
+                </g>
+                <circle cx="88" cy="92" r="18" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+                <circle cx="118" cy="118" r="18" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+                <rect x="70" y="70" width="70" height="70" fill="none" stroke="#c62828" stroke-width="4"/>
+                <text x="105" y="246" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">khó khi vật nhỏ, sát nhau</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Mạnh</strong>
+                <ul>
+                  <li>Rất nhanh, phù hợp camera thời gian thực.</li>
+                  <li>Nhìn toàn ảnh nên ít nhầm nền cục bộ hơn.</li>
+                </ul>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Yếu</strong>
+                <ul>
+                  <li>Khó với vật nhỏ hoặc nhiều vật trong một ô.</li>
+                  <li>YOLO đời đầu dễ sai định vị hơn hai giai đoạn.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Đổi tốc độ lấy đơn giản nghĩa là YOLO phải sống với các giả định của lưới dự đoán.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>SSD: một lần chạy, nhiều bản đồ đặc trưng</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.78em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">đầu vào</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Mạng nền</div><div class="stage-desc">trích đặc trưng</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Nhiều tầng</div><div class="stage-desc">nông đến sâu</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Hộp mặc định</div><div class="stage-desc">ở mỗi vị trí</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Lọc hộp</div><div class="stage-desc">điểm, trùng lặp</div></div>
+          </div>
+          <div class="det-imgbox" style="margin-top:0.45em; padding:4px;">
+            <svg width="100%" viewBox="0 0 1050 330" role="img" aria-label="Tổng quan quy trình SSD">
+              <defs>
+                <marker id="ssd-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <style>
+                  .ssd-label{font:700 18px Arial,sans-serif;fill:#263238;text-anchor:middle}
+                  .ssd-small{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+                  .ssd-line{stroke:#555;stroke-width:3;marker-end:url(#ssd-overview-arrow)}
+                </style>
+              </defs>
+              <rect x="28" y="54" width="160" height="170" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <circle cx="88" cy="126" r="28" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <ellipse cx="135" cy="150" rx="26" ry="45" fill="#bbdefb" stroke="#1565c0" stroke-width="4"/>
+              <text class="ssd-label" x="108" y="260">Ảnh gốc</text>
+
+              <line class="ssd-line" x1="200" y1="140" x2="258" y2="140"/>
+              <g transform="translate(280,68)">
+                <rect x="0" y="0" width="52" height="140" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="68" y="18" width="46" height="104" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="128" y="40" width="38" height="62" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text class="ssd-label" x="363" y="260">Mạng tích chập</text>
+              <text class="ssd-small" x="363" y="284">vẫn chỉ chạy một lần</text>
+
+              <line class="ssd-line" x1="464" y1="140" x2="520" y2="140"/>
+              <g transform="translate(542,52)">
+                <rect x="0" y="0" width="118" height="118" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="138" y="30" width="82" height="82" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="240" y="58" width="52" height="52" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+              </g>
+              <text class="ssd-label" x="688" y="260">Nhiều bản đồ</text>
+              <text class="ssd-small" x="688" y="284">vật nhỏ đến vật lớn</text>
+
+              <line class="ssd-line" x1="846" y1="140" x2="900" y2="140"/>
+              <g transform="translate(920,72)">
+                <rect x="0" y="0" width="86" height="86" rx="8" fill="#f7f7f7" stroke="#78909c" stroke-width="2"/>
+                <rect x="18" y="16" width="48" height="54" fill="none" stroke="#ef6c00" stroke-width="4"/>
+                <rect x="8" y="28" width="68" height="36" fill="none" stroke="#1565c0" stroke-width="4"/>
+                <rect x="26" y="6" width="34" height="74" fill="none" stroke="#2e7d32" stroke-width="4"/>
+                <rect x="24" y="112" width="44" height="42" rx="7" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text class="ssd-label" x="963" y="260">Hộp + lớp</text>
+            </svg>
+          </div>
+          <p class="caption">SSD giữ ưu điểm một giai đoạn của YOLO, nhưng dự đoán trên nhiều tầng đặc trưng thay vì chỉ một lưới cuối.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 1: nhiều bản đồ cho nhiều cỡ vật</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="SSD dùng nhiều bản đồ đặc trưng">
+              <g transform="translate(36,54)">
+                <rect x="0" y="0" width="180" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g stroke="#90caf9" stroke-width="1.8">
+                  <line x1="45" y1="0" x2="45" y2="180"/><line x1="90" y1="0" x2="90" y2="180"/><line x1="135" y1="0" x2="135" y2="180"/>
+                  <line x1="0" y1="45" x2="180" y2="45"/><line x1="0" y1="90" x2="180" y2="90"/><line x1="0" y1="135" x2="180" y2="135"/>
+                </g>
+                <rect x="42" y="40" width="48" height="44" fill="none" stroke="#ef6c00" stroke-width="5"/>
+                <text x="90" y="222" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">tầng nông</text>
+                <text x="90" y="246" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">nhiều vị trí, vật nhỏ</text>
+              </g>
+              <g transform="translate(250,84)">
+                <rect x="0" y="0" width="130" height="130" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g stroke="#ffcc80" stroke-width="1.8">
+                  <line x1="43" y1="0" x2="43" y2="130"/><line x1="86" y1="0" x2="86" y2="130"/>
+                  <line x1="0" y1="43" x2="130" y2="43"/><line x1="0" y1="86" x2="130" y2="86"/>
+                </g>
+                <rect x="34" y="34" width="66" height="62" fill="none" stroke="#2e7d32" stroke-width="5"/>
+                <text x="65" y="192" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">tầng giữa</text>
+                <text x="65" y="216" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">vật vừa</text>
+              </g>
+              <g transform="translate(420,112)">
+                <rect x="0" y="0" width="82" height="82" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <line x1="41" y1="0" x2="41" y2="82" stroke="#ce93d8" stroke-width="1.8"/>
+                <line x1="0" y1="41" x2="82" y2="41" stroke="#ce93d8" stroke-width="1.8"/>
+                <rect x="16" y="10" width="50" height="62" fill="none" stroke="#1565c0" stroke-width="5"/>
+                <text x="41" y="164" text-anchor="middle" font-size="18" fill="#6a1b9a" font-family="Arial">tầng sâu</text>
+                <text x="41" y="188" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">vật lớn</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Tầng nông</strong>
+                <p style="margin:0.35em 0 0;">Còn nhiều vị trí không gian, nên phù hợp vật nhỏ.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#f3e5f5; border-left-color:#7b1fa2;">
+                <strong style="color:#7b1fa2;">Tầng sâu</strong>
+                <p style="margin:0.35em 0 0;">Nhìn vùng ảnh rộng hơn, nên phù hợp vật lớn và ngữ cảnh rộng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">SSD xử lý đa tỉ lệ bằng cách đặt đầu dự đoán lên nhiều bản đồ đặc trưng có độ phân giải khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 2: hộp mặc định tại mỗi vị trí</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Hộp mặc định trong SSD">
+              <defs>
+                <marker id="ssd-box-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="46" y="54" width="180" height="180" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="106" y1="54" x2="106" y2="234"/><line x1="166" y1="54" x2="166" y2="234"/>
+                <line x1="46" y1="114" x2="226" y2="114"/><line x1="46" y1="174" x2="226" y2="174"/>
+              </g>
+              <circle cx="136" cy="144" r="7" fill="#c62828"/>
+              <rect x="106" y="114" width="60" height="60" fill="#fff3e0" opacity="0.8" stroke="#ef6c00" stroke-width="4"/>
+              <text x="136" y="274" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">một vị trí đặc trưng</text>
+
+              <path d="M240 144 L314 144" stroke="#555" stroke-width="3" marker-end="url(#ssd-box-arrow)"/>
+              <g transform="translate(334,52)">
+                <rect x="28" y="30" width="112" height="92" fill="none" stroke="#ef6c00" stroke-width="5"/>
+                <rect x="8" y="58" width="152" height="62" fill="none" stroke="#1565c0" stroke-width="5"/>
+                <rect x="48" y="8" width="72" height="142" fill="none" stroke="#2e7d32" stroke-width="5"/>
+                <rect x="20" y="18" width="132" height="132" fill="none" stroke="#7b1fa2" stroke-width="4" stroke-dasharray="8 6"/>
+                <text x="84" y="198" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">nhiều tỉ lệ hộp</text>
+                <text x="84" y="222" text-anchor="middle" font-size="15" fill="#607d8b" font-family="Arial">rộng, cao, vuông</text>
+              </g>
+            </svg>
+            <div>
+              <div class="eqbox" style="font-size:0.9em;">
+                \[
+                  \text{mỗi vị trí} \rightarrow k \text{ hộp mặc định}
+                \]
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Vai trò</strong>
+                <p style="margin:0.35em 0 0;">Hộp mặc định là điểm xuất phát hình học để mạng học chỉnh tâm và kích thước.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Khác YOLO đời đầu</strong>
+                <p style="margin:0.35em 0 0;">SSD dự đoán độ lệch so với hộp có sẵn, thay vì tự vẽ hộp từ đầu.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Hộp mặc định giúp SSD bao phủ nhiều dáng vật mà vẫn giữ đầu ra của mạng có kích thước cố định.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 3: ghép hộp mặc định với vật thật</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Gán nhãn hộp mặc định trong SSD">
+              <rect x="44" y="56" width="240" height="210" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <ellipse cx="162" cy="158" rx="44" ry="62" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4" opacity="0.75"/>
+              <rect x="108" y="82" width="108" height="144" fill="none" stroke="#2e7d32" stroke-width="5"/>
+              <rect x="124" y="98" width="118" height="118" fill="none" stroke="#1565c0" stroke-width="4"/>
+              <rect x="84" y="126" width="88" height="72" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="8 6"/>
+              <text x="164" y="298" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">chọn hộp có độ chồng lấn cao</text>
+
+              <g transform="translate(344,58)">
+                <rect x="0" y="0" width="180" height="58" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="90" y="24" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">mẫu dương</text>
+                <text x="90" y="46" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">khớp vật thật</text>
+                <rect x="0" y="88" width="180" height="58" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="90" y="112" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">mẫu âm</text>
+                <text x="90" y="134" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">nền hoặc chồng lấn thấp</text>
+                <rect x="0" y="176" width="180" height="58" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="90" y="200" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">mẫu âm khó</text>
+                <text x="90" y="222" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">điểm cao nhưng sai</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Mẫu dương</strong>
+                <p style="margin:0.35em 0 0;">Hộp mặc định được ghép với một vật thật, rồi học lớp và độ lệch hộp.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Mẫu âm khó</strong>
+                <p style="margin:0.35em 0 0;">SSD chỉ giữ một phần hộp nền khó để nền không lấn át vật thật.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Bước ghép hộp quyết định hộp nào học “có vật”, hộp nào học “nền”, và hộp nào bị bỏ qua.</p>
+        </section>
+
         <section style="font-size:0.76em;">
-          <h2>Từ proposal thưa sang dự đoán dày đặc</h2>
-          <div class="det-imgbox">
-            <img src="img/lec-11/one-stage-detectors.svg" alt="YOLO SSD RetinaNet" style="max-width:100%; max-height:65vh; object-fit:contain;" />
-          </div>
-          <p class="caption">Một giai đoạn bỏ bước proposal tách rời: mỗi vị trí đặc trưng trực tiếp dự đoán box và lớp.</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>YOLO: xem detection như hồi quy toàn ảnh</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Ý tưởng</strong>
-              <p style="margin:0.35em 0 0;">Chia ảnh thành lưới. Mỗi ô chịu trách nhiệm dự đoán vật có tâm nằm trong ô đó.</p>
-            </div>
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Đầu ra</strong>
-              <p style="margin:0.35em 0 0;">Một tensor chứa box, confidence và xác suất lớp cho toàn bộ ảnh.</p>
-            </div>
-          </div>
-          <div class="eqbox" style="margin-top:0.7em;">
-            \[
-              S\times S\times (B\cdot 5 + C)
-            \]
-          </div>
-          <p class="caption">YOLO mạnh ở tốc độ vì toàn bộ pipeline là một mạng duy nhất chạy một lần.</p>
-        </section>
-
-        <section style="font-size:0.74em;">
-          <h2>Loss của YOLO gồm nhiều vai trò</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Định vị</strong>
-              <p style="margin:0.35em 0 0;">Phạt sai tâm, rộng và cao của box. Các phiên bản đầu dùng loss bình phương.</p>
-            </div>
-            <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Confidence</strong>
-              <p style="margin:0.35em 0 0;">Phạt sai mức tin rằng box chứa vật, thường liên quan đến IoU với ground truth.</p>
-            </div>
-            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Phân loại</strong>
-              <p style="margin:0.35em 0 0;">Phạt sai nhãn lớp tại ô có chứa đối tượng.</p>
-            </div>
-            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
-              <strong style="color:#c62828;">Nền</strong>
-              <p style="margin:0.35em 0 0;">Cần giảm trọng số của ô không có vật để nền không áp đảo loss.</p>
-            </div>
-          </div>
-          <p class="caption">YOLO phải cân bằng nhiều thành phần loss vì số ô nền lớn hơn số ô chứa vật rất nhiều.</p>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>Điểm mạnh và điểm yếu của YOLO</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Mạnh</strong>
-              <ul>
-                <li>Rất nhanh, phù hợp camera thời gian thực.</li>
-                <li>Nhìn toàn ảnh nên ít nhầm nền cục bộ hơn.</li>
-              </ul>
-            </div>
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Yếu</strong>
-              <ul>
-                <li>Khó với vật nhỏ hoặc nhiều vật sát nhau trong một ô.</li>
-                <li>Phiên bản đầu dễ sai định vị hơn hai giai đoạn.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section style="font-size:0.78em;">
-          <h2>SSD: nhiều feature map cho nhiều kích thước vật</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Ý tưởng chính</strong>
-              <p style="margin:0.35em 0 0;">Dự đoán hộp mặc định trên nhiều tầng đặc trưng: tầng nông cho vật nhỏ, tầng sâu cho vật lớn.</p>
-            </div>
-            <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">So với YOLO đầu</strong>
-              <p style="margin:0.35em 0 0;">Không chỉ dự đoán ở một lưới cuối; tận dụng tháp đặc trưng tự nhiên của CNN.</p>
-            </div>
-          </div>
-          <p class="caption">SSD giữ pipeline đơn giản nhưng thêm khả năng xử lý đa tỉ lệ.</p>
-        </section>
-
-        <section style="font-size:0.76em;">
-          <h2>MultiBox loss của SSD</h2>
+          <h2>Hàm mất mát của SSD</h2>
           <div class="eqbox">
             \[
               L(x,c,l,g)=\frac{1}{N}\left(L_{\text{conf}}(x,c)+\alpha L_{\text{loc}}(x,l,g)\right)
@@ -1633,43 +2117,195 @@
           </div>
           <div class="det-grid-2" style="margin-top:0.7em;">
             <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Confidence loss</strong>
-              <p style="margin:0.35em 0 0;">Softmax cross entropy trên các lớp, gồm cả nền.</p>
+              <strong style="color:#1565c0;">Mất mát phân loại</strong>
+              <p style="margin:0.35em 0 0;">Phạt nhầm lớp, trong đó nền cũng là một lớp cần học.</p>
             </div>
             <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Localization loss</strong>
-              <p style="margin:0.35em 0 0;">Smooth L1 giữa default box đã chỉnh và ground truth được ghép.</p>
+              <strong style="color:#ef6c00;">Mất mát định vị</strong>
+              <p style="margin:0.35em 0 0;">Phạt độ lệch giữa hộp đã chỉnh và hộp thật được ghép.</p>
             </div>
           </div>
-          <p class="caption">SSD dùng hard negative mining để không cho các box nền dễ lấn át quá trình học.</p>
+          <p class="caption">SSD học đồng thời “hộp này là lớp nào” và “cần chỉnh hộp mặc định ra sao”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>RetinaNet: sửa điểm yếu lớn của một giai đoạn</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Tổng quan RetinaNet">
+              <defs>
+                <marker id="retina-overview-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="36" y="72" width="112" height="140" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <text x="92" y="252" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ảnh</text>
+              <path d="M160 142 L220 142" stroke="#555" stroke-width="3" marker-end="url(#retina-overview-arrow)"/>
+              <g transform="translate(236,54)">
+                <rect x="0" y="0" width="54" height="160" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="66" y="24" width="46" height="112" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              </g>
+              <text x="292" y="252" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">mạng nền</text>
+              <path d="M360 142 L420 142" stroke="#555" stroke-width="3" marker-end="url(#retina-overview-arrow)"/>
+              <g transform="translate(438,42)">
+                <rect x="0" y="0" width="104" height="46" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="0" y="66" width="104" height="46" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="132" width="104" height="46" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <text x="52" y="29" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">tháp đặc trưng</text>
+                <text x="52" y="95" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">đầu phân loại</text>
+                <text x="52" y="161" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">đầu chỉnh hộp</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Kiến trúc</strong>
+                <p style="margin:0.35em 0 0;">Dự đoán một giai đoạn trên tháp đặc trưng đa tỉ lệ.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Bài toán chính</strong>
+                <p style="margin:0.35em 0 0;">Có quá nhiều hộp nền dễ, làm tín hiệu từ vật thật bị loãng.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">RetinaNet quan trọng vì kết hợp tháp đặc trưng với một hàm mất mát biết giảm ảnh hưởng của nền dễ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 1: tháp đặc trưng giữ cả chi tiết và ngữ cảnh</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Tháp đặc trưng trong RetinaNet">
+              <defs>
+                <marker id="pyramid-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <g transform="translate(52,48)">
+                <rect x="0" y="0" width="76" height="52" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="76" width="76" height="52" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <rect x="0" y="152" width="76" height="52" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="38" y="236" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">từ mạng nền</text>
+              </g>
+              <path d="M146 74 L236 74" stroke="#555" stroke-width="3" marker-end="url(#pyramid-arrow)"/>
+              <path d="M146 150 L236 150" stroke="#555" stroke-width="3" marker-end="url(#pyramid-arrow)"/>
+              <path d="M146 226 L236 226" stroke="#555" stroke-width="3" marker-end="url(#pyramid-arrow)"/>
+              <g transform="translate(256,38)">
+                <rect x="0" y="0" width="160" height="64" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <rect x="22" y="92" width="116" height="58" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="46" y="178" width="70" height="52" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <path d="M80 178 L80 150" stroke="#555" stroke-width="3" marker-end="url(#pyramid-arrow)"/>
+                <path d="M80 92 L80 64" stroke="#555" stroke-width="3" marker-end="url(#pyramid-arrow)"/>
+                <text x="80" y="268" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">trộn từ trên xuống</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Từ dưới lên</strong>
+                <p style="margin:0.35em 0 0;">Tầng nông giữ vị trí tốt, tầng sâu hiểu ngữ cảnh tốt.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Từ trên xuống</strong>
+                <p style="margin:0.35em 0 0;">Ngữ cảnh từ tầng sâu được đưa ngược về các bản đồ có độ phân giải cao hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Tháp đặc trưng giúp RetinaNet phát hiện vật nhỏ tốt hơn mà vẫn dùng được ngữ cảnh rộng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 2: hai đầu dự đoán dùng chung ở mọi tầng</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Hai đầu dự đoán của RetinaNet">
+              <defs>
+                <marker id="retina-head-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+              </defs>
+              <rect x="48" y="82" width="122" height="122" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+              <g stroke="#90caf9" stroke-width="2">
+                <line x1="88" y1="82" x2="88" y2="204"/><line x1="128" y1="82" x2="128" y2="204"/>
+                <line x1="48" y1="122" x2="170" y2="122"/><line x1="48" y1="162" x2="170" y2="162"/>
+              </g>
+              <text x="109" y="246" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">một tầng đặc trưng</text>
+              <path d="M184 142 L250 104" stroke="#555" stroke-width="3" marker-end="url(#retina-head-arrow)"/>
+              <path d="M184 160 L250 210" stroke="#555" stroke-width="3" marker-end="url(#retina-head-arrow)"/>
+              <rect x="268" y="62" width="120" height="76" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+              <text x="328" y="92" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">đầu phân loại</text>
+              <text x="328" y="116" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">vật / nền / lớp</text>
+              <rect x="268" y="178" width="120" height="76" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+              <text x="328" y="208" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">đầu chỉnh hộp</text>
+              <text x="328" y="232" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">x, y, w, h</text>
+              <g transform="translate(440,82)">
+                <rect x="0" y="0" width="76" height="44" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <rect x="0" y="66" width="76" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="38" y="154" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">lặp ở mọi tầng</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+                <strong style="color:#ef6c00;">Đầu phân loại</strong>
+                <p style="margin:0.35em 0 0;">Mỗi hộp neo được chấm điểm cho từng lớp đối tượng.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
+                <strong style="color:#2e7d32;">Đầu chỉnh hộp</strong>
+                <p style="margin:0.35em 0 0;">Mỗi hộp neo được dự đoán bốn độ lệch để bám sát vật hơn.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">RetinaNet dùng cùng kiểu đầu dự đoán trên mọi tầng của tháp đặc trưng để giữ thiết kế gọn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thành phần 3: nền dễ áp đảo tín hiệu học</h2>
+          <div class="det-grid-2" style="align-items:center;">
+            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Mất cân bằng nền và vật trong RetinaNet">
+              <rect x="46" y="46" width="238" height="238" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+              <g fill="#c62828" opacity="0.72">
+                <circle cx="80" cy="80" r="5"/><circle cx="122" cy="80" r="5"/><circle cx="164" cy="80" r="5"/><circle cx="206" cy="80" r="5"/><circle cx="248" cy="80" r="5"/>
+                <circle cx="80" cy="122" r="5"/><circle cx="122" cy="122" r="5"/><circle cx="206" cy="122" r="5"/><circle cx="248" cy="122" r="5"/>
+                <circle cx="80" cy="164" r="5"/><circle cx="248" cy="164" r="5"/>
+                <circle cx="80" cy="206" r="5"/><circle cx="122" cy="206" r="5"/><circle cx="206" cy="206" r="5"/><circle cx="248" cy="206" r="5"/>
+                <circle cx="80" cy="248" r="5"/><circle cx="122" cy="248" r="5"/><circle cx="164" cy="248" r="5"/><circle cx="206" cy="248" r="5"/><circle cx="248" cy="248" r="5"/>
+              </g>
+              <ellipse cx="164" cy="162" rx="34" ry="50" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+              <circle cx="164" cy="162" r="7" fill="#2e7d32"/>
+              <text x="165" y="318" text-anchor="middle" font-size="18" fill="#263238" font-family="Arial">ít hộp có vật, rất nhiều hộp nền</text>
+
+              <g transform="translate(352,66)">
+                <rect x="0" y="0" width="172" height="56" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+                <text x="86" y="24" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">nền dễ</text>
+                <text x="86" y="45" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">rất nhiều, điểm thấp</text>
+                <rect x="0" y="86" width="172" height="56" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <text x="86" y="110" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">nền khó</text>
+                <text x="86" y="131" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">dễ bị nhầm là vật</text>
+                <rect x="0" y="172" width="172" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <text x="86" y="196" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">vật thật</text>
+                <text x="86" y="217" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">ít nhưng quan trọng</text>
+              </g>
+            </svg>
+            <div>
+              <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
+                <strong style="color:#c62828;">Vấn đề</strong>
+                <p style="margin:0.35em 0 0;">Nếu cộng mất mát thông thường, vô số hộp nền dễ vẫn đóng góp nhiều.</p>
+              </div>
+              <div class="det-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Mục tiêu</strong>
+                <p style="margin:0.35em 0 0;">Giảm trọng số của mẫu đã dễ, giữ trọng số cho mẫu khó và vật thật.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Bài toán chính của RetinaNet không phải thiếu hộp, mà là quá nhiều hộp nền dễ.</p>
         </section>
 
         <section style="font-size:0.76em;">
-          <h2>RetinaNet: vấn đề không chỉ là kiến trúc</h2>
-          <div class="det-grid-2">
-            <div class="det-card" style="background:#ffebee; border-left-color:#c62828;">
-              <strong style="color:#c62828;">Vấn đề</strong>
-              <p style="margin:0.35em 0 0;">Detector một giai đoạn xem rất nhiều vị trí nền. Các mẫu nền dễ có thể làm loss áp đảo mẫu khó.</p>
-            </div>
-            <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Giải pháp</strong>
-              <p style="margin:0.35em 0 0;">RetinaNet dùng FPN để xử lý đa tỉ lệ và Focal Loss để tập trung vào mẫu khó.</p>
-            </div>
-          </div>
-          <p class="caption">RetinaNet cho thấy loss đúng có thể thu hẹp khoảng cách giữa một giai đoạn và hai giai đoạn.</p>
-        </section>
-
-        <section style="font-size:0.76em;">
-          <h2>Focal Loss</h2>
+          <h2>Hàm mất mát tập trung</h2>
           <div class="det-imgbox">
-            <img src="img/lec-11/focal-loss.svg" alt="So sánh cross entropy và focal loss" style="max-width:100%; max-height:57vh; object-fit:contain;" />
+            <img src="img/lec-11/focal-loss.svg" alt="So sánh mất mát thường và mất mát tập trung" style="max-width:100%; max-height:50vh; object-fit:contain;" />
           </div>
-          <div class="eqbox" style="margin-top:0.5em;">
+          <div class="eqbox" style="margin-top:0.45em;">
             \[
               FL(p_t)=-\alpha_t(1-p_t)^\gamma\log(p_t)
             \]
           </div>
-          <p class="caption">Khi \(p_t\) cao, mẫu đã dễ; hệ số \((1-p_t)^\gamma\) làm đóng góp loss của nó nhỏ đi.</p>
+          <p class="caption">Khi mẫu đã dễ, \(p_t\) cao và hệ số \((1-p_t)^\gamma\) tự làm đóng góp của mẫu đó nhỏ đi.</p>
         </section>
 
         <section style="font-size:0.78em;">
@@ -1678,15 +2314,15 @@
             <div class="det-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
               <strong style="color:#2e7d32;">Hai giai đoạn</strong>
               <ul>
-                <li>Ít proposal hơn, head mạnh hơn.</li>
+                <li>Ít vùng ứng viên hơn, đầu dự đoán mạnh hơn.</li>
                 <li>Thường chính xác, tốt cho vật khó.</li>
-                <li>Pipeline phức tạp và chậm hơn.</li>
+                <li>Quy trình nhiều bước và chậm hơn.</li>
               </ul>
             </div>
             <div class="det-card" style="background:#e3f2fd; border-left-color:#1565c0;">
               <strong style="color:#1565c0;">Một giai đoạn</strong>
               <ul>
-                <li>Dự đoán dày đặc trong một lần forward.</li>
+                <li>Dự đoán dày đặc trong một lần chạy mạng.</li>
                 <li>Nhanh, đơn giản khi triển khai.</li>
                 <li>Cần xử lý mất cân bằng nền - vật.</li>
               </ul>
@@ -1697,9 +2333,9 @@
         <section style="font-size:0.76em;">
           <h2>Đánh đổi tốc độ và độ chính xác</h2>
           <div class="det-imgbox">
-            <img src="img/lec-11/speed-accuracy-tradeoff.svg" alt="Đánh đổi tốc độ và độ chính xác trong object detection" style="max-width:100%; max-height:64vh; object-fit:contain;" />
+            <img src="img/lec-11/speed-accuracy-tradeoff.svg" alt="Đánh đổi tốc độ và độ chính xác trong phát hiện đối tượng" style="max-width:100%; max-height:64vh; object-fit:contain;" />
           </div>
-          <p class="caption">CS231n nhấn mạnh: meta-architecture, backbone, kích thước ảnh, số proposal và phần cứng đều ảnh hưởng kết quả.</p>
+          <p class="caption">Kết quả phụ thuộc vào kiểu mô hình, mạng nền, kích thước ảnh, số vùng ứng viên và phần cứng chạy suy luận.</p>
         </section>
       </section>
 
