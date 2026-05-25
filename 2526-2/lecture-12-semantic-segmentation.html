@@ -122,9 +122,50 @@
         <section style="font-size:0.78em;">
           <h2>Từ hộp bao sang mặt nạ điểm ảnh</h2>
           <div class="seg-imgbox">
-            <img src="img/lec-12/segmentation-task-types.svg" alt="Ba kiểu phân vùng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+            <svg width="100%" viewBox="0 0 900 390" role="img" aria-label="Từ hộp bao sang mặt nạ điểm ảnh" style="max-height:62vh;">
+              <defs>
+                <marker id="box-to-mask-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <clipPath id="box-mask-left"><rect x="76" y="74" width="260" height="230" rx="10"/></clipPath>
+                <clipPath id="box-mask-right"><rect x="564" y="74" width="260" height="230" rx="10"/></clipPath>
+              </defs>
+
+              <g>
+                <text x="206" y="42" text-anchor="middle" font-size="24" font-weight="700" fill="#ef6c00" font-family="Arial">Phát hiện đối tượng</text>
+                <rect x="76" y="74" width="260" height="230" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+                <g clip-path="url(#box-mask-left)">
+                  <rect x="76" y="74" width="260" height="230" fill="#e3f2fd"/>
+                  <path d="M76 156 C130 112 190 136 244 96 C282 68 318 76 336 82 L336 304 L76 304 Z" fill="#bbdefb"/>
+                  <rect x="76" y="232" width="260" height="72" fill="#c8e6c9"/>
+                  <path d="M176 122 C216 106 258 126 274 166 C292 212 258 254 210 256 C162 258 130 224 136 180 C140 152 152 132 176 122 Z" fill="#ffe0b2" stroke="#ef6c00" stroke-width="4"/>
+                  <circle cx="196" cy="164" r="7" fill="#5d4037"/>
+                  <circle cx="242" cy="168" r="7" fill="#5d4037"/>
+                </g>
+                <rect x="124" y="104" width="184" height="170" fill="none" stroke="#ef6c00" stroke-width="7"/>
+                <text x="216" y="334" text-anchor="middle" font-size="18" fill="#e65100" font-family="Arial">trả lời: vật nằm trong hộp nào?</text>
+              </g>
+
+              <path d="M380 190 L520 190" stroke="#555" stroke-width="4" marker-end="url(#box-to-mask-arrow)"/>
+              <text x="450" y="160" text-anchor="middle" font-size="18" fill="#455a64" font-family="Arial">chi tiết hơn</text>
+
+              <g>
+                <text x="694" y="42" text-anchor="middle" font-size="24" font-weight="700" fill="#1565c0" font-family="Arial">Phân vùng ảnh</text>
+                <rect x="564" y="74" width="260" height="230" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+                <g clip-path="url(#box-mask-right)">
+                  <rect x="564" y="74" width="260" height="230" fill="#e3f2fd"/>
+                  <path d="M564 156 C618 112 678 136 732 96 C770 68 806 76 824 82 L824 304 L564 304 Z" fill="#bbdefb"/>
+                  <rect x="564" y="232" width="260" height="72" fill="#c8e6c9"/>
+                  <path d="M664 122 C704 106 746 126 762 166 C780 212 746 254 698 256 C650 258 618 224 624 180 C628 152 640 132 664 122 Z" fill="#ffcc80" stroke="#1565c0" stroke-width="5"/>
+                  <circle cx="684" cy="164" r="7" fill="#5d4037"/>
+                  <circle cx="730" cy="168" r="7" fill="#5d4037"/>
+                  <path d="M664 122 C650 142 646 166 650 194 C654 224 674 246 698 256" fill="none" stroke="#fff" stroke-width="5" opacity="0.8"/>
+                </g>
+                <text x="694" y="334" text-anchor="middle" font-size="18" fill="#0d47a1" font-family="Arial">trả lời: pixel nào thuộc vật?</text>
+              </g>
+            </svg>
           </div>
-          <p class="caption">Phân vùng ngữ nghĩa không tách hai vật cùng lớp; phân vùng theo đối tượng tách từng vật; phân vùng toàn cảnh làm cả hai trong một bản đồ.</p>
+          <p class="caption">Hộp bao chỉ định vị thô; mặt nạ cho biết biên vật ở mức điểm ảnh.</p>
         </section>
 
         <section style="font-size:0.82em;">
@@ -247,24 +288,89 @@
           <p class="caption">Phân vùng đổi đơn vị học: từ vùng ứng viên sang lưới điểm ảnh.</p>
         </section>
 
-        <section style="font-size:0.76em;">
+        <section style="font-size:0.70em;">
           <h2>Vấn đề lõi: hiểu lớp nhưng giữ biên</h2>
-          <div class="seg-grid-2">
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Tầng sâu</strong>
-              <p style="margin:0.35em 0 0;">Nhìn ngữ cảnh rộng, biết “đây là người” hay “đây là đường”, nhưng bản đồ đặc trưng thô.</p>
-            </div>
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Tầng nông</strong>
-              <p style="margin:0.35em 0 0;">Giữ cạnh, góc, vân ảnh, nhưng thiếu ngữ nghĩa để phân biệt lớp khó.</p>
-            </div>
+          <div class="seg-imgbox" style="padding:4px;">
+            <svg width="100%" viewBox="0 0 980 420" role="img" aria-label="Cân bằng ngữ nghĩa và biên trong phân vùng">
+              <defs>
+                <marker id="core-boundary-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+                </marker>
+                <clipPath id="core-boundary-image"><rect x="60" y="88" width="210" height="210" rx="10"/></clipPath>
+                <clipPath id="core-boundary-shallow"><rect x="310" y="88" width="210" height="210" rx="10"/></clipPath>
+                <clipPath id="core-boundary-deep"><rect x="560" y="88" width="210" height="210" rx="10"/></clipPath>
+                <clipPath id="core-boundary-final"><rect x="810" y="88" width="130" height="210" rx="10"/></clipPath>
+              </defs>
+
+              <g>
+                <text x="165" y="50" text-anchor="middle" font-size="21" font-weight="700" fill="#263238" font-family="Arial">Ảnh đầu vào</text>
+                <rect x="60" y="88" width="210" height="210" rx="10" fill="#e3f2fd" stroke="#90a4ae" stroke-width="3"/>
+                <g clip-path="url(#core-boundary-image)">
+                  <path d="M60 152 C102 116 150 134 194 98 C228 70 254 82 270 88 L270 298 L60 298 Z" fill="#bbdefb"/>
+                  <rect x="60" y="232" width="210" height="66" fill="#c8e6c9"/>
+                  <path d="M134 124 C168 108 210 126 224 164 C240 210 208 252 164 252 C120 252 96 218 102 180 C106 154 116 134 134 124 Z" fill="#ffe0b2" stroke="#6d4c41" stroke-width="4"/>
+                  <path d="M136 124 C124 144 120 166 124 194 C128 222 144 244 164 252" fill="none" stroke="#8d6e63" stroke-width="4"/>
+                </g>
+                <text x="165" y="330" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">vật có biên rõ</text>
+              </g>
+
+              <path d="M282 194 L302 194" stroke="#555" stroke-width="3" marker-end="url(#core-boundary-arrow)"/>
+
+              <g>
+                <text x="415" y="50" text-anchor="middle" font-size="21" font-weight="700" fill="#ef6c00" font-family="Arial">Tầng nông</text>
+                <rect x="310" y="88" width="210" height="210" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <g clip-path="url(#core-boundary-shallow)">
+                  <rect x="310" y="88" width="210" height="210" fill="#fffaf0"/>
+                  <path d="M384 124 C418 108 460 126 474 164 C490 210 458 252 414 252 C370 252 346 218 352 180 C356 154 366 134 384 124 Z" fill="none" stroke="#ef6c00" stroke-width="8"/>
+                  <path d="M386 124 C374 144 370 166 374 194 C378 222 394 244 414 252" fill="none" stroke="#ef6c00" stroke-width="5"/>
+                  <line x1="330" y1="128" x2="500" y2="128" stroke="#ffe0b2" stroke-width="7"/>
+                  <line x1="330" y1="174" x2="500" y2="174" stroke="#ffe0b2" stroke-width="7"/>
+                  <line x1="330" y1="220" x2="500" y2="220" stroke="#ffe0b2" stroke-width="7"/>
+                </g>
+                <text x="415" y="330" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">biên rõ, lớp còn mơ hồ</text>
+              </g>
+
+              <path d="M532 194 L552 194" stroke="#555" stroke-width="3" marker-end="url(#core-boundary-arrow)"/>
+
+              <g>
+                <text x="665" y="50" text-anchor="middle" font-size="21" font-weight="700" fill="#1565c0" font-family="Arial">Tầng sâu</text>
+                <rect x="560" y="88" width="210" height="210" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g clip-path="url(#core-boundary-deep)">
+                  <rect x="560" y="88" width="210" height="210" fill="#e3f2fd"/>
+                  <rect x="592" y="124" width="128" height="128" rx="24" fill="#90caf9" stroke="#1565c0" stroke-width="5"/>
+                  <text x="656" y="194" text-anchor="middle" font-size="24" font-weight="700" fill="#0d47a1" font-family="Arial">người</text>
+                  <g opacity="0.45">
+                    <line x1="560" y1="140" x2="770" y2="140" stroke="#1565c0" stroke-width="2"/>
+                    <line x1="560" y1="192" x2="770" y2="192" stroke="#1565c0" stroke-width="2"/>
+                    <line x1="560" y1="244" x2="770" y2="244" stroke="#1565c0" stroke-width="2"/>
+                    <line x1="612" y1="88" x2="612" y2="298" stroke="#1565c0" stroke-width="2"/>
+                    <line x1="664" y1="88" x2="664" y2="298" stroke="#1565c0" stroke-width="2"/>
+                    <line x1="716" y1="88" x2="716" y2="298" stroke="#1565c0" stroke-width="2"/>
+                  </g>
+                </g>
+                <text x="665" y="330" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">lớp đúng, mặt nạ thô</text>
+              </g>
+
+              <path d="M782 194 L802 194" stroke="#555" stroke-width="3" marker-end="url(#core-boundary-arrow)"/>
+
+              <g>
+                <text x="875" y="50" text-anchor="middle" font-size="21" font-weight="700" fill="#2e7d32" font-family="Arial">Mục tiêu</text>
+                <rect x="810" y="88" width="130" height="210" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+                <g clip-path="url(#core-boundary-final)">
+                  <rect x="810" y="88" width="130" height="210" fill="#e3f2fd"/>
+                  <rect x="810" y="232" width="130" height="66" fill="#c8e6c9"/>
+                  <path d="M850 124 C884 108 926 126 940 164 C956 210 924 252 880 252 C836 252 812 218 818 180 C822 154 832 134 850 124 Z" fill="#81c784" stroke="#2e7d32" stroke-width="5"/>
+                </g>
+                <text x="875" y="330" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">đúng lớp, sắc biên</text>
+              </g>
+            </svg>
           </div>
-          <div style="margin-top:0.75em;" class="eqbox">
+          <div style="margin-top:0.35em;" class="eqbox">
             <span style="color:#1565c0; font-weight:bold;">ngữ nghĩa mạnh</span>
             <span style="padding:0 20px;">↔</span>
             <span style="color:#ef6c00; font-weight:bold;">độ phân giải cao</span>
           </div>
-          <p class="caption">Các kiến trúc phân vùng chủ yếu tìm cách cân bằng hai yêu cầu này.</p>
+          <p class="caption">Tầng sâu giúp nhận đúng lớp; tầng nông giữ vị trí biên. Phân vùng tốt phải kết hợp cả hai.</p>
         </section>
 
         <section style="font-size:0.76em;">
@@ -350,7 +456,7 @@
         </section>
 
         <section style="font-size:0.72em;">
-          <h2>Độ chính xác dễ gây ảo tưởng</h2>
+          <h2>Độ đo: Trung bình IoU</h2>
           <div class="seg-grid-2">
             <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
               <strong style="color:#c62828;">Độ chính xác theo điểm ảnh</strong>
@@ -374,23 +480,53 @@
           <p class="caption">mIoU phạt lỗi bỏ sót lớp nhỏ tốt hơn accuracy.</p>
         </section>
 
-        <section style="font-size:0.74em;">
+        <section style="font-size:0.70em;">
           <h2>Độ đo đường biên</h2>
-          <div class="seg-grid-2">
+          <div class="seg-grid-2" style="align-items:center;">
+            <div class="eqbox" style="font-size:0.82em;">
+              \[
+                P_B=
+                \frac{|\partial \hat{Y}\cap \operatorname{Dilate}(\partial Y,d)|}
+                {|\partial \hat{Y}|}
+              \]
+              \[
+                R_B=
+                \frac{|\partial Y\cap \operatorname{Dilate}(\partial \hat{Y},d)|}
+                {|\partial Y|}
+              \]
+              \[
+                BF=\frac{2P_BR_B}{P_B+R_B+\epsilon}
+              \]
+            </div>
+            <svg width="100%" viewBox="0 0 560 320" role="img" aria-label="Boundary F1 so khớp biên dự đoán và biên thật">
+              <rect x="42" y="44" width="210" height="210" rx="10" fill="#f7f7f7" stroke="#90a4ae" stroke-width="2"/>
+              <path d="M104 88 C140 68 196 92 208 142 C222 198 176 232 128 216 C84 202 70 122 104 88 Z" fill="#e3f2fd" stroke="#1565c0" stroke-width="8"/>
+              <path d="M112 96 C148 76 188 104 198 148 C210 196 170 218 130 206 C92 194 82 128 112 96 Z" fill="none" stroke="#ef6c00" stroke-width="6" stroke-dasharray="10 8"/>
+              <text x="147" y="286" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">biên gần nhau được tính khớp</text>
+
+              <g transform="translate(312,70)">
+                <rect x="0" y="0" width="196" height="64" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <line x1="28" y1="32" x2="78" y2="32" stroke="#1565c0" stroke-width="7"/>
+                <text x="120" y="38" font-size="17" fill="#0d47a1" font-family="Arial">biên thật</text>
+              </g>
+              <g transform="translate(312,150)">
+                <rect x="0" y="0" width="196" height="64" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+                <line x1="28" y1="32" x2="78" y2="32" stroke="#ef6c00" stroke-width="6" stroke-dasharray="10 8"/>
+                <text x="120" y="38" font-size="17" fill="#e65100" font-family="Arial">biên dự đoán</text>
+              </g>
+            </svg>
+          </div>
+          <div class="seg-grid-2" style="margin-top:0.6em;">
             <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Vì sao cần?</strong>
-              <p style="margin:0.35em 0 0;">Hai mặt nạ có mIoU gần nhau, nhưng biên có thể răng cưa, lệch cạnh hoặc thủng lỗ.</p>
+              <strong style="color:#1565c0;">\(\partial Y\)</strong>
+              <p style="margin:0.35em 0 0;">Tập điểm ảnh biên của mặt nạ đúng; \(\partial \hat{Y}\) là biên dự đoán.</p>
             </div>
             <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Dùng ở đâu?</strong>
-              <p style="margin:0.35em 0 0;">Y tế, bản đồ, tự hành, đo kích thước vật thể và hậu xử lý hình học.</p>
+              <strong style="color:#ef6c00;">Dung sai \(d\)</strong>
+              <p style="margin:0.35em 0 0;">Cho phép lệch vài pixel; biên dự đoán nằm trong vùng giãn được tính là khớp.</p>
             </div>
           </div>
-          <div class="seg-card" style="margin-top:0.75em; background:#f7f7f7; border-left-color:#78909c;">
-            <strong style="color:#455a64;">Thông điệp thiết kế:</strong>
-            mô hình tốt phải biết lớp của điểm ảnh và giữ đúng biên giữa các lớp.
-          </div>
-          <p class="caption">Biên quan trọng khi cần đo, ghép hoặc hậu xử lý hình học.</p>
+          <p class="caption">Boundary F1 cao khi biên dự đoán vừa bám sát biên thật, vừa không sinh quá nhiều đoạn biên thừa.</p>
         </section>
 
         <section style="font-size:0.76em;">
@@ -1003,31 +1139,6 @@
             </div>
           </div>
           <p class="caption">FCN-8s thường tốt hơn FCN-32s vì nó không bắt tầng sâu một mình gánh cả ngữ nghĩa lẫn biên.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Căn kích thước không phải chi tiết phụ</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 600 350" role="img" aria-label="Căn chỉnh bản đồ đặc trưng trong FCN">
-              <rect x="72" y="62" width="150" height="150" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-              <rect x="98" y="88" width="150" height="150" rx="8" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="10 7"/>
-              <text x="160" y="270" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">lệch vài điểm ảnh</text>
-              <rect x="352" y="62" width="150" height="150" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-              <rect x="352" y="62" width="150" height="150" rx="8" fill="none" stroke="#1565c0" stroke-width="4"/>
-              <text x="427" y="270" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">đã căn đúng</text>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
-                <strong style="color:#c62828;">Nguồn lệch</strong>
-                <p style="margin:0.35em 0 0;">Gộp, đệm biên và phóng to có thể tạo sai khác kích thước hoặc lệch tâm.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#e3f2fd; border-left-color:#1565c0;">
-                <strong style="color:#1565c0;">Trong FCN</strong>
-                <p style="margin:0.35em 0 0;">Các bản đồ từ nhiều tầng phải được cắt và căn trước khi cộng điểm lớp.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Với phân vùng, lệch vài điểm ảnh ở bản đồ đặc trưng có thể thành biên sai trên mặt nạ cuối.</p>
         </section>
 
         <section style="font-size:0.72em;">
@@ -2383,25 +2494,6 @@
           <p class="caption">DeepLab mạnh vì xử lý đồng thời hai nhu cầu tưởng như mâu thuẫn: bản đồ dày để giữ biên và ngữ cảnh rộng để hiểu lớp.</p>
         </section>
 
-        <section style="font-size:0.72em;">
-          <h2>Khi dùng DeepLab cần chỉnh ba núm</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Bước nhảy đầu ra</strong>
-              <p style="margin:0.35em 0 0;">OS=8 giữ chi tiết hơn nhưng tốn bộ nhớ; OS=16 thường cân bằng hơn.</p>
-            </div>
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Các rate trong ASPP</strong>
-              <p style="margin:0.35em 0 0;">Rate phải phù hợp kích thước vật và độ phân giải bản đồ đặc trưng.</p>
-            </div>
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Bộ giải mã / CRF</strong>
-              <p style="margin:0.35em 0 0;">Dùng khi sản phẩm cần biên sắc; bỏ bớt khi ưu tiên tốc độ.</p>
-            </div>
-          </div>
-          <p class="caption">DeepLab không phải một lớp duy nhất, mà là một bộ quyết định về độ phân giải, ngữ cảnh và hậu xử lý biên.</p>
-        </section>
-
         <section style="font-size:0.78em;">
           <h2>Nhìn lại và đi tiếp</h2>
           <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
@@ -2969,34 +3061,6 @@
             </svg>
           </div>
           <p class="caption">Trong phân vùng ảnh lớn, chọn kích thước mảnh là đánh đổi trực tiếp giữa chi tiết không gian và chi phí tự chú ý.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Khi dùng U-Net + ViT cần kiểm ba núm</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Kích thước mảnh</strong>
-              <p style="margin:0.35em 0 0;">Mảnh càng nhỏ càng giữ biên, nhưng chi phí tự chú ý tăng nhanh.</p>
-            </div>
-            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">Vị trí đặt ViT</strong>
-              <p style="margin:0.35em 0 0;">Đặt ở giữa U-Net để cân bằng, hoặc dùng làm bộ mã hóa chính khi có dữ liệu và bộ nhớ.</p>
-            </div>
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Liên kết tắt</strong>
-              <p style="margin:0.35em 0 0;">Cần đủ đặc trưng nông để bộ giải mã không chỉ phóng to ngữ cảnh sâu.</p>
-            </div>
-          </div>
-          <svg width="100%" viewBox="0 0 800 120" role="img" aria-label="Ba núm chỉnh U-Net kết hợp ViT" style="margin-top:0.6em;">
-            <path d="M80 60 L720 60" stroke="#cfd8dc" stroke-width="12" stroke-linecap="round"/>
-            <circle cx="190" cy="60" r="24" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
-            <circle cx="400" cy="60" r="24" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
-            <circle cx="610" cy="60" r="24" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
-            <text x="190" y="105" text-anchor="middle" font-size="15" fill="#0d47a1" font-family="Arial">mảnh</text>
-            <text x="400" y="105" text-anchor="middle" font-size="15" fill="#6a1b9a" font-family="Arial">ViT</text>
-            <text x="610" y="105" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">liên kết tắt</text>
-          </svg>
-          <p class="caption">Mô hình lai chỉ đáng dùng khi ngữ cảnh xa thật sự giúp bài toán; nếu dữ liệu ít và vật nhỏ, U-Net gọn có thể ổn định hơn.</p>
         </section>
 
         <section style="font-size:0.72em;">
@@ -3673,34 +3737,6 @@
           <p class="caption">Đây là lý do Mask R-CNN nằm giữa phát hiện đối tượng và phân vùng: nó vẫn dựa vào vùng ứng viên, nhưng đầu ra đã chạm tới điểm ảnh.</p>
         </section>
 
-        <section style="font-size:0.72em;">
-          <h2>Khi dùng Mask R-CNN cần kiểm ba núm</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Chất lượng RoI</strong>
-              <p style="margin:0.35em 0 0;">Nếu RPN bỏ sót vật, nhánh mặt nạ không còn cơ hội sửa.</p>
-            </div>
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Căn chỉnh RoI</strong>
-              <p style="margin:0.35em 0 0;">RoI Align và độ phân giải đặc trưng quyết định biên có bị lệch hay không.</p>
-            </div>
-            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">Độ phân giải mặt nạ</strong>
-              <p style="margin:0.35em 0 0;">Mặt nạ nhỏ rẻ hơn, nhưng vật mảnh hoặc biên phức tạp dễ bị bậc thang.</p>
-            </div>
-          </div>
-          <svg width="100%" viewBox="0 0 800 120" role="img" aria-label="Ba núm chỉnh Mask R-CNN" style="margin-top:0.6em;">
-            <path d="M80 60 L720 60" stroke="#cfd8dc" stroke-width="12" stroke-linecap="round"/>
-            <circle cx="190" cy="60" r="24" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
-            <circle cx="400" cy="60" r="24" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
-            <circle cx="610" cy="60" r="24" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
-            <text x="190" y="105" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">RoI</text>
-            <text x="400" y="105" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">căn chỉnh</text>
-            <text x="610" y="105" text-anchor="middle" font-size="15" fill="#6a1b9a" font-family="Arial">mặt nạ</text>
-          </svg>
-          <p class="caption">Mask R-CNN thường hỏng theo dây chuyền: vùng ứng viên sai làm RoI sai, RoI sai làm mặt nạ sai.</p>
-        </section>
-
         <section style="font-size:0.78em;">
           <h2>Nhìn lại và đi tiếp</h2>
           <div style="background:#e8f5e9; padding:10px; border-radius:8px; border-left:5px solid #2e7d32;">
@@ -3718,7 +3754,7 @@
       <section>
         <section>
           <h1><span class="text-light">7.</span><br />Phân vùng toàn cảnh</h1>
-          <p>Vật thể · vùng nền · chất lượng toàn cảnh · ghép ngữ nghĩa và đối tượng</p>
+          <p>Vật đếm được · vùng nền · một bản đồ phủ kín</p>
         </section>
 
         <section style="font-size:0.78em;">
@@ -3826,7 +3862,7 @@
               </g>
             </svg>
           </div>
-          <p class="caption">Một hệ toàn cảnh thường lấy hai nguồn dự đoán khác nhau, rồi dùng bước ghép để tạo bản đồ cuối không chồng lấn.</p>
+          <p class="caption">Toàn cảnh thường ghép mặt nạ vật với bản đồ nền để tạo một đầu ra phủ kín và không chồng lấn.</p>
         </section>
 
         <section style="font-size:0.72em;">
@@ -3904,449 +3940,62 @@
           <p class="caption">Phân vùng toàn cảnh cần cả hai kiểu lớp vì cảnh thật vừa có vật riêng lẻ, vừa có vùng nền trải rộng.</p>
         </section>
 
-        <section style="font-size:0.72em;">
-          <h2>Nếu chỉ dùng Mask R-CNN: nền bị bỏ trống</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Mask R-CNN bỏ trống vùng nền khi cần toàn cảnh">
-              <rect x="76" y="58" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
-              <path d="M76 142 C118 98 164 118 206 78 C250 34 280 60 296 58 L296 278 L76 278 Z" fill="#f7f7f7"/>
-              <rect x="76" y="208" width="220" height="70" fill="#f7f7f7"/>
-              <circle cx="154" cy="146" r="38" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-              <circle cx="214" cy="152" r="34" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4"/>
-              <text x="186" y="318" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">chỉ có vật, nền chưa có nhãn</text>
-              <g transform="translate(386,92)">
-                <rect x="0" y="0" width="152" height="120" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
-                <text x="76" y="38" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">không đủ</text>
-                <text x="76" y="68" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">cho bản đồ toàn ảnh</text>
-                <text x="76" y="96" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">vì có vùng trống</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-                <strong style="color:#ef6c00;">Mask R-CNN chỉ quan tâm vật</strong>
-                <p style="margin:0.35em 0 0;">Nó trả danh sách mặt nạ vật, không buộc mọi điểm ảnh nền phải có lớp.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
-                <strong style="color:#c62828;">Vấn đề toàn cảnh</strong>
-                <p style="margin:0.35em 0 0;">Ảnh đường phố vẫn cần biết phần còn lại là đường, trời, cây hay tòa nhà.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Toàn cảnh yêu cầu phủ kín ảnh, nên dự đoán vật phải được ghép với dự đoán nền.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Nếu chỉ dùng phân vùng ngữ nghĩa: vật cùng lớp bị dính</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Phân vùng ngữ nghĩa không tách vật cùng lớp">
-              <rect x="74" y="58" width="220" height="220" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-              <path d="M74 126 C120 80 168 102 210 62 C252 24 280 48 294 58 L294 278 L74 278 Z" fill="#bbdefb"/>
-              <rect x="74" y="208" width="220" height="70" fill="#c8e6c9"/>
-              <circle cx="154" cy="146" r="42" fill="#90caf9" stroke="#1565c0" stroke-width="4"/>
-              <circle cx="206" cy="146" r="42" fill="#90caf9" stroke="#1565c0" stroke-width="4"/>
-              <text x="184" y="318" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">hai xe cùng là một lớp xe</text>
-              <g transform="translate(386,92)">
-                <rect x="0" y="0" width="152" height="120" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-                <text x="76" y="38" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">thiếu mã vật</text>
-                <text x="76" y="68" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">không biết có</text>
-                <text x="76" y="96" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">bao nhiêu cá thể</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-                <strong style="color:#1565c0;">Phân vùng ngữ nghĩa phủ kín ảnh</strong>
-                <p style="margin:0.35em 0 0;">Mọi điểm ảnh có lớp, kể cả nền, nên bản đồ không bị trống.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
-                <strong style="color:#ef6c00;">Nhưng thiếu danh tính</strong>
-                <p style="margin:0.35em 0 0;">Hai vật cùng lớp bị nhập vào cùng một vùng nếu chỉ nhìn lớp.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Toàn cảnh cần giữ ưu điểm phủ kín của phân vùng ngữ nghĩa và ưu điểm tách cá thể của Mask R-CNN.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Kiến trúc hai nhánh: một nhánh cho vật, một nhánh cho nền</h2>
+        <section style="font-size:0.68em;">
+          <h2>Phân biệt ba kiểu đầu ra</h2>
           <div class="seg-imgbox" style="padding:4px;">
-            <svg width="100%" viewBox="0 0 1040 340" role="img" aria-label="Kiến trúc hai nhánh cho phân vùng toàn cảnh">
+            <svg width="100%" viewBox="0 0 980 430" role="img" aria-label="Minh họa ba kiểu đầu ra phân vùng">
               <defs>
-                <marker id="pan-two-branch-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
-                </marker>
+                <clipPath id="seg-type-clip-a"><rect x="42" y="70" width="260" height="250" rx="10"/></clipPath>
+                <clipPath id="seg-type-clip-b"><rect x="360" y="70" width="260" height="250" rx="10"/></clipPath>
+                <clipPath id="seg-type-clip-c"><rect x="678" y="70" width="260" height="250" rx="10"/></clipPath>
               </defs>
-              <g transform="translate(42,88)">
-                <rect x="0" y="0" width="120" height="110" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
-                <circle cx="50" cy="58" r="24" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
-                <circle cx="84" cy="62" r="22" fill="#ce93d8" stroke="#7b1fa2" stroke-width="3"/>
-                <text x="60" y="150" text-anchor="middle" font-size="16" fill="#263238" font-family="Arial">ảnh</text>
+
+              <g>
+                <text x="172" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#0d47a1" font-family="Arial">Ngữ nghĩa</text>
+                <rect x="42" y="70" width="260" height="250" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+                <g clip-path="url(#seg-type-clip-a)">
+                  <path d="M42 152 C94 108 158 132 214 92 C256 62 286 70 302 76 L302 320 L42 320 Z" fill="#bbdefb"/>
+                  <rect x="42" y="230" width="260" height="90" fill="#c8e6c9"/>
+                  <circle cx="138" cy="188" r="50" fill="#90caf9" stroke="#1565c0" stroke-width="4"/>
+                  <circle cx="198" cy="190" r="46" fill="#90caf9" stroke="#1565c0" stroke-width="4"/>
+                </g>
+                <text x="172" y="354" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">mọi điểm ảnh có lớp</text>
+                <text x="172" y="380" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">hai xe cùng là lớp xe</text>
               </g>
-              <path d="M176 142 L238 142" stroke="#555" stroke-width="3" marker-end="url(#pan-two-branch-arrow)"/>
-              <g transform="translate(258,72)">
-                <rect x="0" y="0" width="86" height="140" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-                <rect x="108" y="18" width="72" height="104" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
-                <text x="90" y="182" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">mạng nền chung</text>
+
+              <g>
+                <text x="490" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#e65100" font-family="Arial">Theo đối tượng</text>
+                <rect x="360" y="70" width="260" height="250" rx="10" fill="#f7f7f7" stroke="#ef6c00" stroke-width="3"/>
+                <g clip-path="url(#seg-type-clip-b)">
+                  <path d="M360 152 C412 108 476 132 532 92 C574 62 604 70 620 76 L620 320 L360 320 Z" fill="#f7f7f7"/>
+                  <rect x="360" y="230" width="260" height="90" fill="#f7f7f7"/>
+                  <circle cx="456" cy="188" r="50" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+                  <circle cx="516" cy="190" r="46" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4"/>
+                  <text x="456" y="196" text-anchor="middle" font-size="20" font-weight="700" fill="#e65100" font-family="Arial">1</text>
+                  <text x="516" y="198" text-anchor="middle" font-size="20" font-weight="700" fill="#6a1b9a" font-family="Arial">2</text>
+                </g>
+                <text x="490" y="354" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">mỗi vật có mặt nạ riêng</text>
+                <text x="490" y="380" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">nền không bắt buộc có nhãn</text>
               </g>
-              <path d="M456 142 C518 104 540 90 596 90" fill="none" stroke="#555" stroke-width="3" marker-end="url(#pan-two-branch-arrow)"/>
-              <path d="M456 142 C518 180 540 196 596 196" fill="none" stroke="#555" stroke-width="3" marker-end="url(#pan-two-branch-arrow)"/>
-              <g transform="translate(616,44)">
-                <rect x="0" y="0" width="160" height="84" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-                <text x="80" y="34" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">nhánh vật</text>
-                <text x="80" y="60" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">hộp + mặt nạ riêng</text>
-              </g>
-              <g transform="translate(616,166)">
-                <rect x="0" y="0" width="160" height="84" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-                <text x="80" y="34" text-anchor="middle" font-size="17" fill="#0d47a1" font-family="Arial">nhánh nền</text>
-                <text x="80" y="60" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">lớp theo điểm ảnh</text>
-              </g>
-              <path d="M792 86 C852 92 852 138 902 138" fill="none" stroke="#555" stroke-width="3" marker-end="url(#pan-two-branch-arrow)"/>
-              <path d="M792 206 C852 200 852 150 902 150" fill="none" stroke="#555" stroke-width="3" marker-end="url(#pan-two-branch-arrow)"/>
-              <g transform="translate(922,92)">
-                <rect x="0" y="0" width="90" height="102" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
-                <text x="45" y="42" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">ghép</text>
-                <text x="45" y="68" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">thành</text>
-                <text x="45" y="88" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">toàn cảnh</text>
+
+              <g>
+                <text x="808" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#6a1b9a" font-family="Arial">Toàn cảnh</text>
+                <rect x="678" y="70" width="260" height="250" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+                <g clip-path="url(#seg-type-clip-c)">
+                  <path d="M678 152 C730 108 794 132 850 92 C892 62 922 70 938 76 L938 320 L678 320 Z" fill="#bbdefb"/>
+                  <rect x="678" y="230" width="260" height="90" fill="#c8e6c9"/>
+                  <circle cx="774" cy="188" r="50" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+                  <circle cx="834" cy="190" r="46" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4"/>
+                  <path d="M804 140 C786 174 788 206 806 238" fill="none" stroke="#fff" stroke-width="5"/>
+                  <text x="774" y="196" text-anchor="middle" font-size="20" font-weight="700" fill="#e65100" font-family="Arial">1</text>
+                  <text x="834" y="198" text-anchor="middle" font-size="20" font-weight="700" fill="#6a1b9a" font-family="Arial">2</text>
+                </g>
+                <text x="808" y="354" text-anchor="middle" font-size="16" fill="#6a1b9a" font-family="Arial">phủ kín và tách cá thể</text>
+                <text x="808" y="380" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">mỗi điểm ảnh đúng một nhãn</text>
               </g>
             </svg>
           </div>
-          <p class="caption">Cách thực dụng là dùng chung đặc trưng ảnh, rồi để một nhánh xử lý vật đếm được và một nhánh xử lý nền không đếm được.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Bước ghép 1: sắp xếp mặt nạ vật theo độ tin cậy</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Sắp xếp mặt nạ vật theo điểm tin cậy">
-              <g transform="translate(64,62)">
-                <rect x="0" y="0" width="112" height="82" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-                <circle cx="42" cy="42" r="24" fill="#81c784"/>
-                <text x="82" y="36" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">0.96</text>
-                <text x="82" y="58" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">xe</text>
-                <rect x="148" y="0" width="112" height="82" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-                <circle cx="190" cy="42" r="24" fill="#ffcc80"/>
-                <text x="230" y="36" text-anchor="middle" font-size="16" fill="#e65100" font-family="Arial">0.82</text>
-                <text x="230" y="58" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">người</text>
-                <rect x="296" y="0" width="112" height="82" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
-                <circle cx="338" cy="42" r="24" fill="#ef9a9a"/>
-                <text x="378" y="36" text-anchor="middle" font-size="16" fill="#b71c1c" font-family="Arial">0.41</text>
-                <text x="378" y="58" text-anchor="middle" font-size="13" fill="#455a64" font-family="Arial">xe</text>
-                <text x="204" y="138" text-anchor="middle" font-size="17" fill="#263238" font-family="Arial">xử lý mặt nạ điểm cao trước</text>
-              </g>
-              <path d="M130 246 L498 246" stroke="#555" stroke-width="4"/>
-              <circle cx="170" cy="246" r="22" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
-              <circle cx="312" cy="246" r="22" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
-              <circle cx="454" cy="246" r="22" fill="#ffebee" stroke="#c62828" stroke-width="4"/>
-              <text x="312" y="306" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">mặt nạ yếu dễ bị bỏ nếu chồng nhiều với mặt nạ mạnh</text>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-                <strong style="color:#2e7d32;">Vì sao sắp xếp?</strong>
-                <p style="margin:0.35em 0 0;">Khi hai mặt nạ tranh cùng điểm ảnh, mặt nạ đáng tin hơn thường được đặt trước.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
-                <strong style="color:#ef6c00;">Hệ quả</strong>
-                <p style="margin:0.35em 0 0;">Bước ghép không chỉ là cộng bản đồ; nó là một quy trình ra quyết định theo thứ tự.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Điểm tin cậy điều khiển thứ tự dán mặt nạ vật vào bản đồ toàn cảnh.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Bước ghép 2: đặt vật và cắt phần chồng lấn</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Đặt mặt nạ vật và cắt chồng lấn">
-              <rect x="70" y="58" width="220" height="220" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
-              <circle cx="154" cy="150" r="56" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-              <circle cx="210" cy="154" r="56" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4" opacity="0.72"/>
-              <path d="M182 100 C162 138 162 174 184 212" fill="none" stroke="#c62828" stroke-width="7"/>
-              <text x="180" y="318" text-anchor="middle" font-size="17" fill="#c62828" font-family="Arial">vùng chồng lấn phải chọn một bên</text>
-              <g transform="translate(386,86)">
-                <rect x="0" y="0" width="154" height="132" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-                <text x="77" y="36" text-anchor="middle" font-size="17" fill="#1b5e20" font-family="Arial">quy tắc ghép</text>
-                <text x="77" y="66" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">điểm đã có vật</text>
-                <text x="77" y="92" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">không nhận vật khác</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
-                <strong style="color:#c62828;">Mâu thuẫn cần xử lý</strong>
-                <p style="margin:0.35em 0 0;">Mask R-CNN có thể sinh hai mặt nạ phủ cùng điểm ảnh.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
-                <strong style="color:#2e7d32;">Ràng buộc toàn cảnh</strong>
-                <p style="margin:0.35em 0 0;">Bản đồ cuối phải loại chồng lấn: điểm đã được gán cho vật trước thì không gán lại.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Bộ ghép biến tập mặt nạ độc lập thành các vùng loại trừ nhau trên cùng một ảnh.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Bước ghép 3: bỏ mặt nạ quá nhỏ sau khi cắt</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <div>
-              <div class="eqbox" style="font-size:0.9em;">
-                \[
-                  \frac{|M_{\text{còn lại}}|}{|M_{\text{ban đầu}}|} < \tau
-                  \Rightarrow \text{bỏ}
-                \]
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
-                <strong style="color:#ef6c00;">Ý nghĩa</strong>
-                <p style="margin:0.35em 0 0;">Nếu gần như toàn bộ mặt nạ đã bị vật mạnh hơn chiếm, phần còn lại thường là nhiễu.</p>
-              </div>
-            </div>
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Bỏ mặt nạ còn lại quá nhỏ sau ghép">
-              <g transform="translate(78,70)">
-                <rect x="0" y="0" width="170" height="170" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
-                <circle cx="82" cy="86" r="62" fill="#ef9a9a" opacity="0.45"/>
-                <path d="M130 42 C150 68 150 112 128 136 C156 126 166 92 156 66 C150 52 142 46 130 42 Z" fill="#c62828"/>
-                <text x="85" y="214" text-anchor="middle" font-size="16" fill="#b71c1c" font-family="Arial">chỉ còn mảnh nhỏ</text>
-              </g>
-              <g transform="translate(372,82)">
-                <rect x="0" y="0" width="144" height="108" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-                <text x="72" y="42" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">bỏ khỏi bản đồ</text>
-                <text x="72" y="72" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">giảm vùng vụn</text>
-              </g>
-            </svg>
-          </div>
-          <p class="caption">Ngưỡng diện tích sau cắt giúp bản đồ toàn cảnh bớt những mảnh vật rất nhỏ do chồng lấn hoặc dự đoán yếu.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Bước ghép 4: lấp phần còn lại bằng vùng nền</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Lấp vùng nền sau khi đặt vật">
-              <defs>
-                <marker id="pan-fill-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                  <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
-                </marker>
-              </defs>
-              <g transform="translate(60,58)">
-                <rect x="0" y="0" width="190" height="190" rx="8" fill="#f7f7f7" stroke="#90a4ae" stroke-width="3"/>
-                <circle cx="78" cy="96" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-                <circle cx="126" cy="98" r="30" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4"/>
-                <text x="95" y="234" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">đã đặt vật</text>
-              </g>
-              <path d="M270 154 L346 154" stroke="#555" stroke-width="3" marker-end="url(#pan-fill-arrow)"/>
-              <g transform="translate(374,58)">
-                <rect x="0" y="0" width="190" height="190" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-                <path d="M0 74 C44 36 92 54 132 18 C162 -6 180 8 190 0 L190 190 L0 190 Z" fill="#bbdefb"/>
-                <rect x="0" y="128" width="190" height="62" fill="#c8e6c9"/>
-                <circle cx="78" cy="96" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-                <circle cx="126" cy="98" r="30" fill="#ce93d8" stroke="#7b1fa2" stroke-width="4"/>
-                <text x="95" y="234" text-anchor="middle" font-size="16" fill="#0d47a1" font-family="Arial">lấp nền chưa gán</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-                <strong style="color:#1565c0;">Nguồn nền</strong>
-                <p style="margin:0.35em 0 0;">Nhánh phân vùng ngữ nghĩa dự đoán lớp cho mọi điểm ảnh chưa thuộc vật.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#e8f5e9; border-left-color:#2e7d32;">
-                <strong style="color:#2e7d32;">Kết quả</strong>
-                <p style="margin:0.35em 0 0;">Bản đồ cuối phủ kín ảnh: vật có mã riêng, nền có lớp nhưng không cần mã vật.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Sau khi các vật được đặt xong, vùng chưa có nhãn được lấp bằng dự đoán nền để đạt điều kiện phủ kín.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Chất lượng toàn cảnh: đúng lớp, đúng vùng, đúng cá thể</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Đúng lớp</strong>
-              <p style="margin:0.35em 0 0;">Vùng dự đoán phải cùng lớp với vùng thật.</p>
-            </div>
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Đúng vùng</strong>
-              <p style="margin:0.35em 0 0;">Diện tích chồng lấn phải đủ lớn, thường xét IoU.</p>
-            </div>
-            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">Đúng cá thể</strong>
-              <p style="margin:0.35em 0 0;">Một vật thật chỉ nên khớp với một vùng dự đoán.</p>
-            </div>
-          </div>
-          <svg width="100%" viewBox="0 0 800 220" role="img" aria-label="Ba điều kiện chất lượng toàn cảnh" style="margin-top:0.5em;">
-            <g transform="translate(84,36)">
-              <rect x="0" y="0" width="150" height="120" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-              <text x="75" y="58" text-anchor="middle" font-size="18" fill="#1b5e20" font-family="Arial">lớp xe</text>
-              <text x="75" y="88" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">không nhầm người</text>
-            </g>
-            <g transform="translate(326,36)">
-              <rect x="0" y="0" width="150" height="120" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-              <circle cx="62" cy="62" r="40" fill="#ffcc80" opacity="0.65"/>
-              <circle cx="88" cy="62" r="40" fill="#1565c0" opacity="0.45"/>
-              <text x="75" y="156" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">chồng lấn đủ</text>
-            </g>
-            <g transform="translate(568,36)">
-              <rect x="0" y="0" width="150" height="120" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
-              <circle cx="58" cy="60" r="28" fill="#ce93d8" stroke="#7b1fa2" stroke-width="3"/>
-              <circle cx="98" cy="60" r="28" fill="#ce93d8" stroke="#7b1fa2" stroke-width="3"/>
-              <text x="75" y="156" text-anchor="middle" font-size="15" fill="#6a1b9a" font-family="Arial">không nhập hai vật</text>
-            </g>
-          </svg>
-          <p class="caption">Đánh giá toàn cảnh khó hơn IoU ngữ nghĩa vì sai tách/ghép cá thể cũng bị tính lỗi.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>PQ: tách chất lượng thành nhận ra và phân vùng</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <div>
-              <div class="eqbox" style="font-size:0.82em;">
-                \[
-                  PQ=\frac{\sum_{(p,g)\in TP} IoU(p,g)}
-                  {|TP|+\frac{1}{2}|FP|+\frac{1}{2}|FN|}
-                \]
-                \[
-                  PQ=SQ\times RQ
-                \]
-              </div>
-            </div>
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Trực giác PQ gồm SQ và RQ">
-              <g transform="translate(70,68)">
-                <rect x="0" y="0" width="180" height="150" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-                <text x="90" y="44" text-anchor="middle" font-size="20" font-weight="700" fill="#1b5e20" font-family="Arial">SQ</text>
-                <text x="90" y="78" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">vùng khớp đẹp không?</text>
-                <circle cx="72" cy="116" r="22" fill="#ffcc80" opacity="0.65"/>
-                <circle cx="108" cy="116" r="22" fill="#1565c0" opacity="0.45"/>
-              </g>
-              <g transform="translate(370,68)">
-                <rect x="0" y="0" width="180" height="150" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-                <text x="90" y="44" text-anchor="middle" font-size="20" font-weight="700" fill="#e65100" font-family="Arial">RQ</text>
-                <text x="90" y="78" text-anchor="middle" font-size="15" fill="#455a64" font-family="Arial">tìm đúng bao nhiêu vùng?</text>
-                <text x="90" y="118" text-anchor="middle" font-size="16" fill="#455a64" font-family="Arial">TP, FP, FN</text>
-              </g>
-            </svg>
-          </div>
-          <p class="caption">PQ giảm cả khi mặt nạ đúng vật nhưng biên xấu, lẫn khi biên đẹp nhưng thiếu hoặc thừa cá thể.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Khi nào một vùng dự đoán được tính là khớp?</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Điều kiện khớp vùng trong PQ">
-              <g transform="translate(66,62)">
-                <rect x="0" y="0" width="210" height="210" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-                <circle cx="90" cy="108" r="58" fill="#ffcc80" opacity="0.62"/>
-                <circle cx="122" cy="108" r="58" fill="#1565c0" opacity="0.42"/>
-                <text x="105" y="250" text-anchor="middle" font-size="16" fill="#1b5e20" font-family="Arial">cùng lớp và IoU &gt; 0.5</text>
-              </g>
-              <g transform="translate(366,62)">
-                <rect x="0" y="0" width="180" height="210" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
-                <circle cx="72" cy="106" r="42" fill="#ffcc80" opacity="0.62"/>
-                <circle cx="120" cy="112" r="42" fill="#1565c0" opacity="0.42"/>
-                <text x="90" y="250" text-anchor="middle" font-size="16" fill="#b71c1c" font-family="Arial">IoU thấp hoặc sai lớp</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-                <strong style="color:#2e7d32;">Khớp đúng</strong>
-                <p style="margin:0.35em 0 0;">Vùng dự đoán và vùng thật cùng lớp, chồng lấn đủ lớn, và ghép một - một.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#ffebee; border-left-color:#c62828;">
-                <strong style="color:#c62828;">Không khớp</strong>
-                <p style="margin:0.35em 0 0;">Dự đoán thừa thành FP; vùng thật không có dự đoán khớp thành FN.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">PQ không cho một dự đoán “ăn điểm” nhiều vật cùng lúc; nó đánh giá từng vùng theo ghép một - một.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Sai tách và sai ghép làm PQ giảm khác nhau</h2>
-          <div class="seg-grid-2" style="align-items:center;">
-            <svg width="100%" viewBox="0 0 620 360" role="img" aria-label="Sai tách và sai ghép trong phân vùng toàn cảnh">
-              <g transform="translate(54,58)">
-                <rect x="0" y="0" width="230" height="220" rx="10" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
-                <circle cx="92" cy="110" r="44" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-                <circle cx="142" cy="110" r="44" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-                <path d="M116 66 C96 100 98 132 118 154" fill="none" stroke="#fff" stroke-width="5"/>
-                <text x="115" y="184" text-anchor="middle" font-size="17" fill="#b71c1c" font-family="Arial">sai ghép</text>
-                <text x="115" y="208" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">hai vật thành một</text>
-              </g>
-              <g transform="translate(340,58)">
-                <rect x="0" y="0" width="230" height="220" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
-                <circle cx="116" cy="110" r="56" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
-                <path d="M116 54 L116 166" stroke="#fff" stroke-width="6"/>
-                <text x="115" y="184" text-anchor="middle" font-size="17" fill="#e65100" font-family="Arial">sai tách</text>
-                <text x="115" y="208" text-anchor="middle" font-size="14" fill="#455a64" font-family="Arial">một vật thành hai</text>
-              </g>
-            </svg>
-            <div>
-              <div class="seg-card" style="background:#ffebee; border-left-color:#c62828;">
-                <strong style="color:#c62828;">Sai ghép</strong>
-                <p style="margin:0.35em 0 0;">Mất khả năng đếm cá thể; một vùng dự đoán không thể khớp tốt với hai vật thật.</p>
-              </div>
-              <div class="seg-card" style="margin-top:0.65em; background:#fff3e0; border-left-color:#ef6c00;">
-                <strong style="color:#ef6c00;">Sai tách</strong>
-                <p style="margin:0.35em 0 0;">Sinh thêm vùng dự đoán thừa và làm vùng đúng bị chia nhỏ.</p>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Toàn cảnh phạt cả lỗi hình học lẫn lỗi đếm vật, nên không thể chỉ nhìn IoU trung bình của lớp.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>So sánh ba kiểu đầu ra trong bài này</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Ngữ nghĩa</strong>
-              <p style="margin:0.35em 0 0;">Một lớp cho mỗi điểm ảnh; không có mã vật.</p>
-            </div>
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Theo đối tượng</strong>
-              <p style="margin:0.35em 0 0;">Danh sách vật; mỗi vật có hộp và mặt nạ riêng.</p>
-            </div>
-            <div class="seg-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
-              <strong style="color:#7b1fa2;">Toàn cảnh</strong>
-              <p style="margin:0.35em 0 0;">Một bản đồ phủ kín, vừa có lớp vừa có mã vật.</p>
-            </div>
-          </div>
-          <svg width="100%" viewBox="0 0 900 150" role="img" aria-label="Trục đầu ra phân vùng" style="margin-top:0.7em;">
-            <defs>
-              <marker id="pan-compare-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
-              </marker>
-            </defs>
-            <path d="M120 72 L780 72" stroke="#555" stroke-width="3" marker-end="url(#pan-compare-arrow)"/>
-            <circle cx="200" cy="72" r="22" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
-            <circle cx="450" cy="72" r="22" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
-            <circle cx="700" cy="72" r="22" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
-            <text x="200" y="124" text-anchor="middle" font-size="15" fill="#0d47a1" font-family="Arial">phủ kín ảnh</text>
-            <text x="450" y="124" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">tách từng vật</text>
-            <text x="700" y="124" text-anchor="middle" font-size="15" fill="#6a1b9a" font-family="Arial">phủ kín + tách vật</text>
-          </svg>
-          <p class="caption">Phân vùng toàn cảnh là kiểu đầu ra chặt nhất: không bỏ trống nền, không nhập các vật cần đếm.</p>
-        </section>
-
-        <section style="font-size:0.72em;">
-          <h2>Khi dùng phân vùng toàn cảnh cần kiểm ba núm</h2>
-          <div class="seg-grid-3">
-            <div class="seg-card" style="background:#fff3e0; border-left-color:#ef6c00;">
-              <strong style="color:#ef6c00;">Ngưỡng vật</strong>
-              <p style="margin:0.35em 0 0;">Ngưỡng thấp giữ nhiều vật nhưng tăng vùng thừa; ngưỡng cao dễ bỏ sót vật nhỏ.</p>
-            </div>
-            <div class="seg-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
-              <strong style="color:#2e7d32;">Quy tắc chồng lấn</strong>
-              <p style="margin:0.35em 0 0;">Thứ tự và ngưỡng diện tích quyết định vật nào thắng khi mặt nạ tranh nhau.</p>
-            </div>
-            <div class="seg-card" style="background:#e3f2fd; border-left-color:#1565c0;">
-              <strong style="color:#1565c0;">Chất lượng nền</strong>
-              <p style="margin:0.35em 0 0;">Nhánh nền yếu sẽ làm phần không có vật bị sai lớp dù nhánh vật đúng.</p>
-            </div>
-          </div>
-          <svg width="100%" viewBox="0 0 800 120" role="img" aria-label="Ba núm chỉnh phân vùng toàn cảnh" style="margin-top:0.6em;">
-            <path d="M80 60 L720 60" stroke="#cfd8dc" stroke-width="12" stroke-linecap="round"/>
-            <circle cx="190" cy="60" r="24" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
-            <circle cx="400" cy="60" r="24" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
-            <circle cx="610" cy="60" r="24" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
-            <text x="190" y="105" text-anchor="middle" font-size="15" fill="#e65100" font-family="Arial">vật</text>
-            <text x="400" y="105" text-anchor="middle" font-size="15" fill="#1b5e20" font-family="Arial">ghép</text>
-            <text x="610" y="105" text-anchor="middle" font-size="15" fill="#0d47a1" font-family="Arial">nền</text>
-          </svg>
-          <p class="caption">Chất lượng toàn cảnh phụ thuộc vào cả hai nhánh dự đoán và chính sách ghép giữa chúng.</p>
+          <p class="caption">Ngữ nghĩa phủ kín ảnh nhưng không tách cá thể; theo đối tượng tách vật nhưng có thể bỏ nền; toàn cảnh làm cả hai.</p>
         </section>
 
         <section style="font-size:0.78em;">
