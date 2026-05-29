@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="470" viewBox="0 0 1150 470" role="img" aria-label="Kiến trúc tổng quan SiamFC">
+  <defs>
+    <marker id="arrow-siam-arch" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect width="1150" height="470" fill="#ffffff"/>
+  <text x="575" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SiamFC: hai nhánh giống hệt nhau, rồi tương quan chéo</text>
+
+  <g transform="translate(80,88)">
+    <rect x="0" y="0" width="130" height="110" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text x="65" y="45" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">mẫu</text>
+    <text x="65" y="75" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">127 x 127</text>
+  </g>
+  <path d="M230 143 L305 143" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(325,88)">
+    <rect x="0" y="0" width="180" height="110" rx="8" fill="#f7f7f7" stroke="#90a4ae" stroke-width="3"/>
+    <text x="90" y="42" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#263238">CNN \(\varphi_\theta\)</text>
+    <text x="90" y="74" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">trọng số dùng chung</text>
+  </g>
+  <path d="M525 143 L595 143" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(615,88)">
+    <rect x="0" y="0" width="150" height="110" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text x="75" y="45" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">đặc trưng</text>
+    <text x="75" y="75" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">6 x 6 x C</text>
+  </g>
+
+  <g transform="translate(80,270)">
+    <rect x="0" y="0" width="130" height="110" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text x="65" y="45" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">vùng tìm</text>
+    <text x="65" y="75" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">255 x 255</text>
+  </g>
+  <path d="M230 325 L305 325" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(325,270)">
+    <rect x="0" y="0" width="180" height="110" rx="8" fill="#f7f7f7" stroke="#90a4ae" stroke-width="3"/>
+    <text x="90" y="42" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#263238">CNN \(\varphi_\theta\)</text>
+    <text x="90" y="74" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">cùng tham số</text>
+  </g>
+  <path d="M525 325 L595 325" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(615,270)">
+    <rect x="0" y="0" width="150" height="110" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text x="75" y="45" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">đặc trưng</text>
+    <text x="75" y="75" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">22 x 22 x C</text>
+  </g>
+
+  <path d="M785 143 C840 160 850 210 870 232" stroke="#455a64" stroke-width="4" fill="none" marker-end="url(#arrow-siam-arch)"/>
+  <path d="M785 325 C840 308 850 256 870 236" stroke="#455a64" stroke-width="4" fill="none" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(890,180)">
+    <rect x="0" y="0" width="120" height="105" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text x="60" y="42" text-anchor="middle" font-size="19" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">tương quan</text>
+    <text x="60" y="70" text-anchor="middle" font-size="19" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">chéo</text>
+  </g>
+  <path d="M1028 232 L1082 232" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-siam-arch)"/>
+  <g transform="translate(1090,180)">
+    <rect x="0" y="0" width="42" height="105" rx="6" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <text x="21" y="43" text-anchor="middle" font-size="16" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">17</text>
+    <text x="21" y="67" text-anchor="middle" font-size="16" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">x17</text>
+  </g>
+  <text x="575" y="438" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Đỉnh của bản đồ 17 x 17 cho biết mục tiêu dịch về hướng nào trong vùng tìm kiếm.</text>
+</svg>

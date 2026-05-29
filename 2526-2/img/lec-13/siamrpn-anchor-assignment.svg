@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="Gán nhãn hộp neo trong SiamRPN">
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Huấn luyện SiamRPN bắt đầu bằng gán nhãn cho hộp neo</text>
+
+  <g transform="translate(80,78)">
+    <rect x="0" y="0" width="330" height="250" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="165" y="32" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#263238">vùng tìm kiếm</text>
+    <rect x="120" y="86" width="100" height="80" fill="#a5d6a7" opacity="0.25" stroke="#2e7d32" stroke-width="5"/>
+    <rect x="110" y="78" width="116" height="92" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <rect x="62" y="78" width="80" height="62" fill="none" stroke="#c62828" stroke-width="4"/>
+    <rect x="210" y="120" width="86" height="72" fill="none" stroke="#ef6c00" stroke-width="4"/>
+    <text x="170" y="208" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#2e7d32">hộp thật</text>
+  </g>
+
+  <g transform="translate(485,86)">
+    <rect x="0" y="0" width="250" height="230" rx="10" fill="#e8f5e9" stroke="#66bb6a"/>
+    <text x="125" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">hộp neo dương</text>
+    <text x="125" y="88" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">IoU cao với hộp thật</text>
+    <text x="125" y="132" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">được học phân loại</text>
+    <text x="125" y="164" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">và hồi quy hộp</text>
+  </g>
+
+  <g transform="translate(790,86)">
+    <rect x="0" y="0" width="250" height="230" rx="10" fill="#ffebee" stroke="#ef9a9a"/>
+    <text x="125" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">hộp neo âm</text>
+    <text x="125" y="88" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">IoU thấp với hộp thật</text>
+    <text x="125" y="132" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">chỉ học phân loại nền</text>
+    <text x="125" y="164" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">không hồi quy hộp</text>
+  </g>
+
+  <text x="560" y="390" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Các hộp neo ở giữa hai ngưỡng thường bị bỏ qua để nhãn huấn luyện bớt mơ hồ.</text>
+</svg>

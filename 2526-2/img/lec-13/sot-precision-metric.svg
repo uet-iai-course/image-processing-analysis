@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Precision trong SOT đo khoảng cách tâm hộp">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Precision nhìn vào khoảng cách giữa hai tâm hộp</text>
+  <g transform="translate(95,72)">
+    <rect x="0" y="0" width="380" height="230" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <rect x="104" y="74" width="130" height="98" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <rect x="178" y="96" width="130" height="98" fill="none" stroke="#ef6c00" stroke-width="5"/>
+    <circle cx="169" cy="123" r="8" fill="#1565c0"/>
+    <circle cx="243" cy="145" r="8" fill="#ef6c00"/>
+    <line x1="169" y1="123" x2="243" y2="145" stroke="#c62828" stroke-width="4" stroke-dasharray="8 6"/>
+    <text x="170" y="64" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">tâm thật</text>
+    <text x="256" y="218" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#ef6c00">tâm dự đoán</text>
+    <text x="214" y="123" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">d</text>
+  </g>
+  <g transform="translate(585,80)">
+    <rect x="0" y="0" width="320" height="210" rx="10" fill="#fff3e0" stroke="#ffcc80"/>
+    <text x="160" y="44" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">Cách đọc</text>
+    <text x="160" y="86" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">chọn bán kính r, ví dụ 20 px</text>
+    <text x="160" y="124" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đếm khung có d nhỏ hơn r</text>
+    <text x="160" y="162" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hộp sai kích thước nhẹ vẫn có thể đạt</text>
+  </g>
+</svg>

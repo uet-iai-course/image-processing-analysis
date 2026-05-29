@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="430" viewBox="0 0 1150 430" role="img" aria-label="Suy luận trong SiamRPN">
+  <defs>
+    <marker id="arrow-rpn-inf" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect width="1150" height="430" fill="#ffffff"/>
+  <text x="575" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Suy luận SiamRPN: sinh nhiều hộp, rồi chọn hộp đáng tin nhất</text>
+
+  <g transform="translate(60,110)">
+    <rect x="0" y="0" width="140" height="95" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text x="70" y="36" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">mẫu</text>
+    <text x="70" y="64" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">khung đầu</text>
+  </g>
+  <path d="M220 158 L285 158" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-rpn-inf)"/>
+  <g transform="translate(305,110)">
+    <rect x="0" y="0" width="150" height="95" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text x="75" y="36" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">vùng tìm</text>
+    <text x="75" y="64" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">quanh vị trí cũ</text>
+  </g>
+  <path d="M475 158 L540 158" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-rpn-inf)"/>
+  <g transform="translate(560,110)">
+    <rect x="0" y="0" width="150" height="95" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text x="75" y="36" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">SiamRPN</text>
+    <text x="75" y="64" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">điểm + độ lệch</text>
+  </g>
+  <path d="M730 158 L795 158" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-rpn-inf)"/>
+  <g transform="translate(815,94)">
+    <rect x="0" y="0" width="145" height="128" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <rect x="34" y="40" width="70" height="44" fill="none" stroke="#7b1fa2" stroke-width="4"/>
+    <rect x="44" y="50" width="78" height="54" fill="none" stroke="#ef6c00" stroke-width="4"/>
+    <text x="72" y="118" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">nhiều hộp</text>
+  </g>
+  <path d="M980 158 L1045 158" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-rpn-inf)"/>
+  <g transform="translate(1065,110)">
+    <rect x="0" y="0" width="70" height="95" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <rect x="16" y="30" width="40" height="34" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <text x="35" y="84" text-anchor="middle" font-size="15" font-family="Arial, sans-serif" fill="#455a64">chọn</text>
+  </g>
+
+  <g transform="translate(170,300)">
+    <rect x="0" y="-30" width="810" height="60" rx="8" fill="#e3f2fd" stroke="#90caf9"/>
+    <text x="405" y="5" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#0d47a1">điểm cao, thay đổi tỉ lệ vừa phải, và không lệch quá xa vị trí cũ thường được ưu tiên</text>
+  </g>
+</svg>

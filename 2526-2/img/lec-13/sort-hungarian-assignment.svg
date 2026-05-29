@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Hungarian giải bài toán ghép một-một</text>
+  <g transform="translate(160,75)">
+    <text x="0" y="25" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">quỹ đạo</text>
+    <text x="800" y="25" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">phát hiện</text>
+    <g font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="700">
+      <circle cx="0" cy="90" r="30" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/><text x="0" y="97" fill="#2e7d32">T1</text>
+      <circle cx="0" cy="170" r="30" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/><text x="0" y="177" fill="#ef6c00">T2</text>
+      <circle cx="0" cy="250" r="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/><text x="0" y="257" fill="#7b1fa2">T3</text>
+      <rect x="760" y="60" width="80" height="58" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/><text x="800" y="97" fill="#1565c0">D1</text>
+      <rect x="760" y="140" width="80" height="58" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/><text x="800" y="177" fill="#1565c0">D2</text>
+      <rect x="760" y="220" width="80" height="58" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/><text x="800" y="257" fill="#1565c0">D3</text>
+    </g>
+    <line x1="32" y1="90" x2="760" y2="90" stroke="#2e7d32" stroke-width="5"/>
+    <line x1="32" y1="170" x2="760" y2="170" stroke="#ef6c00" stroke-width="5"/>
+    <line x1="32" y1="250" x2="760" y2="250" stroke="#7b1fa2" stroke-width="5"/>
+    <line x1="32" y1="90" x2="760" y2="170" stroke="#90a4ae" stroke-width="2" stroke-dasharray="8 7"/>
+    <line x1="32" y1="170" x2="760" y2="250" stroke="#90a4ae" stroke-width="2" stroke-dasharray="8 7"/>
+    <line x1="32" y1="250" x2="760" y2="90" stroke="#90a4ae" stroke-width="2" stroke-dasharray="8 7"/>
+  </g>
+  <text x="560" y="372" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Mỗi quỹ đạo nhận nhiều nhất một phát hiện; mỗi phát hiện cũng chỉ thuộc về nhiều nhất một quỹ đạo.</text>
+</svg>

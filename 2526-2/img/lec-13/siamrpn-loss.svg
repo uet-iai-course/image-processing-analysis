@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="Mất mát đa nhiệm trong SiamRPN">
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SiamRPN học đồng thời: hộp neo nào là mục tiêu và hộp phải chỉnh ra sao</text>
+
+  <g transform="translate(90,85)">
+    <rect x="0" y="0" width="285" height="235" rx="10" fill="#fff3e0" stroke="#ffcc80"/>
+    <text x="142" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">mất mát phân loại</text>
+    <text x="142" y="90" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">mục tiêu / nền</text>
+    <text x="142" y="130" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">tác động lên cả</text>
+    <text x="142" y="160" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hộp neo dương và âm</text>
+  </g>
+
+  <g transform="translate(420,85)">
+    <rect x="0" y="0" width="285" height="235" rx="10" fill="#f3e5f5" stroke="#ce93d8"/>
+    <text x="142" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">mất mát hồi quy</text>
+    <text x="142" y="90" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">Smooth L1 trên</text>
+    <text x="142" y="120" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">4 độ lệch hộp</text>
+    <text x="142" y="160" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">chỉ dùng hộp neo dương</text>
+  </g>
+
+  <g transform="translate(750,85)">
+    <rect x="0" y="0" width="285" height="235" rx="10" fill="#e8f5e9" stroke="#66bb6a"/>
+    <text x="142" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">tổng hợp</text>
+    <text x="142" y="90" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hai nhánh cùng kéo</text>
+    <text x="142" y="120" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đặc trưng Siamese</text>
+    <text x="142" y="160" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">phù hợp với bám bắt</text>
+  </g>
+
+  <text x="560" y="385" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Phân loại chọn hộp neo đáng tin; hồi quy làm hộp chính xác hơn.</text>
+</svg>

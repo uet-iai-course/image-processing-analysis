@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="So sánh SiamFC và SiamRPN">
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SiamRPN giữ trực giác Siamese, nhưng thêm đầu dự đoán hộp</text>
+
+  <g transform="translate(80,88)">
+    <rect x="0" y="0" width="450" height="265" rx="12" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <text x="225" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">SiamFC</text>
+    <text x="225" y="88" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đầu ra: bản đồ đáp ứng</text>
+    <text x="225" y="128" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hộp được dịch theo đỉnh đáp ứng</text>
+    <text x="225" y="168" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">thay đổi kích thước bằng thử vài tỉ lệ</text>
+    <text x="225" y="218" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#1565c0">đơn giản, nhanh, nhưng hộp chưa tinh</text>
+  </g>
+
+  <g transform="translate(590,88)">
+    <rect x="0" y="0" width="450" height="265" rx="12" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2"/>
+    <text x="225" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">SiamRPN</text>
+    <text x="225" y="88" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đầu ra: điểm mục tiêu + độ lệch hộp</text>
+    <text x="225" y="128" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">nhiều hộp neo tại mỗi vị trí</text>
+    <text x="225" y="168" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hồi quy trực tiếp rộng, cao, tâm hộp</text>
+    <text x="225" y="218" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#2e7d32">định vị hộp tốt hơn, thiết kế giống bộ phát hiện hơn</text>
+  </g>
+</svg>

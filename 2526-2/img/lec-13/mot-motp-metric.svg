@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="MOTP đo chất lượng định vị của các cặp đã ghép đúng">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">MOTP chỉ nhìn các cặp đã ghép đúng, rồi đo hộp khớp tới đâu</text>
+  <g transform="translate(90,78)">
+    <rect x="0" y="0" width="240" height="180" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="120" y="30" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">cặp 1</text>
+    <rect x="70" y="62" width="96" height="74" fill="#90caf9" opacity="0.25" stroke="#1565c0" stroke-width="4"/>
+    <rect x="88" y="72" width="96" height="74" fill="#ffcc80" opacity="0.3" stroke="#ef6c00" stroke-width="4"/>
+    <text x="120" y="164" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">IoU cao</text>
+  </g>
+  <g transform="translate(380,78)">
+    <rect x="0" y="0" width="240" height="180" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="120" y="30" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">cặp 2</text>
+    <rect x="58" y="58" width="96" height="74" fill="#90caf9" opacity="0.25" stroke="#1565c0" stroke-width="4"/>
+    <rect x="126" y="90" width="96" height="74" fill="#ffcc80" opacity="0.3" stroke="#ef6c00" stroke-width="4"/>
+    <text x="120" y="164" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">IoU thấp</text>
+  </g>
+  <g transform="translate(690,95)">
+    <rect x="0" y="0" width="230" height="150" rx="10" fill="#e3f2fd" stroke="#90caf9"/>
+    <text x="115" y="42" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">Trung bình</text>
+    <text x="115" y="82" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">lấy IoU của các</text>
+    <text x="115" y="112" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">cặp đã khớp đúng</text>
+  </g>
+  <text x="500" y="320" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#455a64">MOTP không nói có bỏ sót hay đổi ID nhiều không; nó nói các hộp đúng đã được định vị tốt đến đâu.</text>
+</svg>

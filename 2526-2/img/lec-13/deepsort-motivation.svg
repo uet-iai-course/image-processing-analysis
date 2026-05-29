@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">DeepSORT thêm ngoại hình để trả lời: hộp này nhìn giống quỹ đạo nào?</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#546e7a"/>
+    </marker>
+  </defs>
+  <g transform="translate(80,100)">
+    <rect x="0" y="0" width="250" height="210" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="125" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">SORT</text>
+    <rect x="60" y="82" width="50" height="96" fill="none" stroke="#2e7d32" stroke-width="5"/>
+    <rect x="138" y="86" width="50" height="96" fill="none" stroke="#2e7d32" stroke-width="5"/>
+    <text x="125" y="198" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">chỉ hình học</text>
+  </g>
+  <line x1="360" y1="205" x2="505" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(525,100)">
+    <rect x="0" y="0" width="250" height="210" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="125" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">ReID CNN</text>
+    <rect x="58" y="78" width="50" height="98" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <rect x="132" y="78" width="50" height="98" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
+    <text x="125" y="198" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">véc-tơ ngoại hình</text>
+  </g>
+  <line x1="805" y1="205" x2="950" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(970,100)">
+    <rect x="0" y="0" width="90" height="210" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="45" y="38" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">ID</text>
+    <text x="45" y="76" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">ổn định</text>
+    <circle cx="45" cy="128" r="26" fill="#2e7d32" opacity="0.18" stroke="#2e7d32" stroke-width="3"/>
+    <text x="45" y="136" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">1</text>
+  </g>
+  <text x="560" y="376" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Ngoại hình không thay Kalman; nó bổ sung tín hiệu khi vị trí và IoU không còn đủ phân biệt.</text>
+</svg>

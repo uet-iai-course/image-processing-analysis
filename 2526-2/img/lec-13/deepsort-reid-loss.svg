@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Huấn luyện ReID: kéo cùng ID lại gần, đẩy khác ID ra xa</text>
+  <g transform="translate(80,82)">
+    <rect x="0" y="0" width="440" height="260" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="220" y="35" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">mục tiêu của đặc trưng</text>
+    <circle cx="135" cy="126" r="18" fill="#2e7d32"/>
+    <circle cx="178" cy="156" r="18" fill="#2e7d32" opacity="0.72"/>
+    <circle cx="222" cy="118" r="18" fill="#2e7d32" opacity="0.72"/>
+    <circle cx="310" cy="180" r="18" fill="#c62828"/>
+    <circle cx="338" cy="124" r="18" fill="#c62828" opacity="0.72"/>
+    <path d="M135,126 C150,138 164,147 178,156" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <path d="M222,118 C254,140 280,162 310,180" fill="none" stroke="#c62828" stroke-width="4" stroke-dasharray="8 6"/>
+    <text x="175" y="220" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#2e7d32">cùng ID gần nhau</text>
+    <text x="316" y="220" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#c62828">khác ID xa nhau</text>
+  </g>
+  <g transform="translate(590,82)">
+    <rect x="0" y="0" width="450" height="260" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="225" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#263238">hai cách mất mát thường dùng</text>
+    <g transform="translate(42,72)">
+      <rect x="0" y="0" width="165" height="145" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+      <text x="82" y="35" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">ID entropy chéo</text>
+      <text x="82" y="82" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">dự đoán đúng</text>
+      <text x="82" y="111" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">mã người</text>
+    </g>
+    <g transform="translate(242,72)">
+      <rect x="0" y="0" width="165" height="145" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+      <text x="82" y="35" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">bộ ba</text>
+      <text x="82" y="82" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">dương gần hơn</text>
+      <text x="82" y="111" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">âm ít nhất m</text>
+    </g>
+  </g>
+  <text x="560" y="378" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">DeepSORT dùng đặc trưng đã học ngoại tuyến; trong lúc chạy, mô hình chỉ trích đặc trưng và so khớp.</text>
+</svg>

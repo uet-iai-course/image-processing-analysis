@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SORT và DeepSORT khác nhau ở tín hiệu dùng để ghép cặp</text>
+  <g transform="translate(85,82)">
+    <rect x="0" y="0" width="430" height="260" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="215" y="40" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">SORT</text>
+    <text x="215" y="90" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#263238">Kalman + IoU + Hungarian</text>
+    <text x="215" y="135" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">rất nhanh, ít thành phần</text>
+    <text x="215" y="175" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">phụ thuộc mạnh vào phát hiện</text>
+    <text x="215" y="215" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">dễ đổi ID khi che khuất lâu</text>
+  </g>
+  <g transform="translate(605,82)">
+    <rect x="0" y="0" width="430" height="260" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="215" y="40" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">DeepSORT</text>
+    <text x="215" y="90" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#263238">Kalman + ngoại hình + ghép tầng</text>
+    <text x="215" y="135" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">giữ ID tốt hơn qua che khuất</text>
+    <text x="215" y="175" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">cần bộ ReID học ngoại tuyến</text>
+    <text x="215" y="215" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">chậm hơn và phụ thuộc miền dữ liệu</text>
+  </g>
+  <text x="560" y="380" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Nếu phát hiện tốt và ít che khuất, SORT là nền tảng mạnh; khi cần giữ danh tính lâu hơn, DeepSORT hợp lý hơn.</text>
+</svg>

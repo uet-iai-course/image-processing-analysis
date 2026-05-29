@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SORT ghép quỹ đạo và phát hiện bằng ma trận chi phí IoU</text>
+  <g transform="translate(70,80)">
+    <rect x="0" y="0" width="360" height="260" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="180" y="32" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#263238">hộp dự báo và hộp phát hiện</text>
+    <rect x="72" y="80" width="88" height="130" fill="#2e7d32" opacity="0.16" stroke="#2e7d32" stroke-width="5"/>
+    <rect x="106" y="98" width="92" height="126" fill="#1565c0" opacity="0.16" stroke="#1565c0" stroke-width="5"/>
+    <text x="116" y="238" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#2e7d32">dự báo</text>
+    <text x="208" y="238" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">phát hiện</text>
+    <text x="270" y="140" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#263238">IoU cao</text>
+    <text x="270" y="176" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">chi phí thấp</text>
+  </g>
+  <g transform="translate(505,78)">
+    <rect x="0" y="0" width="545" height="264" rx="8" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="272" y="33" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#263238">chi phí = 1 - IoU</text>
+    <text x="82" y="75" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">quỹ đạo</text>
+    <text x="235" y="75" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">D1</text>
+    <text x="335" y="75" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">D2</text>
+    <text x="435" y="75" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">D3</text>
+    <g font-family="Arial, sans-serif" font-size="20" text-anchor="middle">
+      <text x="82" y="125" fill="#2e7d32">T1</text>
+      <text x="82" y="175" fill="#ef6c00">T2</text>
+      <text x="82" y="225" fill="#7b1fa2">T3</text>
+      <rect x="185" y="97" width="90" height="38" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="230" y="123" fill="#263238">0.12</text>
+      <rect x="285" y="97" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="330" y="123" fill="#263238">0.76</text>
+      <rect x="385" y="97" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="430" y="123" fill="#263238">0.91</text>
+      <rect x="185" y="147" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="230" y="173" fill="#263238">0.82</text>
+      <rect x="285" y="147" width="90" height="38" fill="#fff3e0" stroke="#ef6c00"/>
+      <text x="330" y="173" fill="#263238">0.18</text>
+      <rect x="385" y="147" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="430" y="173" fill="#263238">0.69</text>
+      <rect x="185" y="197" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="230" y="223" fill="#263238">0.94</text>
+      <rect x="285" y="197" width="90" height="38" fill="#fafafa" stroke="#cfd8dc"/>
+      <text x="330" y="223" fill="#263238">0.72</text>
+      <rect x="385" y="197" width="90" height="38" fill="#f3e5f5" stroke="#7b1fa2"/>
+      <text x="430" y="223" fill="#263238">0.09</text>
+    </g>
+  </g>
+  <text x="560" y="382" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Hungarian chọn tập cặp có tổng chi phí nhỏ nhất, nhưng vẫn phải loại các cặp IoU quá thấp.</text>
+</svg>

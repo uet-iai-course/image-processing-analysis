@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Ghép tầng ưu tiên quỹ đạo vừa được nhìn thấy gần đây</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#546e7a"/>
+    </marker>
+  </defs>
+  <g transform="translate(80,90)">
+    <rect x="0" y="0" width="260" height="230" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="130" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">tuổi mất dấu = 0</text>
+    <text x="130" y="92" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">ghép trước</text>
+    <circle cx="88" cy="152" r="23" fill="#2e7d32" opacity="0.22" stroke="#2e7d32" stroke-width="3"/>
+    <circle cx="172" cy="152" r="23" fill="#2e7d32" opacity="0.22" stroke="#2e7d32" stroke-width="3"/>
+  </g>
+  <line x1="365" y1="205" x2="460" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(480,90)">
+    <rect x="0" y="0" width="260" height="230" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="130" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">tuổi mất dấu = 1</text>
+    <text x="130" y="92" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">ghép sau</text>
+    <circle cx="130" cy="152" r="30" fill="#ef6c00" opacity="0.22" stroke="#ef6c00" stroke-width="3"/>
+  </g>
+  <line x1="765" y1="205" x2="860" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(880,90)">
+    <rect x="0" y="0" width="160" height="230" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+    <text x="80" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">cũ hơn</text>
+    <text x="80" y="92" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">ghép cuối</text>
+    <circle cx="80" cy="152" r="34" fill="#7b1fa2" opacity="0.18" stroke="#7b1fa2" stroke-width="3"/>
+  </g>
+  <text x="560" y="376" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Lý do: quỹ đạo càng lâu không cập nhật thì dự báo chuyển động càng kém chắc, dễ chiếm nhầm phát hiện.</text>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Khoảng cách Mahalanobis dùng cả sai lệch vị trí và độ bất định</text>
+  <g transform="translate(80,80)">
+    <rect x="0" y="0" width="420" height="260" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="210" y="32" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#263238">cổng chuyển động</text>
+    <ellipse cx="210" cy="145" rx="128" ry="72" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <ellipse cx="210" cy="145" rx="72" ry="40" fill="#1565c0" opacity="0.13"/>
+    <rect x="185" y="100" width="58" height="90" fill="none" stroke="#2e7d32" stroke-width="5" stroke-dasharray="8 6"/>
+    <rect x="246" y="116" width="54" height="86" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <rect x="340" y="70" width="48" height="82" fill="none" stroke="#c62828" stroke-width="4"/>
+    <text x="274" y="230" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#2e7d32">nhận</text>
+    <text x="364" y="230" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#c62828">loại</text>
+  </g>
+  <g transform="translate(575,92)">
+    <rect x="0" y="0" width="470" height="230" rx="8" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="235" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#263238">d_M(i,j)</text>
+    <text x="235" y="92" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#263238">= bình phương sai lệch đã chuẩn hóa bởi hiệp phương sai</text>
+    <text x="235" y="148" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#455a64">cùng sai lệch điểm ảnh, nhưng quỹ đạo càng bất định</text>
+    <text x="235" y="182" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#455a64">thì khoảng cách chuyển động càng bớt nghiêm khắc</text>
+  </g>
+  <text x="560" y="376" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">DeepSORT dùng Mahalanobis để loại các phát hiện quá xa dự báo trước khi xét ngoại hình.</text>
+</svg>

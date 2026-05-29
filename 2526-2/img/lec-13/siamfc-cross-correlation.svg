@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430" role="img" aria-label="Tương quan chéo trong SiamFC">
+  <defs>
+    <marker id="arrow-xcorr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="430" fill="#ffffff"/>
+  <text x="550" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Đặc trưng mẫu đóng vai trò bộ lọc trượt trên vùng tìm kiếm</text>
+
+  <g transform="translate(80,90)">
+    <rect x="0" y="0" width="185" height="185" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text x="92" y="-15" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">\(\varphi(z)\)</text>
+    <g stroke="#90caf9" stroke-width="2">
+      <path d="M31 0 V185"/><path d="M62 0 V185"/><path d="M93 0 V185"/><path d="M124 0 V185"/><path d="M155 0 V185"/>
+      <path d="M0 31 H185"/><path d="M0 62 H185"/><path d="M0 93 H185"/><path d="M0 124 H185"/><path d="M0 155 H185"/>
+    </g>
+    <rect x="52" y="52" width="82" height="82" fill="#1565c0" opacity="0.25"/>
+    <text x="92" y="220" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">mẫu đặc trưng</text>
+  </g>
+
+  <path d="M294 184 L374 184" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-xcorr)"/>
+  <text x="334" y="156" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">trượt</text>
+
+  <g transform="translate(395,72)">
+    <rect x="0" y="0" width="260" height="260" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text x="130" y="-15" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">\(\varphi(x)\)</text>
+    <g stroke="#a5d6a7" stroke-width="2">
+      <path d="M32 0 V260"/><path d="M64 0 V260"/><path d="M96 0 V260"/><path d="M128 0 V260"/><path d="M160 0 V260"/><path d="M192 0 V260"/><path d="M224 0 V260"/>
+      <path d="M0 32 H260"/><path d="M0 64 H260"/><path d="M0 96 H260"/><path d="M0 128 H260"/><path d="M0 160 H260"/><path d="M0 192 H260"/><path d="M0 224 H260"/>
+    </g>
+    <rect x="116" y="94" width="82" height="82" fill="#1565c0" opacity="0.25" stroke="#1565c0" stroke-width="4"/>
+    <text x="130" y="294" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">vùng tìm kiếm đặc trưng</text>
+  </g>
+
+  <path d="M680 202 L770 202" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-xcorr)"/>
+
+  <g transform="translate(800,96)">
+    <rect x="0" y="0" width="210" height="210" rx="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <text x="105" y="-15" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">bản đồ đáp ứng</text>
+    <g stroke="#ce93d8" stroke-width="2">
+      <path d="M35 0 V210"/><path d="M70 0 V210"/><path d="M105 0 V210"/><path d="M140 0 V210"/><path d="M175 0 V210"/>
+      <path d="M0 35 H210"/><path d="M0 70 H210"/><path d="M0 105 H210"/><path d="M0 140 H210"/><path d="M0 175 H210"/>
+    </g>
+    <circle cx="140" cy="105" r="22" fill="#ef6c00" opacity="0.85"/>
+    <text x="105" y="244" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">điểm cao = vị trí giống nhất</text>
+  </g>
+</svg>

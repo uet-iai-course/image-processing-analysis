@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Đường thành công và AUC trong SOT">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Đổi ngưỡng IoU để xem bộ bám bắt bền đến đâu</text>
+  <g transform="translate(90,70)">
+    <line x1="70" y1="230" x2="430" y2="230" stroke="#455a64" stroke-width="3"/>
+    <line x1="70" y1="230" x2="70" y2="20" stroke="#455a64" stroke-width="3"/>
+    <text x="250" y="270" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">ngưỡng IoU</text>
+    <text x="8" y="126" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64" transform="rotate(-90 8 126)">tỉ lệ khung đạt</text>
+    <text x="70" y="252" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">0</text>
+    <text x="430" y="252" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">1</text>
+    <text x="48" y="28" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#455a64">1</text>
+    <path d="M70 38 C145 44 194 55 252 83 C310 112 358 160 430 225 L430 230 L70 230 Z" fill="#90caf9" opacity="0.25"/>
+    <path d="M70 38 C145 44 194 55 252 83 C310 112 358 160 430 225" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <text x="300" y="120" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">AUC</text>
+  </g>
+  <g transform="translate(590,88)">
+    <rect x="0" y="0" width="330" height="190" rx="10" fill="#e3f2fd" stroke="#90caf9"/>
+    <text x="165" y="44" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">Cách đọc</text>
+    <text x="165" y="86" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">mỗi ngưỡng cho một tỉ lệ thành công</text>
+    <text x="165" y="124" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đường càng cao càng tốt</text>
+    <text x="165" y="162" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">diện tích dưới đường là AUC</text>
+  </g>
+</svg>

@@ -1,0 +1,1689 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 13: Bám bắt đối tượng</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+  <style>
+    .reveal .trk-card {
+      border-radius: 8px;
+      padding: 9px 12px;
+      border-left: 5px solid #90a4ae;
+      background: #fafafa;
+    }
+
+    .reveal .trk-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .reveal .trk-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .trk-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .trk-imgbox {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .reveal .eqbox {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .reveal .mini {
+      font-size: 0.78em;
+      color: #555;
+    }
+
+    .reveal .section-plan {
+      background: #f7f7f7;
+      border: 1px dashed #90a4ae;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #455a64;
+      font-size: 0.9em;
+    }
+
+    .reveal .compact-pipeline {
+      flex-wrap: nowrap;
+      gap: 0.28em;
+      margin-top: 0.35em;
+    }
+
+    .reveal .compact-pipeline .stage {
+      width: 128px;
+      padding: 0.35em;
+    }
+
+    .reveal .compact-pipeline .arrow {
+      font-size: 1.15em;
+    }
+
+    .reveal table.trk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82em;
+    }
+
+    .reveal table.trk-table th,
+    .reveal table.trk-table td {
+      padding: 8px;
+      border: 1px solid #cfd8dc;
+      vertical-align: top;
+    }
+
+    .reveal table.trk-table th {
+      background: #eceff1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================== MỞ ĐẦU ===================== -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 13: Bám bắt đối tượng</h3>
+          <p>SOT · SiamFC · SiamRPN · MOT · SORT · DeepSORT</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Nội dung</h2>
+          <div class="trk-grid-3" style="margin-top:0.5em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bài toán</strong>
+              <p style="margin:0.35em 0 0;">Đối tượng, danh tính, quỹ đạo, lỗi và độ đo.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">SOT</strong>
+              <p style="margin:0.35em 0 0;">Mạng Siamese, SiamFC, SiamRPN.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">MOT</strong>
+              <p style="margin:0.35em 0 0;">Bám bắt dựa trên phát hiện, SORT, DeepSORT.</p>
+            </div>
+          </div>
+          <p class="caption">Bài này nối từ phát hiện và phân vùng: khi ảnh trở thành video, kết quả phải nhất quán theo thời gian.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Từ ảnh đơn sang chuỗi khung hình</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/tracking-problem.svg" alt="Bám bắt đối tượng qua chuỗi khung hình" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Bám bắt không chỉ vẽ hộp đúng ở từng khung hình; nó phải giữ cùng một danh tính qua thời gian.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Từ hộp rời rạc đến quỹ đạo có danh tính</h2>
+          <p style="color:#555;">Bài 11 hỏi ảnh có vật nào và hộp nằm ở đâu. Bài 13 hỏi thêm: hộp ở khung sau có còn là cùng vật đó không?</p>
+          <div style="margin-top:0.8em; background:#fff3e0; padding:14px 18px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
+            <p style="margin-top:0.3em; font-style:italic; font-size:1.05em;">
+              Làm thế nào biến các quan sát rời rạc trong video thành <strong>quỹ đạo ổn định có danh tính</strong>?
+            </p>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Năng lực cần đạt</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Mô hình hóa bài toán</strong>
+              <p style="margin:0.35em 0 0;">Phân biệt hộp, danh tính, quỹ đạo và lỗi liên kết.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đọc kiến trúc SOT</strong>
+              <p style="margin:0.35em 0 0;">Giải thích SiamFC và SiamRPN từ dữ liệu vào đến bản đồ đáp ứng hoặc hộp đầu ra.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hiểu liên kết dữ liệu</strong>
+              <p style="margin:0.35em 0 0;">Biết vì sao SORT cần Kalman + Hungarian, và DeepSORT thêm ngoại hình.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Hiểu mất mát và đánh đổi</strong>
+              <p style="margin:0.35em 0 0;">Nói được mất mát kéo mô hình theo hướng nào và kỹ thuật nào phù hợp tình huống nào.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 1 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Bài toán bám bắt</h1>
+          <p>Đối tượng · danh tính · quỹ đạo · lỗi · độ đo</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Giới hạn của phát hiện độc lập theo khung hình</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/detection-to-tracking.svg" alt="Từ phát hiện từng ảnh sang bám bắt theo thời gian" style="max-width:100%; max-height:60vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Bộ phát hiện sinh hộp độc lập; bộ bám bắt phải nối các hộp thành quỹ đạo có cùng danh tính.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Ràng buộc thời gian trong video</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Ảnh tĩnh</strong>
+              <ul>
+                <li>Một đầu vào độc lập.</li>
+                <li>Dự đoán nhãn, hộp hoặc mặt nạ.</li>
+                <li>Sai lệch được đo ngay trên ảnh đó.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Video</strong>
+              <ul>
+                <li>Nhiều khung hình phụ thuộc nhau.</li>
+                <li>Dự đoán cần giữ danh tính qua thời gian.</li>
+                <li>Sai một lần có thể kéo dài thành sai cả quỹ đạo.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Bám bắt thêm một ràng buộc mới: tính nhất quán theo thời gian.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Hai bài toán bám bắt cơ bản</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/tracking-taxonomy.svg" alt="Hai bài toán bám bắt: SOT và MOT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SOT giữ một mục tiêu đã biết; MOT nối nhiều hộp phát hiện thành nhiều quỹ đạo có danh tính.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>SOT: theo dõi mục tiêu từ hộp khởi tạo</h2>
+          <p>SOT nhận hộp mục tiêu ở khung đầu, rồi dự đoán vị trí của cùng mục tiêu ở các khung sau.</p>
+          <div class="eqbox" style="margin-top:0.6em;">
+            \[
+              (I_1, b_1^\star), I_2, \ldots, I_T
+              \quad\rightarrow\quad
+              \hat b_2, \ldots, \hat b_T
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Không cần biết lớp</strong>
+              <p style="margin:0.35em 0 0;">Mục tiêu có thể là bất kỳ vật nào người dùng khoanh.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cần giống mẫu</strong>
+              <p style="margin:0.35em 0 0;">Khung sau được tìm bằng mức giống với mẫu ban đầu.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dễ trôi</strong>
+              <p style="margin:0.35em 0 0;">Nếu cập nhật sai, bộ bám bắt có thể học nhầm nền thành mục tiêu.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>MOT: nhiều đối tượng, nhiều danh tính</h2>
+          <p>MOT dự đoán nhiều quỹ đạo, mỗi quỹ đạo là một chuỗi hộp cùng ID.</p>
+          <div class="eqbox" style="margin-top:0.6em;">
+            \[
+              \mathcal{T}_k =
+              \{(t, \hat b_t^{(k)}, \hat s_t^{(k)})\}_{t=t_0}^{t_1},
+              \quad k=1,\ldots,K
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Sinh quỹ đạo mới</strong>
+              <p style="margin:0.35em 0 0;">Khi có hộp phát hiện chưa khớp với quỹ đạo cũ.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Duy trì quỹ đạo</strong>
+              <p style="margin:0.35em 0 0;">Khi hộp mới khớp với dự báo hoặc ngoại hình.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Kết thúc quỹ đạo</strong>
+              <p style="margin:0.35em 0 0;">Khi mất quan sát đủ lâu hoặc đối tượng rời cảnh.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Các dạng lỗi đặc thù của bám bắt</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/tracking-failure-modes.svg" alt="Các lỗi thường gặp trong bám bắt đối tượng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Lỗi quan trọng của bám bắt thường nằm ở liên kết thời gian, không chỉ ở một hộp sai.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>MOT dựa trên phát hiện và liên kết</h2>
+          <div class="pipeline compact-pipeline" style="font-size:0.86em;">
+            <div class="stage"><div class="stage-title">Phát hiện</div><div class="stage-desc">hộp ở khung hiện tại</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Dự báo</div><div class="stage-desc">quỹ đạo sẽ ở đâu</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Tính chi phí</div><div class="stage-desc">IoU, chuyển động, ngoại hình</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Ghép cặp</div><div class="stage-desc">hộp nào vào quỹ đạo nào</div></div>
+            <div class="arrow">→</div>
+            <div class="stage"><div class="stage-title">Quản lý</div><div class="stage-desc">tạo, cập nhật, xóa quỹ đạo</div></div>
+          </div>
+          <p class="caption">SORT và DeepSORT khác nhau chủ yếu ở cách dự báo, cách tính chi phí và cách giữ quỹ đạo khi bị che khuất.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>SOT dưới dạng so khớp mẫu</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Mẫu mục tiêu</strong>
+              <p style="margin:0.35em 0 0;">Cắt từ khung đầu hoặc khung gần nhất: vật cần bám.</p>
+              <div class="eqbox" style="margin-top:0.5em;">\(z = crop(I_1, b_1^\star)\)</div>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Vùng tìm kiếm</strong>
+              <p style="margin:0.35em 0 0;">Một vùng lớn hơn quanh vị trí dự đoán ở khung mới.</p>
+              <div class="eqbox" style="margin-top:0.5em;">\(x_t = crop(I_t, \hat b_{t-1})\)</div>
+            </div>
+          </div>
+          <p class="caption">Mạng Siamese dùng cùng một bộ trích đặc trưng cho mẫu và vùng tìm kiếm, rồi đo độ giống theo không gian.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>MOT dưới dạng liên kết dữ liệu</h2>
+          <p>Mỗi khung hình tạo một ma trận chi phí giữa quỹ đạo còn hoạt động và hộp phát hiện mới.</p>
+          <div class="eqbox" style="margin-top:0.6em;">
+            \[
+              C_{ij} =
+              \lambda_{\text{chuyển động}} C^{\text{chuyển động}}_{ij}
+              + \lambda_{\text{ngoại hình}} C^{\text{ngoại hình}}_{ij}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Chi phí chuyển động</strong>
+              <p style="margin:0.35em 0 0;">Hộp mới có gần vị trí dự báo không?</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Chi phí ngoại hình</strong>
+              <p style="margin:0.35em 0 0;">Miếng ảnh mới có giống đối tượng cũ không?</p>
+            </div>
+          </div>
+          <p class="caption">Khi hai người đi gần nhau, chỉ dùng chuyển động thường không đủ để giữ đúng ID.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Đánh giá SOT: độ bám sát của hộp</h2>
+          <table class="trk-table">
+            <thead>
+              <tr>
+                <th>Độ đo</th>
+                <th>Ý nghĩa</th>
+                <th>Lỗi bị phạt mạnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Độ chồng lấn / IoU</td>
+                <td>Hộp dự đoán chồng lên hộp thật bao nhiêu.</td>
+                <td>Hộp lệch, hộp quá to hoặc quá nhỏ.</td>
+              </tr>
+              <tr>
+                <td>Đường thành công / AUC</td>
+                <td>Tỉ lệ khung đạt IoU lớn hơn nhiều ngưỡng khác nhau.</td>
+                <td>Bộ bám bắt chỉ tốt ở một ngưỡng hẹp.</td>
+              </tr>
+              <tr>
+                <td>Precision</td>
+                <td>Khoảng cách tâm hộp dự đoán đến tâm hộp thật.</td>
+                <td>Tâm lệch, dù kích thước hộp có thể gần đúng.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="caption">SOT tập trung vào độ chính xác vị trí của một mục tiêu qua thời gian.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>SOT: độ chồng lấn của hộp</h2>
+          <div class="trk-grid-2" style="align-items:center;">
+            <div class="trk-imgbox">
+              <img src="img/lec-13/sot-iou-metric.svg" alt="Độ chồng lấn IoU cho SOT" style="max-width:100%; max-height:48vh; object-fit:contain;" />
+            </div>
+            <div>
+              <div class="eqbox">
+                \[
+                  IoU_t =
+                  \frac{|\hat b_t \cap b_t^\star|}
+                       {|\hat b_t \cup b_t^\star|}
+                \]
+              </div>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  AO = \frac{1}{T}\sum_{t=1}^{T} IoU_t
+                \]
+              </div>
+            </div>
+          </div>
+          <p class="caption">IoU phạt cả lệch vị trí lẫn sai kích thước hộp; AO là IoU trung bình trên toàn video.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>SOT: tỉ lệ thành công theo ngưỡng</h2>
+          <div class="trk-grid-2" style="align-items:center;">
+            <div class="trk-imgbox">
+              <img src="img/lec-13/sot-success-auc.svg" alt="Đường thành công và AUC trong SOT" style="max-width:100%; max-height:48vh; object-fit:contain;" />
+            </div>
+            <div>
+              <div class="eqbox">
+                \[
+                  S(\tau)=
+                  \frac{1}{T}\sum_{t=1}^{T}
+                  \mathbf{1}[IoU_t \ge \tau]
+                \]
+              </div>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  AUC=\int_{0}^{1} S(\tau)\,d\tau
+                \]
+              </div>
+            </div>
+          </div>
+          <p class="caption">AUC cao nghĩa là bộ bám bắt giữ hộp tốt ở nhiều mức yêu cầu, không chỉ ở một ngưỡng dễ.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>SOT: độ chính xác theo sai số tâm</h2>
+          <div class="trk-grid-2" style="align-items:center;">
+            <div class="trk-imgbox">
+              <img src="img/lec-13/sot-precision-metric.svg" alt="Precision trong SOT đo khoảng cách tâm hộp" style="max-width:100%; max-height:48vh; object-fit:contain;" />
+            </div>
+            <div>
+              <div class="eqbox">
+                \[
+                  d_t =
+                  \left\lVert
+                  c(\hat b_t)-c(b_t^\star)
+                  \right\rVert_2
+                \]
+              </div>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  P(r)=
+                  \frac{1}{T}\sum_{t=1}^{T}
+                  \mathbf{1}[d_t \le r]
+                \]
+              </div>
+            </div>
+          </div>
+          <p class="caption">Precision dễ hiểu và trực quan, nhưng không thấy rõ lỗi sai kích thước nếu tâm hộp vẫn gần đúng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đánh giá MOT: định vị và nhất quán danh tính</h2>
+          <table class="trk-table">
+            <thead>
+              <tr>
+                <th>Độ đo</th>
+                <th>Nhìn vào điều gì?</th>
+                <th>Khi nào hữu ích?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MOTA</td>
+                <td>Phát hiện thừa, phát hiện thiếu và đổi danh tính.</td>
+                <td>Khi cần số tổng hợp về lỗi bám bắt cổ điển.</td>
+              </tr>
+              <tr>
+                <td>MOTP</td>
+                <td>Độ khớp vị trí của các hộp đã ghép đúng.</td>
+                <td>Khi muốn tách chất lượng định vị khỏi chất lượng ID.</td>
+              </tr>
+              <tr>
+                <td>IDF1</td>
+                <td>Mức đúng của danh tính theo toàn bộ quỹ đạo.</td>
+                <td>Khi bài toán quan tâm giữ đúng người/xe qua lâu dài.</td>
+              </tr>
+              <tr>
+                <td>HOTA</td>
+                <td>Cân bằng giữa phát hiện, liên kết và định vị.</td>
+                <td>Khi cần xem phát hiện và liên kết cùng lúc.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="caption">Một MOT tốt phải vừa thấy đúng vật, vừa nối đúng vật đó thành quỹ đạo.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>MOTA: tổng hợp lỗi bám bắt chính</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/mot-mota-metric.svg" alt="MOTA tổng hợp lỗi phát hiện và đổi danh tính" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">MOTA giảm khi hệ thống bỏ sót vật, báo thừa vật không có thật, hoặc đổi danh tính của quỹ đạo.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Công thức MOTA</h2>
+          <div class="eqbox">
+            \[
+              MOTA =
+              1 -
+              \frac{\sum_t(FN_t + FP_t + IDSW_t)}
+                   {\sum_t GT_t}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(GT_t\)</strong>
+              <p style="margin:0.25em 0 0;">số đối tượng thật ở khung \(t\).</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">\(FN_t\)</strong>
+              <p style="margin:0.25em 0 0;">số vật thật không có dự đoán khớp.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(FP_t\)</strong>
+              <p style="margin:0.25em 0 0;">số hộp dự đoán không khớp vật thật nào.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">\(IDSW_t\)</strong>
+              <p style="margin:0.25em 0 0;">số lần quỹ đạo đổi ID so với lần ghép trước.</p>
+            </div>
+          </div>
+          <p class="caption">MOTA trả lời: so với tổng số vật thật, hệ thống mắc bao nhiêu lỗi bỏ sót, báo thừa và đổi ID.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>MOTP: độ chính xác định vị của cặp ghép</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/mot-motp-metric.svg" alt="MOTP đo chất lượng định vị của các cặp đã ghép đúng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Sau khi biết cặp nào là đúng, MOTP hỏi hộp dự đoán khớp hộp thật tốt đến đâu.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Công thức MOTP</h2>
+          <div class="eqbox">
+            \[
+              MOTP_{IoU} =
+              \frac{\sum_{(t,i)\in TP}
+              IoU(\hat b_{t,i}, b^\star_{t,i})}
+              {|TP|}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(TP\)</strong>
+              <p style="margin:0.25em 0 0;">tập cặp dự đoán - vật thật đã được ghép đúng.</p>
+            </div>
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\hat b_{t,i}\)</strong>
+              <p style="margin:0.25em 0 0;">hộp dự đoán của cặp đúng \(i\) tại khung \(t\).</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(b^\star_{t,i}\)</strong>
+              <p style="margin:0.25em 0 0;">hộp thật tương ứng với dự đoán đó.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">\(|TP|\)</strong>
+              <p style="margin:0.25em 0 0;">số cặp đúng được đưa vào trung bình.</p>
+            </div>
+          </div>
+          <p class="caption">Với dạng IoU ở đây, MOTP càng cao nghĩa là định vị càng tốt.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>IDF1: độ chính xác danh tính</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/mot-idf1-metric.svg" alt="IDF1 đo độ đúng danh tính trên quỹ đạo" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Một quỹ đạo đúng vị trí nhưng đổi ID giữa chừng vẫn làm IDF1 giảm.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Công thức IDF1</h2>
+          <div class="eqbox">
+            \[
+              IDF1 =
+              \frac{2\,IDTP}
+                   {2\,IDTP + IDFP + IDFN}
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(IDTP\)</strong>
+              <p style="margin:0.25em 0 0;">dự đoán vừa khớp hộp, vừa đúng danh tính.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(IDFP\)</strong>
+              <p style="margin:0.25em 0 0;">dự đoán gán nhầm danh tính hoặc thừa danh tính.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">\(IDFN\)</strong>
+              <p style="margin:0.25em 0 0;">vật thật không được nhận bằng đúng danh tính.</p>
+            </div>
+          </div>
+          <p class="caption">IDF1 là độ đo F1 ở mức danh tính: cao khi quỹ đạo đúng và ít bị đứt hoặc đổi ID.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>HOTA: cân bằng phát hiện và liên kết</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/mot-hota-metric.svg" alt="HOTA cân bằng phát hiện và liên kết" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">HOTA thấp nếu phát hiện tốt nhưng nối ID kém, hoặc nối ID tốt nhưng bỏ sót nhiều đối tượng.</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Công thức HOTA</h2>
+          <div class="eqbox">
+            \[
+              HOTA_{\alpha} =
+              \sqrt{DetA_{\alpha}\,AssA_{\alpha}},
+              \qquad
+              DetA_{\alpha} =
+              \frac{TP_{\alpha}}
+                   {TP_{\alpha}+FP_{\alpha}+FN_{\alpha}}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\alpha\)</strong>
+              <p style="margin:0.25em 0 0;">ngưỡng IoU dùng để quyết định một dự đoán có khớp vật thật không.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(DetA_{\alpha}\)</strong>
+              <p style="margin:0.25em 0 0;">độ đúng phát hiện: đúng bao nhiêu so với đúng + thừa + thiếu.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">\(AssA_{\alpha}\)</strong>
+              <p style="margin:0.25em 0 0;">độ đúng liên kết: các cặp đúng có giữ cùng danh tính theo thời gian không.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Căn bậc hai tích</strong>
+              <p style="margin:0.25em 0 0;">một nửa yếu sẽ kéo HOTA xuống, dù nửa còn lại mạnh.</p>
+            </div>
+          </div>
+          <p class="caption">HOTA được báo cáo bằng cách tổng hợp qua nhiều ngưỡng \(\alpha\), tương tự cách COCO dùng nhiều ngưỡng IoU.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== KHUNG CÁC PHẦN SAU ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />SOT với mạng Siamese</h1>
+          <p>SiamFC · mẫu mục tiêu · vùng tìm kiếm · tương quan chéo · bản đồ đáp ứng</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Khác biệt giữa SOT và phát hiện đối tượng</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bộ phát hiện</strong>
+              <ul>
+                <li>Học trước các lớp như người, xe, chó.</li>
+                <li>Mỗi ảnh được xử lý khá độc lập.</li>
+                <li>Đầu ra là hộp có nhãn lớp.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">SOT</strong>
+              <ul>
+                <li>Mục tiêu có thể là bất kỳ vật nào được khoanh ở khung đầu.</li>
+                <li>Không cần biết lớp, cần tìm lại cùng vật.</li>
+                <li>Đầu ra là hộp của mục tiêu qua thời gian.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">SOT chuyển câu hỏi từ “vật này thuộc lớp nào?” sang “vùng nào giống mục tiêu ban đầu nhất?”.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Huấn luyện ngoại tuyến cho bám bắt thời gian thực</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-online-vs-offline.svg" alt="Từ học trực tuyến sang học so khớp ngoại tuyến trong SOT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamFC học một hàm so khớp chung từ nhiều video, nên khi chạy thật không phải huấn luyện lại trọng số.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mạng Siamese: hai ảnh, một bộ trích đặc trưng</h2>
+          <div class="eqbox">
+            \[
+              s(z,x)=g\big(\varphi_\theta(z),\varphi_\theta(x)\big)
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(z\): mẫu mục tiêu</strong>
+              <p style="margin:0.35em 0 0;">Miếng ảnh chứa vật cần bám, lấy từ khung đầu.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(x\): vùng tìm kiếm</strong>
+              <p style="margin:0.35em 0 0;">Miếng ảnh lớn hơn quanh vị trí dự đoán ở khung mới.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(\varphi_\theta\): cùng trọng số</strong>
+              <p style="margin:0.35em 0 0;">Cùng một CNN nhìn cả mẫu và vùng tìm để đặc trưng nằm trong cùng không gian.</p>
+            </div>
+          </div>
+          <p class="caption">Nếu hai nhánh không dùng chung trọng số, điểm giống nhau sẽ khó có ý nghĩa ổn định.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Tạo cặp huấn luyện từ mẫu và vùng tìm kiếm</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-pair-crops.svg" alt="Tạo cặp mẫu mục tiêu và vùng tìm kiếm cho SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Mẫu cho biết “cần tìm gì”; vùng tìm kiếm cho biết “tìm ở đâu quanh vị trí cũ”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Luồng xử lý của SiamFC</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-architecture.svg" alt="Kiến trúc tổng quan SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamFC không phân loại từng vùng đề xuất; nó tính một bản đồ điểm giống nhau trên toàn vùng tìm kiếm.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Hai nhánh dùng chung trọng số</h2>
+          <div class="trk-grid-2" style="align-items:center;">
+            <div class="eqbox">
+              \[
+                \varphi_\theta(z),\quad \varphi_\theta(x)
+              \]
+            </div>
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Cùng một hàm nhìn hai ảnh</strong>
+              <p style="margin:0.35em 0 0;">Cùng vật ở hai khung phải tạo đặc trưng gần nhau; vật khác hoặc nền phải tạo đặc trưng xa hơn.</p>
+            </div>
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Lợi ích</strong>
+              <p style="margin:0.35em 0 0;">Mạng học khái niệm “giống mục tiêu” thay vì học một lớp cố định.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Giới hạn</strong>
+              <p style="margin:0.35em 0 0;">Nếu vật đổi dáng mạnh hoặc bị che khuất, đặc trưng giống nhau có thể yếu đi.</p>
+            </div>
+          </div>
+          <p class="caption">Trọng số dùng chung là lý do SiamFC có thể bám vật chưa từng thấy trong tập lớp huấn luyện.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tương quan chéo để so khớp</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-cross-correlation.svg" alt="Tương quan chéo trong SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Đặc trưng mẫu được trượt qua đặc trưng vùng tìm; mỗi vị trí nhận một điểm giống nhau.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Công thức tương quan chéo của SiamFC</h2>
+          <div class="eqbox">
+            \[
+              f_\theta(z,x) =
+              \varphi_\theta(z) \star \varphi_\theta(x) + b\mathbf{1}
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\star\)</strong>
+              <p style="margin:0.35em 0 0;">tương quan chéo trên mặt phẳng không gian của đặc trưng.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(f_\theta(z,x)[u]\)</strong>
+              <p style="margin:0.35em 0 0;">điểm tin rằng tâm mục tiêu nằm quanh vị trí \(u\).</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(b\)</strong>
+              <p style="margin:0.35em 0 0;">độ lệch học được, dùng chung cho các vị trí đáp ứng.</p>
+            </div>
+          </div>
+          <p class="caption">Công thức này biến bám bắt thành bài toán tìm cực đại trên một bản đồ điểm.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bản đồ đáp ứng trong định vị mục tiêu</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-response-map.svg" alt="Bản đồ đáp ứng của SiamFC và cập nhật vị trí" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Đỉnh đáp ứng cho biết mục tiêu dịch chuyển tương đối so với tâm vùng tìm kiếm.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Vai trò của tích chập đầy đủ</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Nếu xét từng cửa sổ riêng</strong>
+              <ul>
+                <li>Cắt nhiều ứng viên quanh vị trí cũ.</li>
+                <li>Chạy CNN nhiều lần để so điểm.</li>
+                <li>Dễ chậm khi cần thời gian thực.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">SiamFC</strong>
+              <ul>
+                <li>Chạy CNN một lần cho vùng tìm kiếm.</li>
+                <li>Tương quan chéo sinh điểm cho mọi vị trí cùng lúc.</li>
+                <li>Bản đồ đáp ứng giữ cấu trúc không gian.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Đây là lý do SiamFC đơn giản nhưng vẫn có thể chạy nhanh: nhiều vị trí được đánh giá trong một lần truyền tiến.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nhãn huấn luyện nằm trên bản đồ đáp ứng</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-label-loss.svg" alt="Nhãn và mất mát logistic của SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Mạng không học lớp đối tượng; mạng học vị trí nào trong vùng tìm kiếm giống mẫu mục tiêu.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Mất mát theo từng vị trí</h2>
+          <div class="eqbox">
+            \[
+              \ell(y,v)=\log\left(1+\exp(-yv)\right),
+              \qquad
+              L(y,v)=\frac{1}{|D|}\sum_{u\in D}\ell(y[u],v[u])
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Vị trí dương: \(y[u]=+1\)</strong>
+              <p style="margin:0.35em 0 0;">Mất mát giảm khi điểm đáp ứng \(v[u]\) tăng cao.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Vị trí âm: \(y[u]=-1\)</strong>
+              <p style="margin:0.35em 0 0;">Mất mát giảm khi điểm đáp ứng \(v[u]\) bị đẩy thấp xuống.</p>
+            </div>
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(D\)</strong>
+              <p style="margin:0.35em 0 0;">tập tất cả vị trí trên bản đồ đáp ứng.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(v=f_\theta(z,x)\)</strong>
+              <p style="margin:0.35em 0 0;">điểm thô của SiamFC trước khi chọn đỉnh.</p>
+            </div>
+          </div>
+          <p class="caption">Mất mát kéo bản đồ đáp ứng thành một “đỉnh” quanh vị trí thật của mục tiêu.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Suy luận: cắt vùng, so khớp và cập nhật</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-inference-loop.svg" alt="Vòng suy luận của SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamFC dùng vị trí cũ để giới hạn vùng tìm kiếm; vì thế nó nhanh nhưng dễ mất dấu khi mục tiêu nhảy xa.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Suy luận đa tỉ lệ</h2>
+          <div class="eqbox">
+            \[
+              s^\star = \arg\max_{s\in\mathcal{S}}\max_u f_\theta(z, x_t^{(s)})[u]
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Nhiều tỉ lệ</strong>
+              <p style="margin:0.35em 0 0;">Tạo vài vùng tìm kiếm lớn/nhỏ quanh kích thước hiện tại.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Chọn đáp ứng mạnh nhất</strong>
+              <p style="margin:0.35em 0 0;">Tỉ lệ nào có đỉnh cao nhất sẽ được chọn.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hạn chế</strong>
+              <p style="margin:0.35em 0 0;">Cách này chỉ chỉnh tỉ lệ thô, chưa hồi quy hộp chính xác.</p>
+            </div>
+          </div>
+          <p class="caption">SiamFC xử lý thay đổi kích thước bằng thử vài tỉ lệ, không bằng một đầu hồi quy hộp như bộ phát hiện.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Điểm mạnh và hạn chế của SiamFC</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamfc-limitations.svg" alt="Giới hạn của SiamFC và động lực cho SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamFC là bước chuyển quan trọng: bám bắt thành so khớp nhanh, nhưng hộp đầu ra vẫn chưa tinh như bộ phát hiện.</p>
+        </section>
+
+      </section>
+
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />SiamRPN</h1>
+          <p>Từ bản đồ giống nhau đến đề xuất vùng · hộp neo · nhánh phân loại · nhánh hồi quy</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Từ SiamFC sang SiamRPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-motivation.svg" alt="Động lực từ SiamFC sang SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamRPN giữ hàm so khớp của SiamFC, nhưng thêm cơ chế dự đoán hộp như bộ phát hiện.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Nhắc lại RPN từ Faster R-CNN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-rpn-recall.svg" alt="Nhắc lại RPN và cách SiamRPN đổi ý nghĩa RPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">RPN trong bộ phát hiện hỏi “có vật không”; SiamRPN hỏi “có đúng mục tiêu đang bám không”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Luồng xử lý của SiamRPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-architecture.svg" alt="Kiến trúc tổng quan SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Nhánh phân loại chọn hộp neo giống mục tiêu; nhánh hồi quy chỉnh hộp neo thành hộp chính xác hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Từ điểm đáp ứng sang hộp neo</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">SiamFC</strong>
+              <ul>
+                <li>Mỗi vị trí có một điểm giống nhau.</li>
+                <li>Đỉnh đáp ứng cho biết tâm mới.</li>
+                <li>Kích thước hộp được chỉnh bằng vài tỉ lệ thử.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">SiamRPN</strong>
+              <ul>
+                <li>Mỗi vị trí có nhiều hộp neo.</li>
+                <li>Mỗi hộp neo có điểm mục tiêu / nền.</li>
+                <li>Mỗi hộp neo có 4 độ lệch hồi quy hộp.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">SiamRPN biến bám bắt thành bài toán đề xuất vùng một lần, có điều kiện theo mẫu mục tiêu.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Hộp neo trong SiamRPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-anchor-grid.svg" alt="Hộp neo trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Nhiều hình dạng hộp neo giúp mô hình xử lý vật rộng, cao, nhỏ, lớn mà không phải tự vẽ hộp từ đầu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Hai nhánh dự đoán trong RPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-branches.svg" alt="Hai nhánh phân loại và hồi quy trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Phân loại quyết định hộp neo nào đáng tin; hồi quy quyết định phải chỉnh hộp neo đó thế nào.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đầu ra của nhánh phân loại</h2>
+          <div class="eqbox">
+            \[
+              p_{u,a} =
+              P(\text{mục tiêu}\mid u,a,z,x)
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(u\)</strong>
+              <p style="margin:0.35em 0 0;">một vị trí trên lưới vùng tìm kiếm.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(a\)</strong>
+              <p style="margin:0.35em 0 0;">một hộp neo tại vị trí đó.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(p_{u,a}\)</strong>
+              <p style="margin:0.35em 0 0;">điểm tin rằng hộp neo này chứa đúng mục tiêu.</p>
+            </div>
+          </div>
+          <p class="caption">Khác bộ phát hiện nhiều lớp, nhánh này chỉ phân biệt “mục tiêu” và “nền”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đầu ra của nhánh hồi quy hộp</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-box-encoding.svg" alt="Mã hóa hồi quy hộp trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Hồi quy hộp học độ lệch tương đối từ hộp neo, nên dễ học hơn dự đoán tọa độ ảnh tuyệt đối.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Công thức mã hóa hộp</h2>
+          <div class="eqbox">
+            \[
+              t_x^\star=\frac{x^\star-x_a}{w_a},\quad
+              t_y^\star=\frac{y^\star-y_a}{h_a},\quad
+              t_w^\star=\log\frac{w^\star}{w_a},\quad
+              t_h^\star=\log\frac{h^\star}{h_a}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Hộp neo \(a\)</strong>
+              <p style="margin:0.35em 0 0;">có tâm \((x_a,y_a)\), rộng \(w_a\), cao \(h_a\).</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hộp thật</strong>
+              <p style="margin:0.35em 0 0;">có tâm \((x^\star,y^\star)\), rộng \(w^\star\), cao \(h^\star\).</p>
+            </div>
+          </div>
+          <p class="caption">Dịch tâm được chuẩn hóa theo kích thước hộp neo; rộng/cao dùng log để biểu diễn tỉ lệ co giãn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Gán nhãn hộp neo bằng IoU</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-anchor-assignment.svg" alt="Gán nhãn hộp neo trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Hộp neo dương học cả phân loại và hồi quy; hộp neo âm chỉ dạy mô hình nhận ra nền.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Ba trạng thái gán nhãn hộp neo</h2>
+          <div class="trk-grid-3">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dương</strong>
+              <p style="margin:0.35em 0 0;">IoU với hộp thật đủ cao, ví dụ lớn hơn 0.6.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Âm</strong>
+              <p style="margin:0.35em 0 0;">IoU đủ thấp, ví dụ nhỏ hơn 0.3.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bỏ qua</strong>
+              <p style="margin:0.35em 0 0;">IoU nằm giữa hai ngưỡng, nhãn không rõ ràng.</p>
+            </div>
+          </div>
+          <p class="caption">Ngưỡng cụ thể có thể thay đổi theo cài đặt; ý chính là tránh ép mô hình học từ hộp neo mơ hồ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Mục tiêu học đa nhiệm của SiamRPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-loss.svg" alt="Mất mát đa nhiệm trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Hai nhánh cùng tối ưu một mục tiêu: chọn đúng hộp neo và chỉnh hộp đó sát mục tiêu.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Công thức mất mát của SiamRPN</h2>
+          <div class="eqbox">
+            \[
+              L =
+              \frac{1}{N_{cls}}\sum_i L_{cls}(p_i,p_i^\star)
+              +
+              \lambda
+              \frac{1}{N_{reg}}\sum_i p_i^\star
+              L_{reg}(t_i,t_i^\star)
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(L_{cls}\)</strong>
+              <p style="margin:0.35em 0 0;">entropy chéo cho nhãn mục tiêu / nền của hộp neo.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">\(L_{reg}\)</strong>
+              <p style="margin:0.35em 0 0;">Smooth L1 trên 4 độ lệch hộp.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(p_i^\star\)</strong>
+              <p style="margin:0.35em 0 0;">bằng 1 với hộp neo dương, nên hộp neo âm không tham gia hồi quy.</p>
+            </div>
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\lambda\)</strong>
+              <p style="margin:0.35em 0 0;">cân bằng giữa lỗi phân loại và lỗi định vị.</p>
+            </div>
+          </div>
+          <p class="caption">Mất mát phân loại kéo điểm hộp neo đúng lên; mất mát hồi quy kéo hộp dương khớp hộp thật.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Smooth L1 cho hồi quy hộp</h2>
+          <div class="eqbox">
+            \[
+              smooth_{L1}(d)=
+              \begin{cases}
+                0.5d^2, & |d|<1 \\
+                |d|-0.5, & \text{ngược lại}
+              \end{cases}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Sai nhỏ</strong>
+              <p style="margin:0.35em 0 0;">phạt gần giống bình phương, giúp tối ưu mượt quanh nghiệm đúng.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Sai lớn</strong>
+              <p style="margin:0.35em 0 0;">phạt gần tuyến tính, giảm tác động của hộp neo lệch quá xa.</p>
+            </div>
+          </div>
+          <p class="caption">Smooth L1 là lựa chọn quen thuộc từ Fast/Faster R-CNN, nay được dùng cho hồi quy hộp trong bám bắt.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Suy luận SiamRPN trên video</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-inference.svg" alt="Suy luận trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamRPN sinh nhiều hộp có điểm mục tiêu; bước chọn cuối cùng thường ưu tiên hộp điểm cao và chuyển động mượt.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Chọn hộp dự đoán ở mỗi khung</h2>
+          <div class="eqbox">
+            \[
+              b_t =
+              \operatorname{decode}\left(a^\star, t_{a^\star}\right),
+              \qquad
+              a^\star =
+              \arg\max_a S(a)
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Điểm phân loại</strong>
+              <p style="margin:0.35em 0 0;">hộp neo nào giống mục tiêu nhất.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Phạt thay đổi tỉ lệ</strong>
+              <p style="margin:0.35em 0 0;">tránh hộp nhảy kích thước quá mạnh giữa hai khung.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cửa sổ không gian</strong>
+              <p style="margin:0.35em 0 0;">ưu tiên vị trí gần tâm vùng tìm kiếm để chuyển động mượt hơn.</p>
+            </div>
+          </div>
+          <p class="caption">Suy luận không chỉ lấy điểm cao nhất; bộ bám bắt còn cần tránh nhảy hộp quá đột ngột.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh SiamFC và SiamRPN</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/siamrpn-comparison.svg" alt="So sánh SiamFC và SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SiamRPN là cầu nối rõ nhất giữa bám bắt bằng so khớp và phát hiện bằng hộp neo.</p>
+        </section>
+
+      </section>
+
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />MOT: SORT và DeepSORT</h1>
+          <p>Bám bắt dựa trên phát hiện · bộ lọc Kalman · ghép cặp Hungarian · đặc trưng ngoại hình</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bám bắt dựa trên phát hiện</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-detect-associate.svg" alt="Quy trình bám bắt dựa trên phát hiện trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SORT không học mô hình bám bắt phức tạp; nó ghép các hộp phát hiện thành chuỗi ID theo thời gian.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Giản lược MOT trong SORT</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đầu vào</strong>
+              <ul>
+                <li>Mỗi khung có danh sách hộp phát hiện.</li>
+                <li>Mỗi hộp có tọa độ và điểm tin cậy.</li>
+                <li>SORT không tự phát hiện vật.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đầu ra</strong>
+              <ul>
+                <li>Mỗi hộp được gán một ID.</li>
+                <li>Cùng ID qua nhiều khung tạo thành quỹ đạo.</li>
+                <li>Quyết định chỉ dùng thông tin đã thấy đến hiện tại.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Tư duy chính: phát hiện trả lời “vật ở đâu?”, ghép cặp trả lời “vật này là ai từ khung trước?”.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Trạng thái quỹ đạo trong SORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-state-vector.svg" alt="Véc-tơ trạng thái hình học trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SORT chỉ giữ hình học hộp và vận tốc, nên rất nhanh nhưng ít thông tin về ngoại hình.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Quan sát hộp và trạng thái ẩn</h2>
+          <div class="eqbox">
+            \[
+              x_t = [u, v, s, r, \dot u, \dot v, \dot s]^T,
+              \qquad
+              z_t = [u, v, s, r]^T
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Trạng thái \(x_t\)</strong>
+              <p style="margin:0.35em 0 0;">là thứ bộ lọc Kalman ước lượng, gồm hộp và vận tốc của hộp.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Quan sát \(z_t\)</strong>
+              <p style="margin:0.35em 0 0;">là hộp phát hiện ở khung hiện tại, không trực tiếp đo vận tốc.</p>
+            </div>
+          </div>
+          <p class="caption">Vận tốc là biến ẩn: chỉ được suy ra dần từ chuỗi hộp đã ghép đúng.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bộ lọc Kalman trong SORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-kalman-cycle.svg" alt="Hai bước dự báo và cập nhật của bộ lọc Kalman" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Kalman cho SORT một hộp dự báo trước khi hộp phát hiện của khung mới được ghép vào.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Dự báo hộp bằng bộ lọc Kalman</h2>
+          <div class="eqbox">
+            \[
+              \hat x_{t|t-1}=F\hat x_{t-1|t-1},
+              \qquad
+              P_{t|t-1}=FP_{t-1|t-1}F^T+Q
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(F\)</strong>
+              <p style="margin:0.35em 0 0;">mô hình chuyển động, thường là vận tốc gần hằng.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(P\)</strong>
+              <p style="margin:0.35em 0 0;">ma trận bất định của trạng thái.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">\(Q\)</strong>
+              <p style="margin:0.35em 0 0;">nhiễu mô hình: chuyển động thật không hoàn toàn đều.</p>
+            </div>
+          </div>
+          <p class="caption">Dự báo nói: nếu vật tiếp tục chuyển động như vừa rồi, hộp mới sẽ ở đâu và chắc đến mức nào?</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Cập nhật trạng thái bằng hộp phát hiện</h2>
+          <div class="eqbox">
+            \[
+              K_t=P_{t|t-1}H^T(HP_{t|t-1}H^T+R)^{-1}
+            \]
+            \[
+              \hat x_{t|t}=\hat x_{t|t-1}+K_t(z_t-H\hat x_{t|t-1}),
+              \qquad
+              P_{t|t}=(I-K_tH)P_{t|t-1}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(z_t-H\hat x\)</strong>
+              <p style="margin:0.35em 0 0;">phần sai khác giữa hộp phát hiện và hộp dự báo.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(K_t\)</strong>
+              <p style="margin:0.35em 0 0;">quyết định tin phát hiện nhiều hay tin dự báo nhiều.</p>
+            </div>
+          </div>
+          <p class="caption">Nếu phát hiện đáng tin, trạng thái kéo về hộp đo được; nếu nhiễu lớn, cập nhật thận trọng hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Ma trận chi phí IoU</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-iou-cost.svg" alt="Ma trận chi phí IoU trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SORT dùng hình học: hộp phát hiện nào chồng lên hộp dự báo nhiều nhất thì có khả năng cùng ID hơn.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Chi phí ghép cặp từ IoU</h2>
+          <div class="eqbox">
+            \[
+              C_{ij}=1-\operatorname{IoU}(\hat b_i, d_j)
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\hat b_i\)</strong>
+              <p style="margin:0.35em 0 0;">hộp dự báo của quỹ đạo \(i\).</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(d_j\)</strong>
+              <p style="margin:0.35em 0 0;">hộp phát hiện thứ \(j\).</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(C_{ij}\)</strong>
+              <p style="margin:0.35em 0 0;">càng nhỏ càng nên ghép.</p>
+            </div>
+          </div>
+          <p class="caption">Đây là lý do SORT phụ thuộc mạnh vào chất lượng hộp phát hiện và chuyển động giữa hai khung.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Ghép cặp tối ưu bằng Hungarian</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-hungarian-assignment.svg" alt="Ghép một-một bằng thuật toán Hungarian" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Nếu chọn tham lam từng cặp tốt nhất, một phát hiện có thể bị “tranh” bởi nhiều quỹ đạo; Hungarian tránh lỗi đó.</p>
+        </section>
+
+        <section style="font-size:0.70em;">
+          <h2>Quản lý quỹ đạo và phát hiện chưa khớp</h2>
+          <div class="trk-grid-3">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cặp hợp lệ</strong>
+              <p style="margin:0.35em 0 0;">IoU đủ cao: cập nhật Kalman và giữ ID.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Quỹ đạo không khớp</strong>
+              <p style="margin:0.35em 0 0;">chỉ dự báo tiếp; nếu mất quá lâu thì xóa.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Phát hiện không khớp</strong>
+              <p style="margin:0.35em 0 0;">tạo quỹ đạo mới, thường cần qua giai đoạn thử nghiệm.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.8em;">
+            \[
+              \operatorname{IoU}(\hat b_i,d_j) < \tau
+              \Rightarrow \text{không ghép}
+            \]
+          </div>
+          <p class="caption">Ngưỡng IoU ngăn Hungarian ghép hai hộp rất xa nhau chỉ vì không còn lựa chọn tốt hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Vòng đời quỹ đạo</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-track-lifecycle.svg" alt="Vòng đời quỹ đạo trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Không phải phát hiện nào cũng thành ID ổn định; SORT dùng quy tắc sinh, xác nhận và xóa quỹ đạo.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Hạn chế danh tính của SORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-occlusion-failure.svg" alt="SORT dễ đổi ID khi che khuất hoặc giao cắt" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">SORT không có bộ nhớ ngoại hình; khi hai người giao cắt hoặc mất dấu lâu, hình học có thể đánh lừa ghép cặp.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Từ SORT sang DeepSORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-motivation.svg" alt="DeepSORT thêm đặc trưng ngoại hình vào SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">DeepSORT giữ khung Kalman + Hungarian, nhưng thay chi phí hình học đơn thuần bằng chi phí có ngoại hình.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Đặc trưng ngoại hình trong DeepSORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-embedding.svg" alt="CNN ReID trích véc-tơ ngoại hình cho DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Bộ ReID được học ngoại tuyến; khi chạy, mỗi hộp phát hiện chỉ đi qua CNN để lấy véc-tơ so khớp.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Cổng chuyển động bằng Mahalanobis</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-mahalanobis.svg" alt="Khoảng cách Mahalanobis và cổng chuyển động trong DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Cổng chuyển động loại các phát hiện không hợp lý theo dự báo Kalman trước khi xét ngoại hình.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Công thức cổng Mahalanobis</h2>
+          <div class="eqbox">
+            \[
+              d^{(1)}(i,j)=
+              (d_j-y_i)^T S_i^{-1}(d_j-y_i)
+            \]
+            \[
+              b^{(1)}_{ij}=
+              \mathbf{1}[d^{(1)}(i,j) \le t^{(1)}]
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(y_i,S_i\)</strong>
+              <p style="margin:0.35em 0 0;">vị trí đo được dự báo và hiệp phương sai của quỹ đạo \(i\).</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(d_j\)</strong>
+              <p style="margin:0.35em 0 0;">vị trí đo được của phát hiện \(j\).</p>
+            </div>
+          </div>
+          <p class="caption">Mahalanobis không chỉ đo “xa bao nhiêu”, mà còn xét quỹ đạo đang chắc hay đang bất định.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Cổng ngoại hình bằng cosine</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-cosine-distance.svg" alt="Khoảng cách cosine giữa các véc-tơ ngoại hình" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Ngoại hình giúp nối lại ID khi vật bị che khuất ngắn hoặc đi qua vùng đông người.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Công thức khoảng cách ngoại hình</h2>
+          <div class="eqbox">
+            \[
+              d^{(2)}(i,j)=
+              \min_{r_k^{(i)}\in R_i}
+              \left(1-r_j^T r_k^{(i)}\right)
+            \]
+            \[
+              b^{(2)}_{ij}=
+              \mathbf{1}[d^{(2)}(i,j) \le t^{(2)}]
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(R_i\)</strong>
+              <p style="margin:0.35em 0 0;">bộ nhớ các véc-tơ ngoại hình đã lưu của quỹ đạo \(i\).</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Giá trị nhỏ nhất</strong>
+              <p style="margin:0.35em 0 0;">chỉ cần phát hiện giống một lần quan sát gần đây của quỹ đạo.</p>
+            </div>
+          </div>
+          <p class="caption">DeepSORT dùng bộ nhớ ngoại hình ngắn để không bị một khung ảnh xấu làm hỏng toàn bộ quỹ đạo.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Chi phí ghép cặp trong DeepSORT</h2>
+          <div class="eqbox">
+            \[
+              C_{ij} =
+              \lambda d^{(1)}(i,j)
+              + (1-\lambda)d^{(2)}(i,j)
+            \]
+            \[
+              b_{ij}=b^{(1)}_{ij}b^{(2)}_{ij};
+              \qquad b_{ij}=0 \Rightarrow C_{ij}=+\infty
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.7em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Chuyển động</strong>
+              <p style="margin:0.35em 0 0;">hợp lý theo Kalman.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ngoại hình</strong>
+              <p style="margin:0.35em 0 0;">giống bộ nhớ của ID.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Cổng</strong>
+              <p style="margin:0.35em 0 0;">sai một trong hai điều kiện thì không ghép.</p>
+            </div>
+          </div>
+          <p class="caption">DeepSORT không chỉ hỏi “gần không?”, mà còn hỏi “có giống người này không?”.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Ghép tầng theo độ mới của quỹ đạo</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-matching-cascade.svg" alt="Ghép tầng ưu tiên quỹ đạo vừa cập nhật trong DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Ghép tầng tránh để các quỹ đạo mất dấu lâu, có dự báo bất định lớn, chiếm nhầm phát hiện của quỹ đạo mới thấy.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Học đặc trưng cho liên kết danh tính</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/deepsort-reid-loss.svg" alt="Mất mát ReID kéo cùng ID gần nhau và đẩy khác ID ra xa" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">Mất mát này không chạy trong bước bám bắt trực tuyến; nó dùng để học bộ trích đặc trưng ngoại hình trước.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Mất mát phân loại theo ID</h2>
+          <div class="eqbox">
+            \[
+              L_{\text{ID}} =
+              -\log
+              \frac{\exp(w_y^T r + b_y)}
+              {\sum_c \exp(w_c^T r + b_c)}
+            \]
+          </div>
+          <div class="trk-grid-2" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Ý nghĩa</strong>
+              <p style="margin:0.35em 0 0;">véc-tơ \(r\) phải đủ phân biệt để dự đoán đúng ID trong tập huấn luyện.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hiệu ứng</strong>
+              <p style="margin:0.35em 0 0;">ảnh cùng người thường gom về vùng đặc trưng giống nhau.</p>
+            </div>
+          </div>
+          <p class="caption">Cách này biến ReID thành bài toán phân loại danh tính trên dữ liệu huấn luyện.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Mất mát bộ ba cho đặc trưng ngoại hình</h2>
+          <div class="eqbox">
+            \[
+              L_{\text{tri}} =
+              \max\left(0,
+              d(r_a,r_p)-d(r_a,r_n)+m
+              \right)
+            \]
+          </div>
+          <div class="trk-grid-3" style="margin-top:0.8em;">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Mẫu gốc \(r_a\)</strong>
+              <p style="margin:0.35em 0 0;">mẫu đang xét.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dương \(r_p\)</strong>
+              <p style="margin:0.35em 0 0;">cùng ID với mẫu.</p>
+            </div>
+            <div class="trk-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Âm \(r_n\)</strong>
+              <p style="margin:0.35em 0 0;">khác ID với mẫu.</p>
+            </div>
+          </div>
+          <p class="caption">Mất mát chỉ bằng 0 khi mẫu dương gần mẫu gốc hơn mẫu âm ít nhất một biên \(m\).</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>So sánh SORT và DeepSORT</h2>
+          <div class="trk-imgbox">
+            <img src="img/lec-13/sort-deepsort-comparison.svg" alt="So sánh SORT và DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
+          </div>
+          <p class="caption">DeepSORT đổi thêm chi phí tính toán và dữ liệu huấn luyện để giảm đổi ID trong các cảnh khó.</p>
+        </section>
+
+      </section>
+
+      <section>
+        <section>
+          <h1><span class="text-light">5.</span><br />Tổng kết</h1>
+          <p>So sánh · tự kiểm tra · bài tập mở rộng</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tổng hợp nội dung chính</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">SOT: một mục tiêu đã biết</strong>
+              <ul>
+                <li>Mẫu mục tiêu lấy từ khung đầu.</li>
+                <li>SiamFC học hàm so khớp nhanh.</li>
+                <li>SiamRPN thêm hộp neo và hồi quy hộp.</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">MOT: nhiều mục tiêu, nhiều ID</strong>
+              <ul>
+                <li>Bộ phát hiện sinh hộp ở từng khung.</li>
+                <li>SORT nối hộp bằng Kalman + Hungarian.</li>
+                <li>DeepSORT thêm ngoại hình để giữ ID tốt hơn.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">SOT đặt nặng “giống mẫu nào nhất”; MOT đặt nặng “hộp mới thuộc về quỹ đạo nào”.</p>
+        </section>
+
+        <section style="font-size:0.56em;">
+          <h2>So sánh bốn hướng tiếp cận</h2>
+          <table class="trk-table">
+            <thead>
+              <tr>
+                <th>Kỹ thuật</th>
+                <th>Ý tưởng lõi</th>
+                <th>Đầu ra chính</th>
+                <th>Mạnh ở đâu</th>
+                <th>Dễ yếu ở đâu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SiamFC</td>
+                <td>So khớp mẫu và vùng tìm kiếm bằng tương quan chéo.</td>
+                <td>Bản đồ đáp ứng.</td>
+                <td>Nhanh, đơn giản, học ngoại tuyến.</td>
+                <td>Hộp chưa tinh, đổi kích thước còn thô.</td>
+              </tr>
+              <tr>
+                <td>SiamRPN</td>
+                <td>RPN có điều kiện theo mẫu mục tiêu.</td>
+                <td>Điểm mục tiêu và độ lệch hộp neo.</td>
+                <td>Định vị hộp tốt hơn SiamFC.</td>
+                <td>Phụ thuộc thiết kế hộp neo và dữ liệu huấn luyện.</td>
+              </tr>
+              <tr>
+                <td>SORT</td>
+                <td>Bám bắt dựa trên phát hiện với Kalman + Hungarian.</td>
+                <td>Chuỗi hộp có ID.</td>
+                <td>Rất nhanh, dễ cài đặt, nền tảng mạnh.</td>
+                <td>Dễ đổi ID khi che khuất hoặc giao cắt.</td>
+              </tr>
+              <tr>
+                <td>DeepSORT</td>
+                <td>Thêm đặc trưng ngoại hình ReID vào ghép cặp.</td>
+                <td>Chuỗi hộp có ID ổn định hơn.</td>
+                <td>Giảm đổi ID trong cảnh đông người.</td>
+                <td>Cần mô hình ReID phù hợp miền dữ liệu.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="caption">Các phương pháp mạnh lên bằng cách thêm tín hiệu: vị trí → hộp → chuyển động → ngoại hình.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Chọn phương pháp theo bối cảnh</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Một vật, có hộp khởi tạo</strong>
+              <p style="margin:0.35em 0 0;">Dùng SOT. SiamFC đủ khi cần nhanh; SiamRPN hợp hơn khi hộp phải sát.</p>
+            </div>
+            <div class="trk-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Nhiều vật, phát hiện tốt, ít che khuất</strong>
+              <p style="margin:0.35em 0 0;">SORT là lựa chọn nền: đơn giản, nhanh, dễ kiểm soát lỗi.</p>
+            </div>
+            <div class="trk-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Nhiều người, giao cắt thường xuyên</strong>
+              <p style="margin:0.35em 0 0;">DeepSORT hữu ích vì ID không chỉ dựa vào vị trí và IoU.</p>
+            </div>
+            <div class="trk-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Độ đo cần báo cáo</strong>
+              <p style="margin:0.35em 0 0;">SOT dùng IoU, AUC, Precision; MOT cần thêm MOTA, IDF1, HOTA.</p>
+            </div>
+          </div>
+          <p class="caption">Không có bộ bám bắt “tốt nhất” chung; lựa chọn phụ thuộc số mục tiêu, độ che khuất, tốc độ và yêu cầu giữ ID.</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Tự kiểm tra và đọc tiếp</h2>
+          <div class="trk-grid-2">
+            <div class="trk-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Tự kiểm tra</strong>
+              <ul>
+                <li>Vì sao SiamFC cần bản đồ đáp ứng thay vì một điểm phân loại?</li>
+                <li>SiamRPN học phân loại và hồi quy hộp khác SiamFC ở đâu?</li>
+                <li>Vì sao Hungarian tốt hơn ghép tham lam trong MOT?</li>
+                <li>DeepSORT giảm đổi ID bằng tín hiệu nào?</li>
+              </ul>
+            </div>
+            <div class="trk-card" style="background:#f7f7f7; border-left-color:#607d8b;">
+              <strong style="color:#455a64;">Đọc tiếp</strong>
+              <ul>
+                <li>CS231n, <a href="https://cs231n.stanford.edu/slides/2025/lecture_9.pdf">Detection and Segmentation</a>.</li>
+                <li><a href="https://arxiv.org/abs/1606.09549">SiamFC</a>, Bertinetto et al., 2016.</li>
+                <li><a href="https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_High_Performance_Visual_CVPR_2018_paper.pdf">SiamRPN</a>, Li et al., 2018.</li>
+                <li><a href="https://arxiv.org/abs/1602.00763">SORT</a>, Bewley et al., 2016.</li>
+                <li><a href="https://arxiv.org/abs/1703.07402">DeepSORT</a>, Wojke et al., 2017.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <div class="footer">
+        Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §13: Bám bắt đối tượng
+      </div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+    });
+  </script>
+</body>
+
+</html>

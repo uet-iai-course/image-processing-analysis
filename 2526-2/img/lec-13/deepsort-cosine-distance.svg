@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Khoảng cách cosine so khớp ngoại hình, không phụ thuộc vị trí ảnh</text>
+  <g transform="translate(85,88)">
+    <rect x="0" y="0" width="390" height="250" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="195" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">cùng danh tính</text>
+    <line x1="120" y1="190" x2="230" y2="90" stroke="#2e7d32" stroke-width="7"/>
+    <line x1="120" y1="190" x2="250" y2="112" stroke="#2e7d32" stroke-width="7" opacity="0.65"/>
+    <circle cx="120" cy="190" r="7" fill="#263238"/>
+    <text x="250" y="220" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">góc nhỏ → khoảng cách nhỏ</text>
+  </g>
+  <g transform="translate(645,88)">
+    <rect x="0" y="0" width="390" height="250" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="195" y="36" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">khác danh tính</text>
+    <line x1="120" y1="190" x2="232" y2="88" stroke="#2e7d32" stroke-width="7"/>
+    <line x1="120" y1="190" x2="292" y2="188" stroke="#c62828" stroke-width="7"/>
+    <circle cx="120" cy="190" r="7" fill="#263238"/>
+    <text x="250" y="220" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">góc lớn → khoảng cách lớn</text>
+  </g>
+  <text x="560" y="380" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Với véc-tơ đã chuẩn hóa, tích vô hướng càng lớn thì ngoại hình càng giống nhau.</text>
+</svg>

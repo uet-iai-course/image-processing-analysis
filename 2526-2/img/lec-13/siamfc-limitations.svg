@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430" role="img" aria-label="Giới hạn của SiamFC và động lực cho SiamRPN">
+  <rect width="1100" height="430" fill="#ffffff"/>
+  <text x="550" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SiamFC tìm tâm rất nhanh, nhưng hộp vẫn còn thô</text>
+
+  <g transform="translate(70,92)">
+    <rect width="290" height="240" rx="12" fill="#fff3e0" stroke="#ffb74d" stroke-width="2"/>
+    <text x="145" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">Đổi tỉ lệ</text>
+    <rect x="80" y="100" width="70" height="62" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <rect x="120" y="78" width="120" height="104" fill="none" stroke="#ef6c00" stroke-width="5" stroke-dasharray="8 6"/>
+    <text x="145" y="215" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">cần thử nhiều tỉ lệ thủ công</text>
+  </g>
+
+  <g transform="translate(405,92)">
+    <rect width="290" height="240" rx="12" fill="#ffebee" stroke="#ef9a9a" stroke-width="2"/>
+    <text x="145" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">Vật giống nhau</text>
+    <circle cx="108" cy="124" r="32" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+    <circle cx="184" cy="120" r="32" fill="#ffcc80" stroke="#ef6c00" stroke-width="4"/>
+    <rect x="76" y="92" width="64" height="64" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <rect x="152" y="88" width="64" height="64" fill="none" stroke="#c62828" stroke-width="5" stroke-dasharray="8 6"/>
+    <text x="145" y="215" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">đỉnh đáp ứng dễ nhầm mục tiêu</text>
+  </g>
+
+  <g transform="translate(740,92)">
+    <rect width="290" height="240" rx="12" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <text x="145" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">Không hồi quy hộp</text>
+    <rect x="88" y="80" width="118" height="112" fill="none" stroke="#90a4ae" stroke-width="5"/>
+    <rect x="108" y="104" width="82" height="62" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <text x="145" y="215" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">chủ yếu suy ra dịch chuyển tâm</text>
+  </g>
+
+  <text x="550" y="385" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Động lực cho SiamRPN: giữ so khớp Siamese, nhưng thêm đề xuất vùng và hồi quy hộp như bộ phát hiện.</text>
+</svg>

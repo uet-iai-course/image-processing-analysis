@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Vòng đời quỹ đạo giúp SORT tránh giữ hộp nhiễu mãi mãi</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#546e7a"/>
+    </marker>
+  </defs>
+  <g transform="translate(80,115)">
+    <rect x="0" y="0" width="170" height="120" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="85" y="38" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">mới</text>
+    <text x="85" y="78" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">phát hiện chưa ghép</text>
+  </g>
+  <line x1="270" y1="175" x2="365" y2="175" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(385,115)">
+    <rect x="0" y="0" width="180" height="120" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="90" y="38" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">thử nghiệm</text>
+    <text x="90" y="78" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">cần đủ lần khớp</text>
+  </g>
+  <line x1="585" y1="175" x2="680" y2="175" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(700,115)">
+    <rect x="0" y="0" width="180" height="120" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="90" y="38" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">xác nhận</text>
+    <text x="90" y="78" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">được xuất ID</text>
+  </g>
+  <path d="M790,242 C785,292 560,322 440,246" fill="none" stroke="#546e7a" stroke-width="3" stroke-dasharray="9 7" marker-end="url(#arrow)"/>
+  <text x="602" y="306" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#455a64">khớp lại → tiếp tục</text>
+  <line x1="900" y1="175" x2="995" y2="175" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(1010,115)">
+    <rect x="0" y="0" width="80" height="120" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="40" y="40" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">xóa</text>
+    <text x="40" y="78" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#263238">mất quá</text>
+    <text x="40" y="102" text-anchor="middle" font-size="16" font-family="Arial, sans-serif" fill="#263238">lâu</text>
+  </g>
+  <text x="560" y="375" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Tham số thường gặp: số lần khớp tối thiểu để xác nhận, và số khung tối đa được phép mất dấu.</text>
+</svg>

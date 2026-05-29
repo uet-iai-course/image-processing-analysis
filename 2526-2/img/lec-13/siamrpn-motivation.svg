@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="Động lực từ SiamFC sang SiamRPN">
+  <defs>
+    <marker id="arrow-rpn-motive" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">SiamFC tìm tâm tốt, SiamRPN muốn dự đoán hộp tốt hơn</text>
+
+  <g transform="translate(70,82)">
+    <rect width="420" height="270" rx="12" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+    <text x="210" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">SiamFC</text>
+    <rect x="85" y="78" width="250" height="145" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+    <circle cx="206" cy="148" r="28" fill="#ef6c00" opacity="0.8"/>
+    <rect x="154" y="112" width="104" height="84" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <text x="210" y="248" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đầu ra chính: vị trí đỉnh đáp ứng</text>
+  </g>
+
+  <path d="M514 215 L606 215" stroke="#455a64" stroke-width="5" marker-end="url(#arrow-rpn-motive)"/>
+  <text x="560" y="185" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#455a64">thêm RPN</text>
+
+  <g transform="translate(630,82)">
+    <rect width="420" height="270" rx="12" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2"/>
+    <text x="210" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">SiamRPN</text>
+    <rect x="85" y="78" width="250" height="145" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+    <rect x="126" y="102" width="132" height="98" fill="none" stroke="#2e7d32" stroke-width="5"/>
+    <rect x="150" y="116" width="92" height="72" fill="none" stroke="#ef6c00" stroke-width="5" stroke-dasharray="8 6"/>
+    <text x="210" y="248" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">đầu ra: điểm mục tiêu + hộp hồi quy</text>
+  </g>
+
+  <text x="560" y="392" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Bước chuyển: từ “vị trí giống nhất” sang “hộp đề xuất nào khớp mục tiêu nhất”.</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Bộ trích đặc trưng ngoại hình biến mỗi hộp thành véc-tơ chuẩn hóa</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#546e7a"/>
+    </marker>
+  </defs>
+  <g transform="translate(70,95)">
+    <rect x="0" y="0" width="180" height="220" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="90" y="36" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">hộp phát hiện</text>
+    <rect x="62" y="80" width="58" height="110" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+  </g>
+  <line x1="275" y1="205" x2="380" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(400,95)">
+    <rect x="0" y="0" width="230" height="220" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="115" y="36" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">CNN ReID</text>
+    <rect x="55" y="75" width="120" height="32" fill="#ffe0b2" stroke="#ef6c00"/>
+    <rect x="70" y="118" width="90" height="32" fill="#ffe0b2" stroke="#ef6c00"/>
+    <rect x="85" y="161" width="60" height="32" fill="#ffe0b2" stroke="#ef6c00"/>
+  </g>
+  <line x1="655" y1="205" x2="760" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(780,95)">
+    <rect x="0" y="0" width="270" height="220" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="135" y="36" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">véc-tơ ngoại hình</text>
+    <g transform="translate(36,78)" fill="#2e7d32">
+      <rect x="0" y="0" width="12" height="92"/>
+      <rect x="22" y="34" width="12" height="58"/>
+      <rect x="44" y="15" width="12" height="77"/>
+      <rect x="66" y="54" width="12" height="38"/>
+      <rect x="88" y="25" width="12" height="67"/>
+      <rect x="110" y="8" width="12" height="84"/>
+      <rect x="132" y="45" width="12" height="47"/>
+      <rect x="154" y="22" width="12" height="70"/>
+      <rect x="176" y="38" width="12" height="54"/>
+    </g>
+    <text x="135" y="194" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">||r|| = 1, thường 128 chiều</text>
+  </g>
+  <text x="560" y="376" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Mỗi quỹ đạo lưu một bộ nhớ ngắn các véc-tơ ngoại hình để so khớp với phát hiện mới.</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="Nhắc lại RPN và cách SiamRPN đổi ý nghĩa RPN">
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">RPN sinh hộp ứng viên; SiamRPN làm hộp ứng viên phụ thuộc mục tiêu</text>
+
+  <g transform="translate(70,92)">
+    <rect width="450" height="250" rx="12" fill="#fff3e0" stroke="#ffb74d" stroke-width="2"/>
+    <text x="225" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">RPN trong Faster R-CNN</text>
+    <rect x="70" y="76" width="310" height="95" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+    <rect x="110" y="104" width="58" height="42" fill="none" stroke="#1565c0" stroke-width="4"/>
+    <rect x="198" y="95" width="76" height="60" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <rect x="292" y="108" width="52" height="40" fill="none" stroke="#7b1fa2" stroke-width="4"/>
+    <text x="225" y="206" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hỏi: vùng này có phải một vật bất kỳ không?</text>
+  </g>
+
+  <g transform="translate(600,92)">
+    <rect width="450" height="250" rx="12" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2"/>
+    <text x="225" y="42" text-anchor="middle" font-size="24" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">RPN trong SiamRPN</text>
+    <rect x="58" y="76" width="96" height="95" rx="8" fill="#e3f2fd" stroke="#1565c0"/>
+    <text x="106" y="128" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">mẫu</text>
+    <rect x="190" y="76" width="210" height="95" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+    <rect x="254" y="96" width="78" height="58" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <text x="225" y="206" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hỏi: vùng này có phải đúng mục tiêu đã cho không?</text>
+  </g>
+
+  <text x="560" y="392" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Cùng ý tưởng hộp neo, nhưng nhãn “vật” được thay bằng nhãn “mục tiêu”.</text>
+</svg>

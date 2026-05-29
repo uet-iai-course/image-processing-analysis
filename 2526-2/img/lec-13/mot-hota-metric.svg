@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="HOTA cân bằng phát hiện và liên kết">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">HOTA cân bằng hai câu hỏi: có thấy đúng vật và có nối đúng ID không?</text>
+  <g transform="translate(95,86)">
+    <rect x="0" y="0" width="250" height="160" rx="10" fill="#e3f2fd" stroke="#90caf9"/>
+    <text x="125" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">DetA</text>
+    <text x="125" y="82" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">đúng vật nào?</text>
+    <text x="125" y="118" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">phạt FP và FN</text>
+  </g>
+  <g transform="translate(655,86)">
+    <rect x="0" y="0" width="250" height="160" rx="10" fill="#f3e5f5" stroke="#ce93d8"/>
+    <text x="125" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">AssA</text>
+    <text x="125" y="82" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">nối đúng ID không?</text>
+    <text x="125" y="118" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">phạt đứt và đổi ID</text>
+  </g>
+  <g transform="translate(405,95)">
+    <circle cx="95" cy="70" r="64" fill="#e8f5e9" stroke="#66bb6a" stroke-width="4"/>
+    <text x="95" y="60" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">HOTA</text>
+    <text x="95" y="93" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">cân bằng</text>
+  </g>
+  <path d="M350 166 L402 166" stroke="#455a64" stroke-width="4"/>
+  <path d="M598 166 L650 166" stroke="#455a64" stroke-width="4"/>
+  <text x="500" y="320" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#455a64">HOTA thấp nếu một trong hai phần yếu: thấy vật tốt nhưng nối sai ID vẫn bị phạt.</text>
+</svg>

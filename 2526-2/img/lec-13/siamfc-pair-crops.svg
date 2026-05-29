@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430" role="img" aria-label="Tạo cặp mẫu mục tiêu và vùng tìm kiếm cho SiamFC">
+  <defs>
+    <marker id="arrow-pair-crop" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="430" fill="#ffffff"/>
+  <text x="550" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Huấn luyện SiamFC bằng cặp khung hình cùng một vật</text>
+
+  <g transform="translate(55,78)">
+    <rect x="0" y="0" width="270" height="210" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="135" y="31" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">Khung A</text>
+    <rect x="0" y="150" width="270" height="60" fill="#c8e6c9"/>
+    <path d="M0 145 C70 110 120 128 174 100 C220 76 248 82 270 94 L270 154 L0 154 Z" fill="#bbdefb"/>
+    <rect x="95" y="82" width="74" height="58" fill="none" stroke="#ef6c00" stroke-width="5"/>
+    <circle cx="132" cy="112" r="22" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+  </g>
+  <path d="M337 175 L407 175" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-pair-crop)"/>
+  <g transform="translate(420,98)">
+    <rect x="0" y="0" width="160" height="160" rx="8" fill="#ffffff" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="80" cy="80" r="30" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <text x="80" y="190" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">mẫu mục tiêu \(z\)</text>
+  </g>
+
+  <g transform="translate(625,78)">
+    <rect x="0" y="0" width="270" height="210" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="135" y="31" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">Khung B</text>
+    <rect x="0" y="150" width="270" height="60" fill="#c8e6c9"/>
+    <path d="M0 145 C70 110 120 128 174 100 C220 76 248 82 270 94 L270 154 L0 154 Z" fill="#bbdefb"/>
+    <rect x="130" y="86" width="74" height="58" fill="none" stroke="#ef6c00" stroke-width="5"/>
+    <rect x="90" y="58" width="154" height="126" fill="none" stroke="#2e7d32" stroke-width="5" stroke-dasharray="8 6"/>
+    <circle cx="167" cy="116" r="22" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+  </g>
+  <path d="M907 175 L970 175" stroke="#455a64" stroke-width="4" marker-end="url(#arrow-pair-crop)"/>
+  <g transform="translate(980,98)">
+    <rect x="0" y="0" width="100" height="160" rx="8" fill="#ffffff" stroke="#2e7d32" stroke-width="3"/>
+    <circle cx="55" cy="80" r="22" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <text x="50" y="190" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#2e7d32">vùng tìm \(x\)</text>
+  </g>
+
+  <g transform="translate(185,335)">
+    <rect x="0" y="-28" width="730" height="50" rx="8" fill="#e8f5e9" stroke="#66bb6a"/>
+    <text x="365" y="4" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#1b5e20">mẫu nhỏ chứa vật; vùng tìm lớn hơn để cho phép vật dịch chuyển quanh vị trí cũ</text>
+  </g>
+</svg>

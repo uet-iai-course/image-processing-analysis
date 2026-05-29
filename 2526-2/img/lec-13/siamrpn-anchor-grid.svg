@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-label="Hộp neo trong SiamRPN">
+  <rect width="1120" height="430" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Mỗi vị trí trên lưới có nhiều hộp neo với tỉ lệ khác nhau</text>
+
+  <g transform="translate(100,70)">
+    <rect x="0" y="0" width="310" height="260" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <text x="155" y="30" text-anchor="middle" font-size="21" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">vùng tìm kiếm</text>
+    <g stroke="#b0bec5" stroke-width="1.5">
+      <path d="M62 45 V240"/><path d="M124 45 V240"/><path d="M186 45 V240"/><path d="M248 45 V240"/>
+      <path d="M35 80 H275"/><path d="M35 125 H275"/><path d="M35 170 H275"/><path d="M35 215 H275"/>
+    </g>
+    <circle cx="186" cy="125" r="8" fill="#c62828"/>
+    <rect x="146" y="92" width="80" height="66" fill="none" stroke="#ef6c00" stroke-width="4"/>
+    <rect x="130" y="104" width="112" height="42" fill="none" stroke="#2e7d32" stroke-width="4"/>
+    <rect x="162" y="72" width="50" height="106" fill="none" stroke="#7b1fa2" stroke-width="4"/>
+  </g>
+
+  <g transform="translate(505,90)">
+    <rect x="0" y="0" width="245" height="210" rx="10" fill="#fff3e0" stroke="#ffcc80"/>
+    <text x="122" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">k hộp neo</text>
+    <text x="122" y="82" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">cùng tâm lưới</text>
+    <text x="122" y="120" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">khác rộng, cao</text>
+    <text x="122" y="158" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">được chỉnh bằng hồi quy</text>
+  </g>
+
+  <g transform="translate(825,82)">
+    <rect x="0" y="0" width="230" height="230" rx="10" fill="#e8f5e9" stroke="#66bb6a"/>
+    <text x="115" y="42" text-anchor="middle" font-size="22" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">đầu ra tại 1 vị trí</text>
+    <text x="115" y="90" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">phân loại: \(2k\)</text>
+    <text x="115" y="128" text-anchor="middle" font-size="19" font-family="Arial, sans-serif" fill="#263238">hồi quy: \(4k\)</text>
+    <text x="115" y="174" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">mỗi hộp neo có 2 điểm</text>
+    <text x="115" y="202" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#455a64">và 4 độ lệch hộp</text>
+  </g>
+
+  <text x="560" y="390" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Hộp neo biến dự đoán hộp thành dự đoán độ lệch nhỏ quanh các hình dạng đã biết.</text>
+</svg>

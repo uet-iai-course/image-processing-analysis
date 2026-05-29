@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <text x="560" y="38" text-anchor="middle" font-size="27" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Bộ lọc Kalman xen kẽ dự báo và cập nhật</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#546e7a"/>
+    </marker>
+  </defs>
+  <g transform="translate(80,90)">
+    <rect x="0" y="0" width="260" height="230" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="130" y="36" text-anchor="middle" font-size="23" font-weight="700" font-family="Arial, sans-serif" fill="#1565c0">trạng thái cũ</text>
+    <rect x="88" y="88" width="68" height="96" fill="none" stroke="#2e7d32" stroke-width="5"/>
+    <ellipse cx="122" cy="136" rx="70" ry="48" fill="#2e7d32" opacity="0.12" stroke="#2e7d32" stroke-width="2"/>
+    <text x="130" y="210" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">ước lượng + bất định</text>
+  </g>
+  <line x1="360" y1="205" x2="475" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(495,90)">
+    <rect x="0" y="0" width="260" height="230" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text x="130" y="36" text-anchor="middle" font-size="23" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">dự báo</text>
+    <rect x="108" y="98" width="68" height="96" fill="none" stroke="#2e7d32" stroke-width="5" stroke-dasharray="9 7"/>
+    <ellipse cx="142" cy="146" rx="86" ry="58" fill="#ef6c00" opacity="0.14" stroke="#ef6c00" stroke-width="2"/>
+    <path d="M77,150 C94,122 110,111 129,96" fill="none" stroke="#c62828" stroke-width="4" marker-end="url(#arrow)"/>
+    <text x="130" y="210" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">chỉ dùng mô hình chuyển động</text>
+  </g>
+  <line x1="775" y1="205" x2="890" y2="205" stroke="#546e7a" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(910,90)">
+    <rect x="0" y="0" width="140" height="230" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="70" y="36" text-anchor="middle" font-size="23" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">cập nhật</text>
+    <rect x="35" y="85" width="60" height="96" fill="none" stroke="#2e7d32" stroke-width="5"/>
+    <rect x="46" y="100" width="60" height="96" fill="none" stroke="#1565c0" stroke-width="4" stroke-dasharray="7 6"/>
+    <text x="70" y="214" text-anchor="middle" font-size="17" font-family="Arial, sans-serif" fill="#263238">đo + dự báo</text>
+  </g>
+  <text x="560" y="380" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#455a64">Nếu không có hộp phát hiện ghép vào, SORT chỉ giữ bước dự báo và bất định sẽ tăng.</text>
+</svg>

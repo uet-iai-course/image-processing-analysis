@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Độ chồng lấn IoU cho SOT">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">Một khung hình: hộp dự đoán chồng hộp thật bao nhiêu?</text>
+  <g transform="translate(80,70)">
+    <rect x="0" y="0" width="380" height="230" rx="10" fill="#eef7ff" stroke="#90a4ae"/>
+    <rect x="92" y="74" width="150" height="108" fill="#90caf9" opacity="0.28" stroke="#1565c0" stroke-width="5"/>
+    <rect x="154" y="96" width="150" height="108" fill="#ffcc80" opacity="0.35" stroke="#ef6c00" stroke-width="5"/>
+    <rect x="154" y="96" width="88" height="86" fill="#66bb6a" opacity="0.45"/>
+    <text x="167" y="64" font-size="18" font-family="Arial, sans-serif" fill="#1565c0">hộp thật</text>
+    <text x="236" y="224" font-size="18" font-family="Arial, sans-serif" fill="#ef6c00">hộp dự đoán</text>
+    <text x="198" y="145" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial, sans-serif" fill="#1b5e20">giao</text>
+  </g>
+  <g transform="translate(540,84)">
+    <rect x="0" y="0" width="380" height="205" rx="10" fill="#f7f7f7" stroke="#cfd8dc"/>
+    <text x="190" y="48" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#263238">IoU = phần giao / phần hợp</text>
+    <text x="190" y="100" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#455a64">cao khi hai hộp gần trùng nhau</text>
+    <text x="190" y="150" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#455a64">thấp khi lệch vị trí hoặc sai kích thước</text>
+  </g>
+  <text x="500" y="330" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#455a64">SOT thường tính IoU theo từng khung rồi tổng hợp trên toàn video.</text>
+</svg>

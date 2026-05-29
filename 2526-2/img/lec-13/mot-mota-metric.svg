@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="MOTA tổng hợp lỗi phát hiện và đổi danh tính">
+  <rect width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" font-family="Arial, sans-serif" fill="#263238">MOTA đếm các lỗi làm quỹ đạo không đúng</text>
+  <g transform="translate(75,80)">
+    <rect x="0" y="0" width="850" height="190" rx="10" fill="#f7f7f7" stroke="#cfd8dc"/>
+    <g transform="translate(42,42)">
+      <rect x="0" y="0" width="150" height="90" rx="8" fill="#e8f5e9" stroke="#66bb6a"/>
+      <text x="75" y="38" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#2e7d32">GT</text>
+      <text x="75" y="66" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">tổng vật thật</text>
+    </g>
+    <g transform="translate(245,42)">
+      <rect x="0" y="0" width="150" height="90" rx="8" fill="#ffebee" stroke="#ef9a9a"/>
+      <text x="75" y="36" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#c62828">FN</text>
+      <text x="75" y="66" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">bỏ sót</text>
+    </g>
+    <g transform="translate(448,42)">
+      <rect x="0" y="0" width="150" height="90" rx="8" fill="#fff3e0" stroke="#ffcc80"/>
+      <text x="75" y="36" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#ef6c00">FP</text>
+      <text x="75" y="66" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">báo thừa</text>
+    </g>
+    <g transform="translate(651,42)">
+      <rect x="0" y="0" width="150" height="90" rx="8" fill="#f3e5f5" stroke="#ce93d8"/>
+      <text x="75" y="36" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial, sans-serif" fill="#7b1fa2">IDSW</text>
+      <text x="75" y="66" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#263238">đổi ID</text>
+    </g>
+  </g>
+  <text x="500" y="315" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#455a64">MOTA giảm khi có nhiều bỏ sót, báo thừa hoặc đổi danh tính so với số vật thật.</text>
+</svg>
