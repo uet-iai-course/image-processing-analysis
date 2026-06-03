@@ -111,6 +111,10 @@
           <h3>Bài 13: Bám bắt đối tượng</h3>
           <p>SOT · SiamFC · SiamRPN · MOT · SORT · DeepSORT</p>
           <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+          <aside class="notes">
+            <p>Mở đầu bằng cách nhắc lại bài phát hiện đối tượng: trong ảnh đơn, ta cần biết vật ở đâu và hộp bao quanh vật nằm thế nào. Khi chuyển sang chuỗi khung hình, câu hỏi không dừng ở việc vẽ hộp đúng từng khung, mà còn phải biết hộp ở khung sau có còn là cùng một vật với khung trước không.</p>
+            <p>Lấy ví dụ camera giao thông: một chiếc xe đi từ trái sang phải trong mười giây. Nếu mỗi khung hình chỉ có một hộp riêng lẻ, ta chưa có câu chuyện chuyển động của xe. Bài này tập trung vào cách nối các hộp đó thành quỹ đạo có danh tính ổn định, rồi đi qua hai nhánh chính là bám một mục tiêu và bám nhiều mục tiêu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -130,6 +134,10 @@
             </div>
           </div>
           <p class="caption">Bài này nối từ phát hiện và phân vùng: khi ảnh trở thành video, kết quả phải nhất quán theo thời gian.</p>
+          <aside class="notes">
+            <p>Giới thiệu cấu trúc bài theo ba lớp. Lớp đầu là bài toán: ta cần nói rõ đối tượng, danh tính, quỹ đạo, lỗi bám bắt và cách đánh giá. Nếu không nắm lớp này, sinh viên dễ nghĩ bám bắt chỉ là chạy lại bộ phát hiện trên từng ảnh.</p>
+            <p>Lớp thứ hai là bám một mục tiêu, nơi mục tiêu đã được khoanh ở khung đầu và hệ thống phải tìm lại nó. Lớp thứ ba là bám nhiều mục tiêu, nơi nhiều hộp được phát hiện trong từng khung và bài toán khó là ghép đúng hộp với đúng quỹ đạo. Ví dụ cùng là theo dõi người, nhưng theo một vận động viên trong trận đấu là bám một mục tiêu, còn đếm và giữ ID cho mọi người trong sân ga là bám nhiều mục tiêu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -138,6 +146,10 @@
             <img src="img/lec-13/tracking-problem.svg" alt="Bám bắt đối tượng qua chuỗi khung hình" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Bám bắt không chỉ vẽ hộp đúng ở từng khung hình; nó phải giữ cùng một danh tính qua thời gian.</p>
+          <aside class="notes">
+            <p>Dùng hình này để chuyển tư duy từ ảnh đơn sang chuỗi khung hình. Trong ảnh đơn, mỗi kết quả là một quyết định tại một thời điểm. Trong đoạn phim, các quyết định đứng cạnh nhau và có quan hệ thời gian: vật không tự nhiên biến mất rồi xuất hiện ở nơi rất xa, trừ khi có che khuất hoặc phát hiện bị lỗi.</p>
+            <p>Nêu ví dụ một quả bóng đang lăn. Nếu hộp ở khung 1, 2, 3 nằm nối tiếp nhau hợp lý, ta có thể nói đó là cùng quả bóng. Nếu ở khung 4 có một hộp khác ở góc xa, ta phải nghi ngờ: có thể là bóng khác, có thể bộ phát hiện nhầm, hoặc mục tiêu đã bị mất. Bám bắt chính là dùng thông tin thời gian để trả lời những nghi ngờ như vậy.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.82em;">
@@ -149,6 +161,10 @@
               Làm thế nào biến các quan sát rời rạc trong video thành <strong>quỹ đạo ổn định có danh tính</strong>?
             </p>
           </div>
+          <aside class="notes">
+            <p>Nhấn mạnh câu hỏi xuyên suốt: làm sao biến các quan sát rời rạc thành một quỹ đạo có danh tính. Một hộp rời rạc chỉ cho ta biết “ở khung này có vật tại đây”. Một quỹ đạo cho ta biết “đây là cùng một vật, đã đi qua các vị trí này theo thời gian”. Sự khác biệt này rất quan trọng trong các ứng dụng thực tế.</p>
+            <p>Ví dụ trong cửa hàng, người quản lý không chỉ cần biết có bao nhiêu người trong từng khung hình, mà còn muốn biết một khách đi vào, dừng ở kệ nào, đi ra lúc nào. Nếu danh tính bị đổi giữa chừng, kết luận về hành vi sẽ sai. Vì vậy, bám bắt là cầu nối giữa nhận biết từng ảnh và hiểu diễn biến trong cảnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -171,6 +187,10 @@
               <p style="margin:0.35em 0 0;">Nói được mất mát kéo mô hình theo hướng nào và kỹ thuật nào phù hợp tình huống nào.</p>
             </div>
           </div>
+          <aside class="notes">
+            <p>Trình bày các năng lực cần đạt như một bản kiểm tra cuối bài. Sau bài này, sinh viên cần nói được sự khác nhau giữa hộp, danh tính và quỹ đạo. Hộp là vị trí ở một khung, danh tính là nhãn ổn định của vật, còn quỹ đạo là chuỗi hộp mang cùng danh tính.</p>
+            <p>Về kỹ thuật, sinh viên cần đọc được dòng dữ liệu trong SiamFC và SiamRPN: mẫu mục tiêu đi vào đâu, vùng tìm kiếm đi vào đâu, đầu ra là bản đồ đáp ứng hay hộp dự đoán. Với bám nhiều mục tiêu, cần hiểu vì sao cần dự báo chuyển động, ghép cặp tối ưu và đôi khi phải thêm đặc trưng ngoại hình. Khi gặp một cảnh thực tế, ví dụ người giao cắt trong hành lang, sinh viên phải biết lỗi có thể đến từ phát hiện, từ ghép cặp, hoặc từ đổi danh tính.</p>
+          </aside>
         </section>
       </section>
 
@@ -179,6 +199,10 @@
         <section>
           <h1><span class="text-light">1.</span><br />Bài toán bám bắt</h1>
           <p>Đối tượng · danh tính · quỹ đạo · lỗi · độ đo</p>
+          <aside class="notes">
+            <p>Đây là phần đặt nền móng. Trước khi nói đến mạng học sâu hay thuật toán ghép cặp, cần thống nhất bám bắt đang giải quyết điều gì. Một hệ thống bám bắt phải trả lời bốn câu hỏi: vật nào đang xuất hiện, vật đó ở đâu, vật đó có cùng danh tính với khung trước không, và khi vật mất hoặc quay lại thì xử lý thế nào.</p>
+            <p>Có thể lấy ví dụ camera ở cổng trường. Nếu chỉ phát hiện người, ta biết mỗi khung có bao nhiêu người. Nếu bám bắt, ta có thể biết người A đi từ cổng vào lớp, người B đứng lại nói chuyện, người C bị che khuất rồi xuất hiện lại. Những khái niệm đối tượng, danh tính và quỹ đạo giúp ta mô tả các tình huống này một cách rõ ràng.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -187,6 +211,10 @@
             <img src="img/lec-13/detection-to-tracking.svg" alt="Từ phát hiện từng ảnh sang bám bắt theo thời gian" style="max-width:100%; max-height:60vh; object-fit:contain;" />
           </div>
           <p class="caption">Bộ phát hiện sinh hộp độc lập; bộ bám bắt phải nối các hộp thành quỹ đạo có cùng danh tính.</p>
+          <aside class="notes">
+            <p>Giải thích giới hạn của việc phát hiện độc lập. Bộ phát hiện thường nhìn từng khung như một ảnh riêng, nên nó không nhớ hộp nào đã xuất hiện trước đó. Vì vậy, nếu có ba người trong khung, bộ phát hiện cho ba hộp, nhưng không tự nói hộp thứ hai hôm nay là người nào so với khung trước.</p>
+            <p>Ví dụ hai người đi ngược chiều và lướt qua nhau. Trên từng khung, hộp có thể đều đúng. Nhưng nếu hệ thống gán nhầm danh tính sau lúc giao cắt, ứng dụng theo dõi đường đi sẽ sai. Điều này cho thấy bám bắt không thay thế phát hiện; nó dùng kết quả phát hiện làm nguyên liệu rồi thêm bước nối theo thời gian.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -210,6 +238,10 @@
             </div>
           </div>
           <p class="caption">Bám bắt thêm một ràng buộc mới: tính nhất quán theo thời gian.</p>
+          <aside class="notes">
+            <p>So sánh ảnh tĩnh và đoạn phim theo ý “lỗi có trí nhớ”. Trong ảnh tĩnh, nếu một hộp sai thì lỗi nằm ở ảnh đó. Sang đoạn phim, một lỗi ghép sai có thể kéo dài nhiều khung sau. Ví dụ một xe bị gán nhầm ID ở giây thứ năm, thì toàn bộ quãng đường sau đó có thể bị tính cho xe khác.</p>
+            <p>Ràng buộc thời gian giúp ta sửa một số lỗi, nhưng cũng tạo ra trách nhiệm mới. Nếu vật đang đi đều, vị trí khung sau thường gần vị trí dự báo. Nếu vật bị che bởi cột trong vài khung, ta không nên xóa ngay quỹ đạo. Nhưng nếu ta giữ quỹ đạo quá lâu, có thể lại ghép nhầm với vật mới. Bám bắt vì thế luôn là cân bằng giữa tin vào quá khứ và tin vào quan sát hiện tại.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -218,6 +250,10 @@
             <img src="img/lec-13/tracking-taxonomy.svg" alt="Hai bài toán bám bắt: SOT và MOT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SOT giữ một mục tiêu đã biết; MOT nối nhiều hộp phát hiện thành nhiều quỹ đạo có danh tính.</p>
+          <aside class="notes">
+            <p>Phân biệt hai bài toán cơ bản. Bám một mục tiêu bắt đầu bằng một hộp do người dùng hoặc hệ thống chọn ở khung đầu. Sau đó ta chỉ cần đi tìm đúng vật đó. Ví dụ người xem khoanh một cầu thủ trong trận bóng và muốn máy quay ảo bám theo cầu thủ này.</p>
+            <p>Bám nhiều mục tiêu khó hơn vì số vật có thể thay đổi. Người mới đi vào cảnh thì cần tạo quỹ đạo mới, người đi ra thì cần kết thúc quỹ đạo, người bị che khuất thì cần giữ hoặc tạm dự báo. Ví dụ trong bãi đỗ xe, nhiều xe cùng chuyển động, dừng, che nhau và rời cảnh. Bài toán không chỉ tìm hộp, mà còn phải quản lý một tập danh tính sống theo thời gian.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -244,6 +280,10 @@
               <p style="margin:0.35em 0 0;">Nếu cập nhật sai, bộ bám bắt có thể học nhầm nền thành mục tiêu.</p>
             </div>
           </div>
+          <aside class="notes">
+            <p>Giải thích công thức bằng lời. Đầu vào gồm khung đầu cùng hộp thật của mục tiêu, rồi các khung tiếp theo. Đầu ra là hộp dự đoán của chính mục tiêu đó ở từng khung sau. Điểm quan trọng là mô hình không cần biết mục tiêu thuộc lớp gì. Nó chỉ cần biết “vật được khoanh ban đầu” trông như thế nào.</p>
+            <p>Ví dụ ta khoanh một chiếc cốc đỏ trên bàn. Trong tập huấn luyện có thể không có lớp “cốc đỏ của tôi”, nhưng bộ bám bắt vẫn có thể tìm vùng giống chiếc cốc đó trong các khung sau. Hạn chế là nếu chiếc cốc bị tay che, hoặc ánh sáng đổi mạnh, hoặc bộ bám bắt cập nhật nhầm sang vật khác màu đỏ, nó có thể trôi khỏi mục tiêu thật.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -270,6 +310,10 @@
               <p style="margin:0.35em 0 0;">Khi mất quan sát đủ lâu hoặc đối tượng rời cảnh.</p>
             </div>
           </div>
+          <aside class="notes">
+            <p>Trình bày MOT như một tập quỹ đạo. Mỗi quỹ đạo là chuỗi các bản ghi theo thời gian: ở khung nào, hộp nằm đâu, điểm tin cậy bao nhiêu. Chỉ số \(k\) là danh tính của quỹ đạo. Nếu cùng một người xuất hiện trong nhiều khung, các hộp của người đó phải cùng nằm trong một quỹ đạo.</p>
+            <p>Ví dụ trong camera đường phố, một người đi xe máy vào cảnh ở khung 20, bị xe tải che ở khung 50 đến 55, rồi xuất hiện lại ở khung 56. Hệ thống tốt sẽ giữ hoặc nối lại cùng ID. Nếu nó tạo ID mới sau khi che khuất, thống kê sẽ tưởng có hai xe khác nhau. Vì vậy, MOT vừa là bài toán phát hiện, vừa là bài toán quản lý danh tính.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -278,6 +322,10 @@
             <img src="img/lec-13/tracking-failure-modes.svg" alt="Các lỗi thường gặp trong bám bắt đối tượng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Lỗi quan trọng của bám bắt thường nằm ở liên kết thời gian, không chỉ ở một hộp sai.</p>
+          <aside class="notes">
+            <p>Dùng slide này để đặt tên các lỗi thường gặp. Bỏ sót là vật thật không có hộp. Báo thừa là hộp được vẽ ở nơi không có vật thật. Sai định vị là hộp có vật nhưng lệch hoặc sai kích thước. Riêng bám bắt còn có lỗi đổi danh tính, đứt quỹ đạo và trôi mục tiêu.</p>
+            <p>Nêu ví dụ một người mặc áo trắng đi sau cột. Nếu trước cột người đó có ID 3, sau cột hệ thống gán thành ID 7, đó là đổi danh tính. Nếu hệ thống xóa ID 3 rồi vài khung sau tạo lại ID 3 ở người khác, lỗi còn nghiêm trọng hơn. Với SOT, trôi mục tiêu xảy ra khi bộ bám bắt dần chuyển từ vật thật sang một vùng nền giống vật, chẳng hạn từ mặt người sang tấm áp phích có màu tương tự.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -294,6 +342,10 @@
             <div class="stage"><div class="stage-title">Quản lý</div><div class="stage-desc">tạo, cập nhật, xóa quỹ đạo</div></div>
           </div>
           <p class="caption">SORT và DeepSORT khác nhau chủ yếu ở cách dự báo, cách tính chi phí và cách giữ quỹ đạo khi bị che khuất.</p>
+          <aside class="notes">
+            <p>Giải thích quy trình bám nhiều mục tiêu theo năm bước. Đầu tiên bộ phát hiện tạo danh sách hộp trong khung hiện tại. Sau đó mỗi quỹ đạo cũ dự báo vị trí mới của mình. Tiếp theo ta tính chi phí giữa từng quỹ đạo và từng hộp, rồi giải bài toán ghép một-một. Cuối cùng hệ thống cập nhật, tạo mới hoặc xóa quỹ đạo.</p>
+            <p>Ví dụ có ba quỹ đạo đang sống và bốn hộp phát hiện mới. Ta cần biết hộp nào thuộc quỹ đạo nào, và hộp thừa có phải người mới đi vào hay chỉ là phát hiện sai. SORT dùng chủ yếu hình học và chuyển động, nên rất nhanh. DeepSORT thêm vẻ ngoài của đối tượng, nên khi hai người đi sát nhau, hệ thống có thêm căn cứ để giữ đúng ID.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -311,6 +363,10 @@
             </div>
           </div>
           <p class="caption">Mạng Siamese dùng cùng một bộ trích đặc trưng cho mẫu và vùng tìm kiếm, rồi đo độ giống theo không gian.</p>
+          <aside class="notes">
+            <p>Đưa SOT về bài toán so khớp mẫu. Mẫu mục tiêu là miếng ảnh nhỏ chứa vật cần bám, thường lấy từ khung đầu. Vùng tìm kiếm là miếng ảnh lớn hơn ở khung mới, thường cắt quanh vị trí dự đoán từ khung trước. Câu hỏi là trong vùng tìm kiếm, chỗ nào giống mẫu nhất.</p>
+            <p>Ví dụ ta đang bám một biển số xe. Mẫu là vùng biển số ở khung đầu. Ở khung sau, thay vì tìm khắp ảnh, ta cắt một vùng quanh vị trí cũ vì xe không thể nhảy quá xa trong một khung. Nếu vùng giống nhất nằm lệch sang phải, ta cập nhật hộp sang phải. Cách nghĩ này rất trực quan: bám bắt là tìm lại “dấu vết” của mẫu theo thời gian.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.78em;">
@@ -334,6 +390,10 @@
             </div>
           </div>
           <p class="caption">Khi hai người đi gần nhau, chỉ dùng chuyển động thường không đủ để giữ đúng ID.</p>
+          <aside class="notes">
+            <p>Giải thích ma trận chi phí như một bảng so sánh mọi khả năng ghép. Mỗi hàng là một quỹ đạo cũ, mỗi cột là một hộp phát hiện mới. Ô trong bảng cho biết ghép cặp đó có hợp lý không. Chi phí thấp nghĩa là nên ghép, chi phí cao nghĩa là không nên ghép.</p>
+            <p>Chi phí chuyển động trả lời: hộp mới có gần nơi quỹ đạo dự báo không. Chi phí ngoại hình trả lời: miếng ảnh mới có giống người hoặc xe trước đó không. Ví dụ hai người mặc áo khác màu đi giao nhau. Ngay tại điểm giao, chuyển động có thể mơ hồ vì hai hộp gần nhau, nhưng ngoại hình giúp nhận ra người áo đỏ vẫn là người áo đỏ. DeepSORT khai thác đúng ý này.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -365,6 +425,10 @@
             </tbody>
           </table>
           <p class="caption">SOT tập trung vào độ chính xác vị trí của một mục tiêu qua thời gian.</p>
+          <aside class="notes">
+            <p>Ở phần đánh giá SOT, nhấn mạnh rằng chỉ có một mục tiêu nên độ đo tập trung vào hộp của mục tiêu đó. Ta cần biết hộp dự đoán có chồng lên hộp thật không, tâm hộp có gần đúng không, và chất lượng đó ổn định qua cả đoạn phim hay chỉ đúng vài khung dễ.</p>
+            <p>Ví dụ bộ bám bắt theo dõi khuôn mặt. Nếu hộp luôn bao vừa mặt, IoU cao. Nếu hộp giữ đúng tâm mặt nhưng quá lớn, precision theo tâm có thể vẫn tốt, nhưng IoU giảm vì kích thước sai. Nếu bộ bám bắt chỉ tốt khi đặt ngưỡng thấp, đường thành công sẽ lộ ra. Vì thế cần nhiều độ đo để nhìn các kiểu lỗi khác nhau.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -389,6 +453,10 @@
             </div>
           </div>
           <p class="caption">IoU phạt cả lệch vị trí lẫn sai kích thước hộp; AO là IoU trung bình trên toàn video.</p>
+          <aside class="notes">
+            <p>Giải thích IoU bằng hình học: tử số là phần hai hộp chồng lên nhau, mẫu số là toàn bộ vùng được phủ bởi ít nhất một trong hai hộp. Nếu hai hộp trùng hẳn, IoU bằng 1. Nếu không chạm nhau, IoU bằng 0. Nếu hộp dự đoán lệch hoặc quá to, phần giao giảm hoặc phần hợp tăng, nên IoU giảm.</p>
+            <p>AO là trung bình IoU trên toàn chuỗi. Ví dụ một bộ bám bắt có IoU 0.8 trong hầu hết khung nhưng rơi xuống 0.1 khi vật bị che, AO sẽ phản ánh cả hai giai đoạn. Khi giảng, nên nhấn mạnh IoU không biết danh tính trong MOT, nhưng với SOT chỉ có một mục tiêu nên nó là thước đo rất trực tiếp cho độ bám sát hộp.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -413,6 +481,10 @@
             </div>
           </div>
           <p class="caption">AUC cao nghĩa là bộ bám bắt giữ hộp tốt ở nhiều mức yêu cầu, không chỉ ở một ngưỡng dễ.</p>
+          <aside class="notes">
+            <p>Trình bày đường thành công như cách tránh phụ thuộc vào một ngưỡng duy nhất. Với mỗi ngưỡng \(\tau\), ta hỏi có bao nhiêu khung đạt IoU ít nhất bằng ngưỡng đó. Ngưỡng thấp như 0.2 dễ đạt, ngưỡng cao như 0.8 đòi hỏi hộp rất sát.</p>
+            <p>Ví dụ hai bộ bám bắt cùng đạt 80 phần trăm khung nếu ngưỡng là 0.3, nhưng khi tăng ngưỡng lên 0.7, một bộ vẫn giữ được nhiều khung, bộ kia giảm mạnh. Nhìn một điểm sẽ khó thấy khác biệt, còn nhìn cả đường cong sẽ rõ hơn. AUC tóm tắt diện tích dưới đường cong, nên càng cao thì chất lượng càng ổn định trên nhiều mức yêu cầu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -440,6 +512,10 @@
             </div>
           </div>
           <p class="caption">Precision dễ hiểu và trực quan, nhưng không thấy rõ lỗi sai kích thước nếu tâm hộp vẫn gần đúng.</p>
+          <aside class="notes">
+            <p>Giải thích precision theo tâm hộp. Ta lấy tâm hộp dự đoán và tâm hộp thật, rồi đo khoảng cách giữa hai tâm. Nếu khoảng cách nhỏ hơn một bán kính \(r\), khung đó được xem là đúng theo ngưỡng \(r\). Cách đo này dễ hiểu vì nó giống câu hỏi: mục tiêu có bị lệch khỏi vị trí cần bám bao xa.</p>
+            <p>Ví dụ trong điều khiển camera bám người, tâm hộp gần đúng có thể đủ để giữ người ở giữa màn hình, dù hộp hơi to. Nhưng trong bài toán cắt ảnh chính xác để nhận dạng, kích thước hộp cũng quan trọng. Vì vậy precision không thay thế IoU; nó bổ sung góc nhìn về sai lệch vị trí trung tâm.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -476,6 +552,10 @@
             </tbody>
           </table>
           <p class="caption">Một MOT tốt phải vừa thấy đúng vật, vừa nối đúng vật đó thành quỹ đạo.</p>
+          <aside class="notes">
+            <p>Với MOT, đánh giá khó hơn vì có nhiều vật và nhiều danh tính. Một hệ thống có thể phát hiện tốt nhưng nối sai ID, hoặc nối ID khá tốt cho các vật thấy được nhưng lại bỏ sót nhiều vật. Do đó cần nhiều độ đo nhìn vào các mặt khác nhau.</p>
+            <p>MOTA cộng các lỗi bỏ sót, báo thừa và đổi ID thành một số tổng hợp. MOTP tập trung vào hộp của các cặp đã ghép đúng. IDF1 nhìn mạnh vào danh tính theo toàn quỹ đạo. HOTA cố cân bằng giữa phát hiện và liên kết. Ví dụ trong theo dõi người ở nhà ga, nếu mục tiêu là đếm người qua cửa thì MOTA quan trọng; nếu mục tiêu là hiểu từng người đi đâu, IDF1 và HOTA sẽ có ý nghĩa hơn.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -484,6 +564,10 @@
             <img src="img/lec-13/mot-mota-metric.svg" alt="MOTA tổng hợp lỗi phát hiện và đổi danh tính" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">MOTA giảm khi hệ thống bỏ sót vật, báo thừa vật không có thật, hoặc đổi danh tính của quỹ đạo.</p>
+          <aside class="notes">
+            <p>Giới thiệu MOTA như độ đo cổ điển và dễ diễn giải: hệ thống mắc bao nhiêu lỗi so với tổng số vật thật. Ba loại lỗi chính là bỏ sót, báo thừa và đổi danh tính. Bỏ sót làm ta không thấy vật thật, báo thừa làm ta tưởng có vật không tồn tại, đổi danh tính làm quỹ đạo bị lẫn.</p>
+            <p>Ví dụ một đoạn phim có 100 lần xuất hiện vật thật theo khung. Nếu hệ thống bỏ sót 10, báo thừa 5 và đổi ID 3 lần, tổng lỗi là 18, MOTA sẽ bị giảm tương ứng. Cần nói thêm rằng MOTA hữu ích nhưng không hoàn hảo: một lỗi đổi ID dài có thể được đếm ít hơn cảm nhận thực tế về chất lượng quỹ đạo.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.66em;">
@@ -515,6 +599,10 @@
             </div>
           </div>
           <p class="caption">MOTA trả lời: so với tổng số vật thật, hệ thống mắc bao nhiêu lỗi bỏ sót, báo thừa và đổi ID.</p>
+          <aside class="notes">
+            <p>Đọc công thức từ trong ra ngoài. Ở mỗi khung \(t\), ta đếm số bỏ sót \(FN_t\), số báo thừa \(FP_t\), và số lần đổi danh tính \(IDSW_t\). Cộng các lỗi này qua toàn bộ đoạn phim rồi chia cho tổng số vật thật \(GT_t\). Lấy 1 trừ đi tỉ lệ lỗi để được MOTA.</p>
+            <p>Ví dụ nếu tổng số vật thật theo khung là 1000 và tổng lỗi là 120, MOTA bằng 0.88. Nếu bộ phát hiện yếu, \(FN\) sẽ tăng mạnh. Nếu ngưỡng phát hiện quá thấp, \(FP\) tăng. Nếu ghép cặp kém trong cảnh đông, \(IDSW\) tăng. Khi dùng MOTA, cần xem cả các thành phần lỗi, không chỉ nhìn mỗi con số cuối.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -523,6 +611,10 @@
             <img src="img/lec-13/mot-motp-metric.svg" alt="MOTP đo chất lượng định vị của các cặp đã ghép đúng" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Sau khi biết cặp nào là đúng, MOTP hỏi hộp dự đoán khớp hộp thật tốt đến đâu.</p>
+          <aside class="notes">
+            <p>MOTP tách riêng câu hỏi định vị khỏi câu hỏi phát hiện và danh tính. Trước hết hệ thống đánh giá xác định những cặp dự đoán và vật thật nào được xem là khớp đúng. Sau đó MOTP đo các hộp trong những cặp này chồng lên nhau tốt đến đâu.</p>
+            <p>Ví dụ hai hệ thống có cùng số hộp đúng và cùng số ID đúng, nhưng một hệ thống vẽ hộp sát người, hệ thống kia vẽ hộp quá rộng. MOTA có thể gần nhau, nhưng MOTP dạng IoU sẽ cao hơn cho hệ thống vẽ hộp sát. Khi giảng, nên lưu ý một số tài liệu định nghĩa MOTP theo khoảng cách hoặc lỗi, còn ở đây dùng dạng IoU nên giá trị càng cao càng tốt.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.66em;">
@@ -554,6 +646,10 @@
             </div>
           </div>
           <p class="caption">Với dạng IoU ở đây, MOTP càng cao nghĩa là định vị càng tốt.</p>
+          <aside class="notes">
+            <p>Giải thích công thức MOTP dạng IoU. Tập \(TP\) chứa các cặp dự đoán và vật thật đã được ghép đúng. Với từng cặp, ta tính IoU giữa hộp dự đoán và hộp thật. Sau đó lấy trung bình trên tất cả cặp đúng. Vì chỉ tính trên cặp đúng, MOTP không trực tiếp phạt hộp bị bỏ sót hoặc hộp báo thừa.</p>
+            <p>Ví dụ một hệ thống rất bảo thủ, chỉ dự đoán khi chắc chắn. Các hộp nó dự đoán có thể rất sát nên MOTP cao, nhưng nó bỏ sót nhiều vật nên MOTA thấp. Điều này minh họa vì sao đánh giá MOT cần nhiều chỉ số. MOTP trả lời “khi đã bám đúng, hộp có đẹp không”, không trả lời “có bám đủ mọi vật không”.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -562,6 +658,10 @@
             <img src="img/lec-13/mot-idf1-metric.svg" alt="IDF1 đo độ đúng danh tính trên quỹ đạo" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Một quỹ đạo đúng vị trí nhưng đổi ID giữa chừng vẫn làm IDF1 giảm.</p>
+          <aside class="notes">
+            <p>Chuyển sang IDF1 để nhấn mạnh danh tính. Trong nhiều ứng dụng, giữ đúng ID quan trọng hơn việc chỉ có hộp ở đúng chỗ. Nếu một người đi qua camera trong 200 khung nhưng bị đổi ID sau 100 khung, hệ thống sẽ coi như hai người hoặc hai đoạn hành trình, dù hộp ở từng khung có thể vẫn đúng.</p>
+            <p>Ví dụ phân tích hành vi khách trong siêu thị. Nếu khách A lấy hàng ở kệ 1 rồi đi sang kệ 2, hệ thống phải biết đó vẫn là khách A. Nếu ID đổi giữa chừng, ta không nối được hành vi trước và sau. IDF1 đo chất lượng ở mức danh tính, nên thường được chú ý trong các bài toán theo dõi người, xe hoặc cầu thủ qua thời gian dài.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.66em;">
@@ -588,6 +688,10 @@
             </div>
           </div>
           <p class="caption">IDF1 là độ đo F1 ở mức danh tính: cao khi quỹ đạo đúng và ít bị đứt hoặc đổi ID.</p>
+          <aside class="notes">
+            <p>Giải thích IDF1 theo cách quen thuộc của F1. \(IDTP\) là số lần dự đoán vừa đúng hộp vừa đúng danh tính. \(IDFP\) là dự đoán thừa hoặc gán nhầm danh tính. \(IDFN\) là vật thật không được nhận ra bằng đúng danh tính. Công thức lấy trung bình điều hòa giữa đúng theo danh tính và phủ đủ theo danh tính.</p>
+            <p>Ví dụ một hệ thống luôn thấy người nhưng thỉnh thoảng đổi ID. Khi đổi ID, nhiều khung sau có thể bị tính là sai danh tính, làm IDF1 giảm. Ngược lại, nếu hệ thống giữ ID tốt nhưng bỏ sót nhiều khung lúc người bị che, \(IDFN\) tăng. Vì vậy IDF1 khuyến khích vừa giữ đúng ID, vừa không để quỹ đạo bị đứt quá nhiều.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -596,6 +700,10 @@
             <img src="img/lec-13/mot-hota-metric.svg" alt="HOTA cân bằng phát hiện và liên kết" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">HOTA thấp nếu phát hiện tốt nhưng nối ID kém, hoặc nối ID tốt nhưng bỏ sót nhiều đối tượng.</p>
+          <aside class="notes">
+            <p>Giới thiệu HOTA như một cách nhìn cân bằng hơn. Một bộ bám bắt tốt cần hai nửa: phát hiện đúng vật và liên kết đúng theo thời gian. Nếu chỉ một nửa tốt, kết quả vẫn không đáng tin. HOTA cố làm rõ điều đó bằng cách kết hợp độ đúng phát hiện và độ đúng liên kết.</p>
+            <p>Ví dụ hệ thống A phát hiện hầu hết người nhưng đổi ID liên tục trong đám đông. Hệ thống B giữ ID tốt cho vài người dễ thấy nhưng bỏ sót nhiều người khác. Cả hai đều có vấn đề, chỉ khác loại vấn đề. HOTA giúp tránh việc một chỉ số tổng hợp che mất sự yếu ở một nửa của bài toán. Khi báo cáo kết quả, HOTA thường đi cùng MOTA và IDF1 để có bức tranh đầy đủ hơn.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.62em;">
@@ -629,6 +737,10 @@
             </div>
           </div>
           <p class="caption">HOTA được báo cáo bằng cách tổng hợp qua nhiều ngưỡng \(\alpha\), tương tự cách COCO dùng nhiều ngưỡng IoU.</p>
+          <aside class="notes">
+            <p>Đọc công thức HOTA theo hai phần. \(DetA\) là độ đúng phát hiện ở ngưỡng IoU \(\alpha\): số đúng chia cho đúng cộng thừa cộng thiếu. \(AssA\) là độ đúng liên kết: những cặp đã phát hiện đúng có được nối đúng danh tính qua thời gian không. HOTA lấy căn của tích hai phần này.</p>
+            <p>Điểm cần nhấn mạnh là tích làm cho một phần yếu kéo điểm xuống. Nếu phát hiện đạt 0.9 nhưng liên kết chỉ 0.4, HOTA không thể cao. Ví dụ camera ở ngã tư phát hiện xe rất tốt nhưng khi xe quay đầu hoặc bị che thì đổi ID, phần liên kết sẽ kéo điểm xuống. Tổng hợp qua nhiều ngưỡng \(\alpha\) giúp đánh giá không phụ thuộc vào một mức IoU duy nhất.</p>
+          </aside>
         </section>
 
       </section>
@@ -638,6 +750,10 @@
         <section>
           <h1><span class="text-light">2.</span><br />SOT với mạng Siamese</h1>
           <p>SiamFC · mẫu mục tiêu · vùng tìm kiếm · tương quan chéo · bản đồ đáp ứng</p>
+          <aside class="notes">
+            <p>Mở phần này bằng ý chính: trong bám một mục tiêu, ta không huấn luyện lại mô hình cho từng vật mới, mà học trước một cách so sánh. Mạng Siamese nhận hai miếng ảnh: một miếng là mẫu mục tiêu, một miếng là vùng cần tìm. Đầu ra không phải nhãn lớp, mà là mức giống nhau theo vị trí.</p>
+            <p>Ví dụ người dùng khoanh chiếc ba lô trong khung đầu. Mạng không cần biết đó là ba lô, túi hay hộp; nó chỉ cần học cách tìm vùng trong khung sau giống với miếng đã khoanh. SiamFC là phiên bản nền tảng dùng tương quan chéo để sinh bản đồ đáp ứng. Khi hiểu SiamFC, ta sẽ thấy rõ vì sao các bộ bám bắt Siamese về sau vừa nhanh vừa linh hoạt.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -661,6 +777,10 @@
             </div>
           </div>
           <p class="caption">SOT chuyển câu hỏi từ “vật này thuộc lớp nào?” sang “vùng nào giống mục tiêu ban đầu nhất?”.</p>
+          <aside class="notes">
+            <p>So sánh bộ phát hiện và SOT bằng câu hỏi mà mỗi hệ thống trả lời. Bộ phát hiện học các lớp trước, ví dụ người, xe, chó, rồi tìm các vật thuộc lớp đó trong từng ảnh. SOT không bắt đầu từ lớp, mà bắt đầu từ một vật cụ thể đã được khoanh. Vì vậy, mục tiêu có thể là vật hiếm, vật không có tên lớp rõ ràng, hoặc một chi tiết nhỏ trong ảnh.</p>
+            <p>Ví dụ trong phòng thí nghiệm, ta muốn bám một đầu bút laser, một con vít, hoặc một logo trên áo. Bộ phát hiện lớp tổng quát có thể không có các lớp đó. SOT vẫn làm được nếu mẫu ban đầu đủ rõ. Điểm đổi lại là SOT phải dựa vào sự giống nhau của mục tiêu qua thời gian, nên khi vật đổi dáng mạnh hoặc bị che lâu, nó dễ mất dấu hơn bộ phát hiện mạnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -669,6 +789,10 @@
             <img src="img/lec-13/siamfc-online-vs-offline.svg" alt="Từ học trực tuyến sang học so khớp ngoại tuyến trong SOT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamFC học một hàm so khớp chung từ nhiều video, nên khi chạy thật không phải huấn luyện lại trọng số.</p>
+          <aside class="notes">
+            <p>Giải thích vì sao huấn luyện ngoại tuyến quan trọng. Các bộ bám bắt cũ đôi khi cập nhật mô hình ngay trong lúc chạy, nghĩa là vừa quan sát vừa học lại mục tiêu. Cách này có thể thích nghi, nhưng dễ chậm và dễ học nhầm nếu mục tiêu bị che hoặc phát hiện sai. SiamFC chọn hướng khác: học trước một hàm so khớp chung từ nhiều đoạn phim.</p>
+            <p>Khi chạy thật, trọng số mạng giữ nguyên. Mỗi mục tiêu mới chỉ cần cung cấp mẫu ở khung đầu. Ví dụ cùng một mô hình đã học có thể bám một người, một xe đạp hoặc một hộp hàng, miễn là có mẫu ban đầu. Điều này giúp tốc độ cao vì không cần tối ưu trọng số trực tuyến. Đồng thời, chất lượng phụ thuộc vào việc tập huấn luyện có đủ đa dạng về chuyển động, ánh sáng, che khuất và thay đổi kích thước hay không.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -693,6 +817,10 @@
             </div>
           </div>
           <p class="caption">Nếu hai nhánh không dùng chung trọng số, điểm giống nhau sẽ khó có ý nghĩa ổn định.</p>
+          <aside class="notes">
+            <p>Diễn giải công thức \(s(z,x)\). \(z\) là mẫu mục tiêu, \(x\) là vùng tìm kiếm. Cả hai đi qua cùng một bộ trích đặc trưng \(\varphi_\theta\), nghĩa là mạng nhìn hai ảnh bằng cùng một “bộ mắt”. Sau đó hàm \(g\) so sánh hai đặc trưng để tạo điểm giống nhau.</p>
+            <p>Lý do dùng chung trọng số là để đặc trưng của mẫu và đặc trưng của vùng tìm nằm trong cùng một thước đo. Ví dụ nếu một nhánh học màu và nhánh kia học cạnh, so sánh hai đầu ra sẽ không ổn định. Khi hai nhánh giống nhau, một vùng trong khung sau càng giống mẫu thì đặc trưng càng tương hợp. Cách này giống việc ta dùng cùng một tiêu chí khi so hai khuôn mặt, thay vì dùng hai tiêu chí khác nhau cho hai ảnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -701,6 +829,10 @@
             <img src="img/lec-13/siamfc-pair-crops.svg" alt="Tạo cặp mẫu mục tiêu và vùng tìm kiếm cho SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Mẫu cho biết “cần tìm gì”; vùng tìm kiếm cho biết “tìm ở đâu quanh vị trí cũ”.</p>
+          <aside class="notes">
+            <p>Giải thích cách tạo dữ liệu huấn luyện. Từ cùng một đoạn phim, ta lấy một khung làm mẫu mục tiêu và một khung gần đó làm vùng tìm kiếm. Mẫu được cắt quanh vật thật, còn vùng tìm kiếm rộng hơn để chứa cả vị trí thật mới và vùng nền xung quanh. Nhãn cho biết vị trí đúng của mục tiêu trong vùng tìm kiếm.</p>
+            <p>Ví dụ trong một đoạn phim xe chạy, ta cắt chiếc xe ở khung 10 làm mẫu, rồi lấy vùng quanh xe ở khung 14 làm vùng tìm. Nếu xe đã dịch sang phải 20 điểm ảnh, nhãn sẽ đặt vùng dương ở vị trí tương ứng trên bản đồ đáp ứng. Việc tạo nhiều cặp như vậy dạy mạng biết vật có thể dịch, đổi kích thước, đổi ánh sáng, nhưng vẫn phải được tìm lại dựa trên mẫu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -709,6 +841,10 @@
             <img src="img/lec-13/siamfc-architecture.svg" alt="Kiến trúc tổng quan SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamFC không phân loại từng vùng đề xuất; nó tính một bản đồ điểm giống nhau trên toàn vùng tìm kiếm.</p>
+          <aside class="notes">
+            <p>Mô tả luồng xử lý của SiamFC theo ba bước. Bước một, cắt mẫu mục tiêu và vùng tìm kiếm. Bước hai, đưa cả hai qua cùng mạng tích chập để lấy đặc trưng. Bước ba, trượt đặc trưng mẫu trên đặc trưng vùng tìm kiếm bằng tương quan chéo để sinh bản đồ đáp ứng.</p>
+            <p>Điểm cần nhấn mạnh là SiamFC không tạo hàng trăm vùng đề xuất rồi phân loại từng vùng. Nó đánh giá mọi vị trí trong vùng tìm kiếm gần như cùng lúc. Vị trí có điểm đáp ứng cao nhất được xem là nơi mục tiêu xuất hiện. Ví dụ nếu người trong khung mới đi hơi sang trái, đỉnh trên bản đồ đáp ứng cũng dịch sang trái, và từ dịch chuyển đó ta cập nhật lại hộp.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -735,6 +871,10 @@
             </div>
           </div>
           <p class="caption">Trọng số dùng chung là lý do SiamFC có thể bám vật chưa từng thấy trong tập lớp huấn luyện.</p>
+          <aside class="notes">
+            <p>Nhấn mạnh ý nghĩa của hai nhánh dùng chung trọng số. Mạng không học một bộ lọc riêng cho từng mục tiêu. Nó học cách biến mọi miếng ảnh thành đặc trưng sao cho cùng vật ở hai khung có thể so sánh được với nhau. Nhờ vậy, khi gặp vật mới, chỉ cần mẫu ban đầu là đủ để bắt đầu bám.</p>
+            <p>Ví dụ trong tập huấn luyện không có món đồ chơi cụ thể trên bàn, nhưng mạng đã học từ nhiều vật khác rằng cạnh, màu, hoa văn và hình dạng cục bộ có thể dùng để so khớp qua thời gian. Khi mẫu đồ chơi đi qua nhánh thứ nhất và vùng tìm đi qua nhánh thứ hai, các vùng trong vùng tìm có đặc trưng giống mẫu sẽ nhận điểm cao. Giới hạn là nếu đồ chơi quay mặt khác hẳn hoặc bị che, đặc trưng có thể không còn giống đủ mạnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -743,6 +883,10 @@
             <img src="img/lec-13/siamfc-cross-correlation.svg" alt="Tương quan chéo trong SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Đặc trưng mẫu được trượt qua đặc trưng vùng tìm; mỗi vị trí nhận một điểm giống nhau.</p>
+          <aside class="notes">
+            <p>Giải thích tương quan chéo bằng hình ảnh trượt khuôn. Hãy tưởng tượng đặc trưng mẫu như một con dấu nhỏ, còn đặc trưng vùng tìm kiếm là một tấm bản đồ lớn. Ta đặt con dấu tại từng vị trí trên bản đồ và đo mức khớp. Chỗ nào khớp tốt thì điểm cao, chỗ nào là nền hoặc vật khác thì điểm thấp.</p>
+            <p>Ví dụ mẫu là mặt trước của một chiếc xe. Trong vùng tìm kiếm có nhiều vùng đường, vạch kẻ và một phần chiếc xe. Khi trượt mẫu qua đặc trưng vùng tìm, vị trí trùng với chiếc xe sẽ cho đáp ứng cao hơn nền đường. Tương quan chéo giữ lại cấu trúc không gian, nên điểm cao không chỉ nói “có giống”, mà còn cho biết “giống ở vị trí nào”.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -768,6 +912,10 @@
             </div>
           </div>
           <p class="caption">Công thức này biến bám bắt thành bài toán tìm cực đại trên một bản đồ điểm.</p>
+          <aside class="notes">
+            <p>Đọc công thức theo lời: lấy đặc trưng của mẫu \(\varphi_\theta(z)\), tương quan chéo với đặc trưng của vùng tìm \(\varphi_\theta(x)\), rồi cộng một độ lệch học được. Kết quả \(f_\theta(z,x)\) là một bản đồ điểm. Mỗi ô trên bản đồ tương ứng với một vị trí có thể là tâm mục tiêu.</p>
+            <p>Ví dụ nếu bản đồ đáp ứng có kích thước 17 nhân 17, ta có 289 vị trí ứng viên. Thay vì hỏi từng hộp một, mạng cho điểm toàn bộ lưới. Khi điểm cao nhất ở bên phải tâm, ta hiểu mục tiêu đã dịch sang phải. Công thức này cũng cho thấy SiamFC rất gọn: phần học sâu tạo đặc trưng, còn phần định vị là phép tương quan và tìm đỉnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -776,6 +924,10 @@
             <img src="img/lec-13/siamfc-response-map.svg" alt="Bản đồ đáp ứng của SiamFC và cập nhật vị trí" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Đỉnh đáp ứng cho biết mục tiêu dịch chuyển tương đối so với tâm vùng tìm kiếm.</p>
+          <aside class="notes">
+            <p>Bản đồ đáp ứng là cầu nối giữa điểm giống nhau và cập nhật vị trí. Tâm của vùng tìm kiếm thường đặt ở vị trí dự đoán từ khung trước. Nếu đỉnh đáp ứng nằm đúng giữa bản đồ, mục tiêu gần như không dịch chuyển. Nếu đỉnh lệch, độ lệch đó được đổi ngược về tọa độ ảnh để cập nhật hộp.</p>
+            <p>Ví dụ ở khung trước hộp người ở giữa ảnh. Sang khung sau, ta cắt vùng tìm quanh vị trí cũ. Nếu người bước sang trái, bản đồ đáp ứng sẽ có đỉnh lệch trái. Hệ thống không cần quét toàn ảnh; nó chỉ cần đo dịch chuyển tương đối trong vùng đã cắt. Điều này làm SiamFC nhanh, nhưng cũng giải thích điểm yếu: nếu mục tiêu nhảy ra khỏi vùng tìm, bản đồ sẽ không có đỉnh đúng.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -799,6 +951,10 @@
             </div>
           </div>
           <p class="caption">Đây là lý do SiamFC đơn giản nhưng vẫn có thể chạy nhanh: nhiều vị trí được đánh giá trong một lần truyền tiến.</p>
+          <aside class="notes">
+            <p>Giải thích vai trò của tích chập đầy đủ như một mẹo tính toán. Nếu cắt từng cửa sổ riêng rồi chạy mạng cho từng cửa sổ, ta phải lặp lại rất nhiều phép tính giống nhau. SiamFC chạy mạng một lần trên toàn vùng tìm kiếm, giữ bản đồ đặc trưng không gian, rồi dùng tương quan chéo để có điểm cho mọi vị trí.</p>
+            <p>Ví dụ muốn kiểm tra 289 vị trí quanh mục tiêu. Cách ngây thơ là tạo 289 miếng ảnh và chạy CNN 289 lần. Cách của SiamFC gần như chia sẻ toàn bộ tính toán, vì các cửa sổ lân cận có nhiều điểm ảnh chồng nhau. Đây là lý do phương pháp có thể chạy thời gian thực trên phần cứng phù hợp, dù vẫn dùng mạng tích chập.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -807,6 +963,10 @@
             <img src="img/lec-13/siamfc-label-loss.svg" alt="Nhãn và mất mát logistic của SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Mạng không học lớp đối tượng; mạng học vị trí nào trong vùng tìm kiếm giống mẫu mục tiêu.</p>
+          <aside class="notes">
+            <p>Giải thích nhãn huấn luyện trên bản đồ đáp ứng. Mỗi vị trí trên bản đồ được gán nhãn dương hoặc âm tùy nó có gần vị trí thật của mục tiêu hay không. Vùng gần tâm thật là dương, các vùng xa là âm. Như vậy, mạng học tạo một đỉnh điểm quanh vị trí thật.</p>
+            <p>Ví dụ trong vùng tìm kiếm có mục tiêu ở hơi lệch phải. Các ô trên bản đồ tương ứng với lệch phải sẽ được dạy là dương, còn ô tương ứng với nền trái, nền trên, hoặc vật khác được dạy là âm. Điều này khác phân loại ảnh: mạng không nói ảnh thuộc lớp gì, mà nói vị trí nào trong vùng tìm kiếm là nơi mẫu đang xuất hiện. Đây là cách biến bám bắt thành học bản đồ vị trí.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -837,6 +997,10 @@
             </div>
           </div>
           <p class="caption">Mất mát kéo bản đồ đáp ứng thành một “đỉnh” quanh vị trí thật của mục tiêu.</p>
+          <aside class="notes">
+            <p>Diễn giải mất mát logistic theo từng vị trí. Với vị trí dương, nhãn \(y=+1\), mất mát nhỏ khi điểm \(v\) lớn. Với vị trí âm, nhãn \(y=-1\), mất mát nhỏ khi điểm \(v\) nhỏ hoặc âm. Cộng trung bình trên toàn bộ bản đồ buộc mạng vừa nâng điểm ở mục tiêu, vừa hạ điểm ở nền.</p>
+            <p>Ví dụ nếu một vùng nền có màu giống mục tiêu và nhận điểm cao, nó là vị trí âm nhưng \(v\) lớn, nên mất mát sẽ phạt mạnh. Nếu vị trí thật nhận điểm thấp, nó là vị trí dương nhưng mạng chưa tự tin, cũng bị phạt. Sau nhiều cặp huấn luyện, mạng học phân biệt “giống mục tiêu thật” với “chỉ tình cờ giống một phần”.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -845,6 +1009,10 @@
             <img src="img/lec-13/siamfc-inference-loop.svg" alt="Vòng suy luận của SiamFC" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamFC dùng vị trí cũ để giới hạn vùng tìm kiếm; vì thế nó nhanh nhưng dễ mất dấu khi mục tiêu nhảy xa.</p>
+          <aside class="notes">
+            <p>Trình bày vòng suy luận khi chạy trên đoạn phim. Ở khung đầu, ta có hộp mục tiêu. Ở mỗi khung sau, cắt vùng tìm kiếm quanh vị trí hiện tại, đưa mẫu và vùng tìm qua mạng, lấy bản đồ đáp ứng, chọn đỉnh, rồi cập nhật hộp. Vòng này lặp lại cho đến hết đoạn phim.</p>
+            <p>Ví dụ theo dõi một người đi bộ. Mỗi khung, người chỉ dịch một đoạn nhỏ nên vùng tìm quanh vị trí cũ thường chứa người. Nhờ giới hạn vùng tìm, hệ thống nhanh và ít bị nhiễu bởi các vật ở xa. Nhưng nếu máy quay rung mạnh, người chạy nhanh, hoặc khung hình bị cắt đột ngột, mục tiêu có thể rời khỏi vùng tìm. Khi đó SiamFC có thể chọn nhầm một vùng nền có điểm cao nhất.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -869,6 +1037,10 @@
             </div>
           </div>
           <p class="caption">SiamFC xử lý thay đổi kích thước bằng thử vài tỉ lệ, không bằng một đầu hồi quy hộp như bộ phát hiện.</p>
+          <aside class="notes">
+            <p>Giải thích suy luận đa tỉ lệ. Mục tiêu trong đoạn phim có thể to dần khi tiến gần camera hoặc nhỏ dần khi đi xa. SiamFC nguyên bản không có nhánh hồi quy kích thước hộp, nên nó thử vài vùng tìm kiếm ở các tỉ lệ khác nhau, chạy so khớp, rồi chọn tỉ lệ có đáp ứng mạnh nhất.</p>
+            <p>Ví dụ một xe chạy về phía camera. Nếu giữ nguyên kích thước hộp, hộp sẽ dần nhỏ hơn xe thật. Bằng cách thử vùng ở tỉ lệ lớn hơn một chút, hệ thống có cơ hội chọn kích thước phù hợp hơn. Tuy nhiên đây là cách chỉnh thô: chỉ chọn trong vài tỉ lệ đã định, không dự đoán liên tục chiều rộng và chiều cao. Hạn chế này là một động lực để chuyển sang SiamRPN.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -877,6 +1049,10 @@
             <img src="img/lec-13/siamfc-limitations.svg" alt="Giới hạn của SiamFC và động lực cho SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamFC là bước chuyển quan trọng: bám bắt thành so khớp nhanh, nhưng hộp đầu ra vẫn chưa tinh như bộ phát hiện.</p>
+          <aside class="notes">
+            <p>Tổng kết SiamFC bằng hai mặt. Điểm mạnh là ý tưởng rất gọn: học ngoại tuyến một hàm so khớp, dùng hai nhánh chung trọng số, sinh bản đồ đáp ứng nhanh. Nhờ vậy SiamFC có thể bám các vật không thuộc lớp cố định và chạy khá nhanh trong thực tế.</p>
+            <p>Điểm yếu là hộp đầu ra chủ yếu dựa vào vị trí đỉnh và vài tỉ lệ thử, nên chưa tinh như các bộ phát hiện có hồi quy hộp. Khi mục tiêu đổi dáng, bị che, xoay mạnh hoặc thay đổi tỉ lệ nhanh, bộ bám bắt dễ lệch hoặc trôi. Lấy ví dụ người quay lưng, cúi xuống, rồi đứng lên: mẫu ban đầu có thể không còn giống dáng hiện tại. Các hạn chế này dẫn đến SiamRPN, nơi ý tưởng so khớp được kết hợp với hộp neo và hồi quy hộp.</p>
+          </aside>
         </section>
 
       </section>
@@ -885,6 +1061,10 @@
         <section>
           <h1><span class="text-light">3.</span><br />SiamRPN</h1>
           <p>Từ bản đồ giống nhau đến đề xuất vùng · hộp neo · nhánh phân loại · nhánh hồi quy</p>
+          <aside class="notes">
+            <p>Mở phần SiamRPN bằng cách nối lại hạn chế của SiamFC. SiamFC tìm vị trí mục tiêu bằng đỉnh trên bản đồ đáp ứng, nhưng việc xác định kích thước hộp còn khá thô. SiamRPN giữ tinh thần so khớp theo mẫu, đồng thời mượn ý tưởng đề xuất vùng từ các bộ phát hiện để dự đoán hộp chính xác hơn.</p>
+            <p>Có thể nói với sinh viên rằng SiamRPN giống như hỏi hai câu cùng lúc tại nhiều hộp neo: hộp này có chứa đúng mục tiêu đã cho không, và nếu có thì cần chỉnh hộp này lệch bao nhiêu để sát mục tiêu. Ví dụ bám một xe đang tiến gần camera: thay vì chỉ chọn tâm rồi thử vài tỉ lệ, SiamRPN có thể hồi quy chiều rộng và chiều cao phù hợp hơn.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -893,6 +1073,10 @@
             <img src="img/lec-13/siamrpn-motivation.svg" alt="Động lực từ SiamFC sang SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamRPN giữ hàm so khớp của SiamFC, nhưng thêm cơ chế dự đoán hộp như bộ phát hiện.</p>
+          <aside class="notes">
+            <p>Dùng slide này để giải thích động lực chuyển từ SiamFC sang SiamRPN. SiamFC trả lời tốt câu hỏi “mục tiêu ở gần vị trí nào”, nhưng chưa trả lời đủ tốt câu hỏi “hộp bao quanh mục tiêu phải rộng cao bao nhiêu”. Trong nhiều ứng dụng, hộp cần sát để cắt ảnh, nhận dạng tiếp hoặc đo kích thước.</p>
+            <p>Ví dụ theo dõi một người đi từ xa lại gần. Tâm người có thể được tìm đúng, nhưng hộp phải lớn dần theo cơ thể. Nếu chỉ chỉnh bằng vài tỉ lệ rời rạc, hộp dễ quá nhỏ hoặc quá to. SiamRPN thêm cơ chế giống mạng đề xuất vùng: tại mỗi vị trí có nhiều hộp neo, mỗi hộp có điểm mục tiêu và bốn độ lệch để chỉnh hộp. Nhờ vậy đầu ra gần với bộ phát hiện hơn.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -901,6 +1085,10 @@
             <img src="img/lec-13/siamrpn-rpn-recall.svg" alt="Nhắc lại RPN và cách SiamRPN đổi ý nghĩa RPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">RPN trong bộ phát hiện hỏi “có vật không”; SiamRPN hỏi “có đúng mục tiêu đang bám không”.</p>
+          <aside class="notes">
+            <p>Nhắc lại RPN trong Faster R-CNN ở mức ý tưởng. RPN đặt nhiều hộp neo trên lưới đặc trưng, rồi dự đoán hộp nào có khả năng chứa vật và cần chỉnh hộp thế nào. Trong bộ phát hiện thông thường, câu hỏi là “có vật thuộc lớp quan tâm không”.</p>
+            <p>SiamRPN đổi câu hỏi thành có điều kiện theo mẫu. Mẫu mục tiêu cho biết ta đang tìm vật nào, nên nhánh phân loại không cần phân biệt người, xe, chó. Nó chỉ cần phân biệt “đúng mục tiêu” và “không phải mục tiêu”. Ví dụ nếu mẫu là chiếc xe màu đỏ, một xe xanh cùng lớp xe nhưng khác danh tính phải bị xem là nền đối với bài bám bắt này. Đây là điểm khác then chốt so với phát hiện đối tượng thông thường.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -909,6 +1097,10 @@
             <img src="img/lec-13/siamrpn-architecture.svg" alt="Kiến trúc tổng quan SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Nhánh phân loại chọn hộp neo giống mục tiêu; nhánh hồi quy chỉnh hộp neo thành hộp chính xác hơn.</p>
+          <aside class="notes">
+            <p>Mô tả luồng xử lý của SiamRPN. Mẫu và vùng tìm kiếm vẫn đi qua hai nhánh trích đặc trưng có liên hệ Siamese. Sau đó hệ thống sinh các bộ lọc hoặc đặc trưng để so khớp vùng tìm với mẫu. Đầu ra tách thành hai nhánh: phân loại mục tiêu và hồi quy hộp.</p>
+            <p>Nhánh phân loại cho điểm từng hộp neo: hộp này có chứa đúng mục tiêu không. Nhánh hồi quy cho bốn số để chỉnh tâm, chiều rộng và chiều cao của hộp neo. Ví dụ tại một vị trí có ba hộp neo: hộp cao, hộp vuông, hộp rộng. Nếu mục tiêu là người đứng, hộp cao có thể được chọn và chỉnh nhẹ. Nếu mục tiêu là xe buýt, hộp rộng có thể phù hợp hơn. Hai nhánh phối hợp để vừa chọn đúng vừa vẽ sát.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -932,6 +1124,10 @@
             </div>
           </div>
           <p class="caption">SiamRPN biến bám bắt thành bài toán đề xuất vùng một lần, có điều kiện theo mẫu mục tiêu.</p>
+          <aside class="notes">
+            <p>So sánh rõ giữa điểm đáp ứng của SiamFC và hộp neo của SiamRPN. Ở SiamFC, mỗi vị trí trên bản đồ chủ yếu là một điểm, và ta suy ra tâm mục tiêu từ điểm cao nhất. Kích thước hộp được chỉnh bằng quy tắc ngoài mô hình. Ở SiamRPN, mỗi vị trí đi kèm nhiều hộp neo có hình dạng khác nhau.</p>
+            <p>Ví dụ tại cùng một tâm, ta có thể đặt một hộp hẹp cao cho người, một hộp rộng cho xe, một hộp vuông cho biển báo. Mạng không cần vẽ hộp từ con số không; nó chỉ chọn hộp neo gần đúng rồi dự đoán độ lệch. Cách này làm bài toán học dễ hơn và giúp SiamRPN xử lý thay đổi tỉ lệ tốt hơn SiamFC.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.76em;">
@@ -940,6 +1136,10 @@
             <img src="img/lec-13/siamrpn-anchor-grid.svg" alt="Hộp neo trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Nhiều hình dạng hộp neo giúp mô hình xử lý vật rộng, cao, nhỏ, lớn mà không phải tự vẽ hộp từ đầu.</p>
+          <aside class="notes">
+            <p>Giải thích hộp neo là các hộp mẫu đặt sẵn trên lưới. Tại mỗi vị trí, ta đặt một số hộp với tỉ lệ và kích thước khác nhau. Mục tiêu thật thường gần với một hoặc vài hộp neo nào đó. Mạng chỉ cần học cách chọn hộp neo phù hợp và chỉnh nó.</p>
+            <p>Ví dụ người đi bộ thường hợp với hộp cao, xe con hợp với hộp rộng thấp, còn biển báo có thể gần hộp vuông. Nếu không có hộp neo đa dạng, một hộp khởi đầu quá khác hình dạng mục tiêu sẽ khó hồi quy chính xác. Tuy nhiên hộp neo cũng là một thiết kế cần cân nhắc: nếu miền dữ liệu thay đổi, ví dụ bám vật rất nhỏ từ máy bay không người lái, bộ hộp neo phải được chọn sao cho phù hợp.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -948,6 +1148,10 @@
             <img src="img/lec-13/siamrpn-branches.svg" alt="Hai nhánh phân loại và hồi quy trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Phân loại quyết định hộp neo nào đáng tin; hồi quy quyết định phải chỉnh hộp neo đó thế nào.</p>
+          <aside class="notes">
+            <p>Dùng slide này để tách vai trò hai nhánh. Nhánh phân loại trả lời “hộp neo này có phải mục tiêu không”. Nó tạo điểm tin cậy để xếp hạng các hộp. Nhánh hồi quy trả lời “nếu hộp này là mục tiêu, cần dịch tâm và đổi kích thước thế nào”. Hai nhánh dùng chung thông tin so khớp với mẫu, nhưng mục tiêu tối ưu khác nhau.</p>
+            <p>Ví dụ hộp neo đã nằm gần một chiếc xe nhưng hơi lệch trái và hơi nhỏ. Nhánh phân loại có thể cho điểm cao vì nó nhận ra đây là xe mục tiêu. Nhánh hồi quy sẽ dự đoán cần dịch sang phải và tăng chiều rộng. Nếu chỉ có phân loại, hộp vẫn chưa sát. Nếu chỉ có hồi quy mà không biết hộp nào là mục tiêu, ta không biết nên chỉnh hộp nào. Vì vậy SiamRPN cần cả hai.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -973,6 +1177,10 @@
             </div>
           </div>
           <p class="caption">Khác bộ phát hiện nhiều lớp, nhánh này chỉ phân biệt “mục tiêu” và “nền”.</p>
+          <aside class="notes">
+            <p>Giải thích đầu ra phân loại \(p_{u,a}\). Chỉ số \(u\) là vị trí trên lưới, \(a\) là hộp neo tại vị trí đó. \(p_{u,a}\) là xác suất hoặc điểm tin rằng hộp neo này chứa đúng mục tiêu đang bám, với điều kiện đã biết mẫu \(z\) và vùng tìm \(x\).</p>
+            <p>Điểm khác với phát hiện nhiều lớp là nhánh này không cần nói hộp là người, xe hay mèo. Nếu mẫu là người A, thì người B trong cùng vùng tìm vẫn là nền đối với người A. Ví dụ trong sân bóng, ta bám cầu thủ số 10. Các cầu thủ khác đều là “không phải mục tiêu”, dù cùng lớp người. Nhờ đó SiamRPN phù hợp với bám bắt theo danh tính cụ thể, không phải chỉ theo lớp vật.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -981,6 +1189,10 @@
             <img src="img/lec-13/siamrpn-box-encoding.svg" alt="Mã hóa hồi quy hộp trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Hồi quy hộp học độ lệch tương đối từ hộp neo, nên dễ học hơn dự đoán tọa độ ảnh tuyệt đối.</p>
+          <aside class="notes">
+            <p>Giải thích vì sao hồi quy hộp dùng độ lệch tương đối. Thay vì bắt mạng dự đoán tọa độ tuyệt đối trong ảnh, ta cho nó một hộp neo gần đúng rồi học bốn điều chỉnh: tâm lệch bao nhiêu theo chiều ngang, tâm lệch bao nhiêu theo chiều dọc, chiều rộng đổi theo tỉ lệ nào, chiều cao đổi theo tỉ lệ nào.</p>
+            <p>Ví dụ hộp neo rộng 100, cao 50, còn hộp thật rộng 110, cao 55 và tâm lệch sang phải 5 điểm ảnh. Các độ lệch này nhỏ và có ý nghĩa tương đối, dễ học hơn nhiều so với tọa độ ảnh có thể thay đổi theo kích thước ảnh. Cách mã hóa này cũng giúp cùng một công thức dùng được cho vật nhỏ và vật lớn, vì dịch tâm được chuẩn hóa theo kích thước hộp neo.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1004,6 +1216,10 @@
             </div>
           </div>
           <p class="caption">Dịch tâm được chuẩn hóa theo kích thước hộp neo; rộng/cao dùng log để biểu diễn tỉ lệ co giãn.</p>
+          <aside class="notes">
+            <p>Đọc bốn công thức mã hóa hộp. \(t_x^\star\) và \(t_y^\star\) là độ lệch tâm thật so với tâm hộp neo, chia cho chiều rộng hoặc chiều cao hộp neo. Nhờ chia như vậy, lệch 10 điểm ảnh trên hộp rất lớn không bị hiểu giống lệch 10 điểm ảnh trên hộp rất nhỏ.</p>
+            <p>Hai công thức \(t_w^\star\) và \(t_h^\star\) dùng log của tỉ lệ chiều rộng và chiều cao. Nếu hộp thật rộng gấp đôi hộp neo, giá trị là log 2; nếu hẹp bằng một nửa, giá trị là log 0.5. Cách dùng log làm co và giãn có tính đối xứng hơn. Ví dụ hộp neo hơi nhỏ so với xe thật, mạng chỉ cần dự đoán một độ tăng tỉ lệ, rồi khi giải mã ta nhân ngược lại để có hộp cuối.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1012,6 +1228,10 @@
             <img src="img/lec-13/siamrpn-anchor-assignment.svg" alt="Gán nhãn hộp neo trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Hộp neo dương học cả phân loại và hồi quy; hộp neo âm chỉ dạy mô hình nhận ra nền.</p>
+          <aside class="notes">
+            <p>Giải thích gán nhãn hộp neo bằng IoU. Trong huấn luyện, ta biết hộp thật của mục tiêu trong vùng tìm kiếm. Mỗi hộp neo được so với hộp thật. Nếu IoU cao, hộp neo đó được xem là dương vì nó gần mục tiêu. Nếu IoU thấp, nó là âm vì chủ yếu là nền hoặc vật khác.</p>
+            <p>Hộp dương dạy mô hình hai việc: nhận ra mục tiêu và chỉnh hộp cho sát hơn. Hộp âm chỉ dạy mô hình phân biệt nền, vì không có hộp thật phù hợp để hồi quy. Ví dụ trong vùng tìm kiếm có một chiếc xe mục tiêu và một biển báo. Hộp neo quanh xe là dương, hộp neo quanh biển báo là âm. Việc gán nhãn rõ ràng giúp mạng học không nhầm vật giống hoặc nền thành mục tiêu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1031,6 +1251,10 @@
             </div>
           </div>
           <p class="caption">Ngưỡng cụ thể có thể thay đổi theo cài đặt; ý chính là tránh ép mô hình học từ hộp neo mơ hồ.</p>
+          <aside class="notes">
+            <p>Ba trạng thái gán nhãn giúp huấn luyện ổn định hơn. Hộp dương có IoU cao nên đủ tin rằng nó đại diện cho mục tiêu. Hộp âm có IoU thấp nên đủ tin rằng nó không phải mục tiêu. Hộp ở giữa là mơ hồ: nó có thể chạm một phần mục tiêu nhưng không đủ tốt để dạy hồi quy, cũng không nên xem như nền hoàn toàn.</p>
+            <p>Ví dụ một hộp neo cắt trúng nửa người. Nếu ép nó là dương, mạng học từ hộp quá xấu. Nếu ép nó là âm, mạng bị phạt dù hộp có chứa một phần mục tiêu. Bỏ qua các hộp lưng chừng này giúp tín hiệu huấn luyện sạch hơn. Ngưỡng 0.6 và 0.3 chỉ là ví dụ; điều quan trọng là nguyên tắc tạo vùng chắc chắn và vùng bỏ qua.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1039,6 +1263,10 @@
             <img src="img/lec-13/siamrpn-loss.svg" alt="Mất mát đa nhiệm trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Hai nhánh cùng tối ưu một mục tiêu: chọn đúng hộp neo và chỉnh hộp đó sát mục tiêu.</p>
+          <aside class="notes">
+            <p>Mục tiêu học đa nhiệm nghĩa là mô hình học hai việc cùng lúc. Việc thứ nhất là phân loại hộp neo thành mục tiêu hoặc nền. Việc thứ hai là hồi quy hộp cho những hộp neo dương. Hai việc này liên quan chặt chẽ: muốn hộp cuối tốt, phải chọn đúng hộp khởi đầu và chỉnh nó đúng.</p>
+            <p>Ví dụ nếu nhánh phân loại chọn nhầm hộp ở vật khác, hồi quy có tốt đến đâu cũng không cứu được vì đang chỉnh sai vật. Ngược lại, nếu chọn đúng vùng mục tiêu nhưng nhánh hồi quy yếu, hộp cuối vẫn lệch. Khi huấn luyện, mất mát phân loại và hồi quy được cộng lại với trọng số cân bằng, giúp mạng học cả khả năng nhận mục tiêu và khả năng vẽ hộp sát.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1072,6 +1300,10 @@
             </div>
           </div>
           <p class="caption">Mất mát phân loại kéo điểm hộp neo đúng lên; mất mát hồi quy kéo hộp dương khớp hộp thật.</p>
+          <aside class="notes">
+            <p>Đọc công thức mất mát SiamRPN. Phần đầu là tổng mất mát phân loại trên các hộp neo, chuẩn hóa bởi \(N_{cls}\). Phần sau là mất mát hồi quy, chuẩn hóa bởi \(N_{reg}\) và nhân với \(\lambda\) để cân bằng. Hệ số \(p_i^\star\) làm cho hồi quy chỉ áp dụng với hộp neo dương.</p>
+            <p>Ví dụ một hộp neo âm nằm trên nền trời. Ta vẫn muốn nhánh phân loại học rằng đó là nền, nhưng không có ý nghĩa gì khi yêu cầu nó dự đoán độ lệch tới hộp mục tiêu. Một hộp neo dương quanh người thì phải vừa nhận điểm mục tiêu cao, vừa dự đoán bốn độ lệch cho sát hộp thật. \(\lambda\) quan trọng vì nếu phân loại quá nặng, hộp có thể không sát; nếu hồi quy quá nặng, điểm chọn hộp có thể kém ổn định.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1096,6 +1328,10 @@
             </div>
           </div>
           <p class="caption">Smooth L1 là lựa chọn quen thuộc từ Fast/Faster R-CNN, nay được dùng cho hồi quy hộp trong bám bắt.</p>
+          <aside class="notes">
+            <p>Giải thích Smooth L1 như một mất mát dung hòa giữa bình phương và trị tuyệt đối. Khi sai số nhỏ, hàm phạt giống bình phương nên mượt quanh nghiệm đúng, giúp tối ưu tinh chỉnh hộp. Khi sai số lớn, hàm phạt gần tuyến tính, không để một vài hộp neo quá lệch chi phối toàn bộ học.</p>
+            <p>Ví dụ trong một mẻ huấn luyện có nhiều hộp neo dương tương đối tốt và một hộp bị gán gần nhưng lệch mạnh vì mục tiêu bị che. Nếu dùng mất mát bình phương thuần túy, sai lớn có thể tạo gradient quá mạnh. Smooth L1 giảm tác động đó nhưng vẫn khuyến khích sửa sai. Đây là lý do nó được dùng rộng rãi trong hồi quy hộp, từ phát hiện đối tượng sang SiamRPN.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1104,6 +1340,10 @@
             <img src="img/lec-13/siamrpn-inference.svg" alt="Suy luận trong SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamRPN sinh nhiều hộp có điểm mục tiêu; bước chọn cuối cùng thường ưu tiên hộp điểm cao và chuyển động mượt.</p>
+          <aside class="notes">
+            <p>Trình bày suy luận SiamRPN trên từng khung. Từ vị trí hiện tại, ta cắt vùng tìm kiếm, đưa mẫu và vùng tìm qua mạng, nhận điểm phân loại và độ lệch hồi quy cho nhiều hộp neo. Sau đó giải mã các độ lệch thành hộp thật dự đoán và chọn hộp tốt nhất.</p>
+            <p>Điểm cần nói thêm là chọn hộp không chỉ dựa vào điểm cao nhất. Trong bám bắt, chuyển động giữa hai khung thường mượt, nên các cài đặt thực tế hay phạt hộp đổi tỉ lệ quá mạnh hoặc nằm quá xa tâm vùng tìm. Ví dụ nếu một hộp rất xa có điểm cao vì giống màu mục tiêu, nhưng mục tiêu không thể nhảy xa như vậy trong một khung, bộ bám bắt nên giảm điểm của hộp đó. Đây là cách dùng giả thiết thời gian để ổn định kết quả.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1132,6 +1372,10 @@
             </div>
           </div>
           <p class="caption">Suy luận không chỉ lấy điểm cao nhất; bộ bám bắt còn cần tránh nhảy hộp quá đột ngột.</p>
+          <aside class="notes">
+            <p>Giải thích công thức chọn hộp. \(a^\star\) là hộp neo được chọn theo điểm \(S(a)\). Điểm này thường kết hợp điểm phân loại với các hình phạt về tỉ lệ, kích thước và vị trí. Sau khi chọn hộp neo, hàm giải mã dùng bốn độ lệch hồi quy để tạo hộp cuối \(b_t\).</p>
+            <p>Ví dụ khi bám một người đang đi đều, hộp ở khung sau không nên đột nhiên rộng gấp ba hoặc nhảy sang góc ảnh. Nếu mạng cho điểm cao cho một vùng như vậy vì có màu áo giống, cửa sổ không gian và phạt thay đổi tỉ lệ giúp giữ lựa chọn hợp lý hơn. Tuy nhiên phạt quá mạnh cũng có rủi ro: nếu người thật chuyển động nhanh hoặc camera quay gấp, hệ thống có thể quá bảo thủ và mất mục tiêu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1140,6 +1384,10 @@
             <img src="img/lec-13/siamrpn-comparison.svg" alt="So sánh SiamFC và SiamRPN" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SiamRPN là cầu nối rõ nhất giữa bám bắt bằng so khớp và phát hiện bằng hộp neo.</p>
+          <aside class="notes">
+            <p>Kết phần bằng so sánh SiamFC và SiamRPN. SiamFC đơn giản, nhanh, dựa trên bản đồ đáp ứng và tìm đỉnh. Nó rất tốt để hiểu tư duy so khớp mẫu với vùng tìm kiếm. SiamRPN thêm hộp neo, nhánh phân loại và nhánh hồi quy, nên hộp đầu ra thường chính xác hơn, đặc biệt khi kích thước mục tiêu thay đổi.</p>
+            <p>Ví dụ bám một chiếc xe từ xa lại gần. SiamFC có thể giữ được tâm xe nhưng hộp co giãn chưa mịn. SiamRPN có thể chọn hộp neo phù hợp và chỉnh kích thước sát hơn. Đổi lại, SiamRPN phức tạp hơn, phụ thuộc thiết kế hộp neo và dữ liệu huấn luyện. Nhấn mạnh rằng cả hai vẫn cùng gốc Siamese: dùng mẫu để điều kiện hóa việc tìm mục tiêu trong khung mới.</p>
+          </aside>
         </section>
 
       </section>
@@ -1148,6 +1396,10 @@
         <section>
           <h1><span class="text-light">4.</span><br />MOT: SORT và DeepSORT</h1>
           <p>Bám bắt dựa trên phát hiện · bộ lọc Kalman · ghép cặp Hungarian · đặc trưng ngoại hình</p>
+          <aside class="notes">
+            <p>Mở phần này bằng việc nhấn mạnh MOT trong thực tế thường được xây trên bộ phát hiện. Bộ phát hiện cho hộp ở từng khung, còn bộ bám bắt phải nối các hộp thành ID ổn định. SORT là phương pháp nền rất quan trọng vì nó cho thấy một khung xử lý đơn giản nhưng hiệu quả: dự báo bằng Kalman, ghép cặp bằng Hungarian, quản lý quỹ đạo bằng vài quy tắc.</p>
+            <p>DeepSORT đi tiếp từ SORT bằng cách thêm đặc trưng ngoại hình. Nói cách khác, SORT hỏi “hộp mới có gần nơi tôi dự báo không”, còn DeepSORT hỏi thêm “hộp mới có giống người hoặc vật tôi đã thấy trước đó không”. Ví dụ trong một hành lang đông người, chỉ dùng vị trí có thể nhầm khi hai người giao cắt; thêm áo quần, dáng và màu sắc giúp giữ ID tốt hơn.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1156,6 +1408,10 @@
             <img src="img/lec-13/sort-detect-associate.svg" alt="Quy trình bám bắt dựa trên phát hiện trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SORT không học mô hình bám bắt phức tạp; nó ghép các hộp phát hiện thành chuỗi ID theo thời gian.</p>
+          <aside class="notes">
+            <p>Giải thích bám bắt dựa trên phát hiện theo cách thực dụng. Ta tách bài toán thành hai phần: một mô hình phát hiện mạnh vẽ hộp ở từng khung, và một thuật toán nhẹ nối hộp thành quỹ đạo. SORT thuộc nhóm này. Nó không cố học lại toàn bộ bài toán bám bắt, mà tận dụng chất lượng của bộ phát hiện.</p>
+            <p>Ví dụ một camera giao thông dùng bộ phát hiện xe để tạo danh sách hộp mỗi khung. Nếu chỉ lưu danh sách đó, ta không biết xe nào đi từ làn này sang làn kia. SORT dự báo vị trí từng xe từ khung trước, so với hộp mới, rồi gán ID. Ưu điểm là nhanh và dễ cài đặt. Nhược điểm là nếu bộ phát hiện bỏ sót hoặc hai xe che nhau, thuật toán ghép có ít thông tin để quyết định.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1179,6 +1435,10 @@
             </div>
           </div>
           <p class="caption">Tư duy chính: phát hiện trả lời “vật ở đâu?”, ghép cặp trả lời “vật này là ai từ khung trước?”.</p>
+          <aside class="notes">
+            <p>Trình bày đầu vào và đầu ra của SORT. Đầu vào mỗi khung là các hộp phát hiện, có tọa độ và điểm tin cậy. SORT không tự nhìn ảnh để tìm vật, nên chất lượng phát hiện ảnh hưởng trực tiếp đến chất lượng bám bắt. Đầu ra là cùng các hộp đó nhưng được gắn ID.</p>
+            <p>Ví dụ ở khung 1 có ba hộp xe, SORT tạo ba quỹ đạo với ID 1, 2, 3. Ở khung 2 có ba hộp mới. SORT phải quyết định hộp mới nào là xe 1, xe 2, xe 3. Nó chỉ dùng thông tin tới thời điểm hiện tại, không nhìn trước tương lai. Điều này phù hợp chạy thời gian thực, nhưng cũng có nghĩa là các quyết định trong cảnh mơ hồ có thể sai và phải được xử lý bằng quy tắc quản lý quỹ đạo.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1187,6 +1447,10 @@
             <img src="img/lec-13/sort-state-vector.svg" alt="Véc-tơ trạng thái hình học trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SORT chỉ giữ hình học hộp và vận tốc, nên rất nhanh nhưng ít thông tin về ngoại hình.</p>
+          <aside class="notes">
+            <p>Giải thích trạng thái quỹ đạo trong SORT là mô tả hình học, không phải mô tả hình ảnh. Nó lưu tâm hộp, diện tích, tỉ lệ, và một số vận tốc tương ứng. Từ đó bộ lọc Kalman có thể dự báo hộp ở khung sau nếu vật tiếp tục chuyển động gần đều.</p>
+            <p>Ví dụ một xe đang đi sang phải, tâm hộp tăng đều qua các khung. Dựa trên vận tốc ước lượng, SORT dự báo xe sẽ tiếp tục sang phải một khoảng tương tự. Cách lưu này rất nhẹ, nên SORT nhanh. Nhưng nó không biết xe màu gì, người mặc áo gì, hay mục tiêu có hình dáng ra sao. Khi hai hộp hình học gần nhau, ví dụ hai người đi sát, SORT thiếu thông tin để phân biệt danh tính.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1209,6 +1473,10 @@
             </div>
           </div>
           <p class="caption">Vận tốc là biến ẩn: chỉ được suy ra dần từ chuỗi hộp đã ghép đúng.</p>
+          <aside class="notes">
+            <p>Đọc véc-tơ trạng thái \(x_t\) và quan sát \(z_t\). Quan sát là hộp phát hiện ở khung hiện tại, gồm tâm \(u, v\), diện tích \(s\), và tỉ lệ \(r\). Trạng thái ẩn thêm các vận tốc \(\dot u, \dot v, \dot s\), tức tốc độ thay đổi tâm và diện tích. Tỉ lệ \(r\) thường được xem là gần ổn định.</p>
+            <p>Ví dụ bộ phát hiện chỉ nói ở khung này xe có hộp tâm tại 200, 120. Nó không trực tiếp nói xe đang chạy nhanh hay chậm. Vận tốc được suy ra từ các hộp đã ghép đúng ở những khung trước. Nếu ghép sai, vận tốc cũng bị ước lượng sai, kéo theo dự báo sai ở khung sau. Vì vậy trạng thái Kalman vừa hữu ích, vừa phụ thuộc vào chất lượng liên kết dữ liệu.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1217,6 +1485,10 @@
             <img src="img/lec-13/sort-kalman-cycle.svg" alt="Hai bước dự báo và cập nhật của bộ lọc Kalman" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Kalman cho SORT một hộp dự báo trước khi hộp phát hiện của khung mới được ghép vào.</p>
+          <aside class="notes">
+            <p>Giới thiệu bộ lọc Kalman như một vòng hai bước: dự báo và cập nhật. Trước khi xem hộp phát hiện mới, Kalman dùng trạng thái cũ để dự báo hộp sẽ ở đâu. Sau khi có hộp phát hiện được ghép vào quỹ đạo, nó cập nhật trạng thái bằng cách kết hợp dự báo và quan sát.</p>
+            <p>Ví dụ một người đi đều sang phải. Nếu khung mới bị mờ và bộ phát hiện hơi lệch, Kalman không nhất thiết tin hoàn toàn vào hộp mới; nó kéo trạng thái theo cả dự báo lẫn quan sát. Nếu không có phát hiện trong một khung, SORT vẫn có thể dự báo tiếp vị trí tạm thời. Điều này giúp vượt qua bỏ sót ngắn, nhưng nếu mất quá lâu thì bất định tăng và quỹ đạo nên bị xóa.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1243,6 +1515,10 @@
             </div>
           </div>
           <p class="caption">Dự báo nói: nếu vật tiếp tục chuyển động như vừa rồi, hộp mới sẽ ở đâu và chắc đến mức nào?</p>
+          <aside class="notes">
+            <p>Giải thích công thức dự báo. \(\hat x_{t|t-1}\) là trạng thái dự báo ở khung \(t\) dựa trên thông tin đến khung \(t-1\). Ma trận \(F\) mô tả chuyển động, thường là vận tốc gần hằng: vị trí mới bằng vị trí cũ cộng vận tốc. \(P\) là mức bất định, và \(Q\) thêm nhiễu vì chuyển động thật không hoàn hảo.</p>
+            <p>Ví dụ xe đang đi thẳng với vận tốc ổn định, dự báo sẽ khá chắc. Nếu xe đột ngột rẽ, mô hình vận tốc hằng sẽ sai, và phần nhiễu \(Q\) giúp biểu diễn rằng dự báo có thể không chắc tuyệt đối. Khi bất định lớn hơn, cổng ghép cặp sau này nên rộng hơn một chút. Nói cách khác, Kalman không chỉ dự báo vị trí, mà còn nói hệ thống tự tin đến mức nào về dự báo đó.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1268,6 +1544,10 @@
             </div>
           </div>
           <p class="caption">Nếu phát hiện đáng tin, trạng thái kéo về hộp đo được; nếu nhiễu lớn, cập nhật thận trọng hơn.</p>
+          <aside class="notes">
+            <p>Diễn giải bước cập nhật. Sau khi một hộp phát hiện \(z_t\) được ghép với quỹ đạo, ta so hộp đó với hộp mà trạng thái dự báo sẽ đo được, tức \(H\hat x\). Hiệu \(z_t - H\hat x\) là phần sai khác. Hệ số Kalman \(K_t\) quyết định lấy bao nhiêu phần sai khác để sửa trạng thái.</p>
+            <p>Ví dụ dự báo nói hộp người ở tọa độ 100, nhưng phát hiện thấy ở 106. Nếu phát hiện tin cậy và bất định dự báo cao, trạng thái sẽ kéo nhiều về 106. Nếu phát hiện nhiễu hoặc dự báo rất chắc, cập nhật sẽ nhẹ hơn. Cách kết hợp này giúp SORT không bị dao động quá mạnh khi hộp phát hiện lúc thì lệch trái, lúc thì lệch phải quanh vật thật.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1276,6 +1556,10 @@
             <img src="img/lec-13/sort-iou-cost.svg" alt="Ma trận chi phí IoU trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SORT dùng hình học: hộp phát hiện nào chồng lên hộp dự báo nhiều nhất thì có khả năng cùng ID hơn.</p>
+          <aside class="notes">
+            <p>Giải thích ma trận chi phí IoU trong SORT. Sau khi có hộp dự báo cho từng quỹ đạo và hộp phát hiện mới trong khung hiện tại, ta tính IoU giữa mọi cặp. IoU cao nghĩa là hộp phát hiện nằm gần và chồng nhiều với hộp dự báo, nên có khả năng là cùng đối tượng. Chi phí thường lấy 1 trừ IoU.</p>
+            <p>Ví dụ có hai quỹ đạo xe và hai hộp phát hiện. Nếu hộp phát hiện thứ nhất chồng nhiều với dự báo của xe 1, chi phí cặp đó thấp. Nếu nó nằm xa dự báo của xe 2, chi phí cặp kia cao. Ma trận này là đầu vào cho thuật toán ghép cặp. Hạn chế là IoU chỉ nhìn hình học; hai người giao cắt có thể tạo IoU mơ hồ và dẫn đến đổi ID.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1300,6 +1584,10 @@
             </div>
           </div>
           <p class="caption">Đây là lý do SORT phụ thuộc mạnh vào chất lượng hộp phát hiện và chuyển động giữa hai khung.</p>
+          <aside class="notes">
+            <p>Công thức \(C_{ij}=1-IoU(\hat b_i,d_j)\) rất trực quan. \(\hat b_i\) là hộp dự báo của quỹ đạo \(i\), \(d_j\) là hộp phát hiện mới. Nếu hai hộp trùng nhau, IoU gần 1 và chi phí gần 0, nên rất nên ghép. Nếu hai hộp không chồng, IoU bằng 0 và chi phí bằng 1, nên không nên ghép.</p>
+            <p>Ví dụ một người đứng yên, hộp dự báo và phát hiện gần trùng, chi phí thấp. Một người chạy nhanh hoặc camera rung mạnh có thể làm hộp phát hiện không chồng nhiều với dự báo, chi phí cao dù đó vẫn là cùng người. Vì vậy SORT hoạt động tốt khi tốc độ khung hình đủ cao, chuyển động giữa hai khung không quá lớn, và bộ phát hiện cho hộp ổn định.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1308,6 +1596,10 @@
             <img src="img/lec-13/sort-hungarian-assignment.svg" alt="Ghép một-một bằng thuật toán Hungarian" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Nếu chọn tham lam từng cặp tốt nhất, một phát hiện có thể bị “tranh” bởi nhiều quỹ đạo; Hungarian tránh lỗi đó.</p>
+          <aside class="notes">
+            <p>Giải thích vì sao cần Hungarian. Ghép cặp trong MOT là bài toán một-một: một quỹ đạo chỉ nhận một hộp phát hiện, và một hộp phát hiện chỉ thuộc một quỹ đạo. Nếu chọn tham lam cặp có chi phí thấp nhất trước, lựa chọn sớm có thể làm tổng chi phí toàn cục tệ hơn.</p>
+            <p>Ví dụ hai quỹ đạo cùng gần một hộp phát hiện, nhưng quỹ đạo thứ nhất còn có một lựa chọn tốt khác, quỹ đạo thứ hai thì không. Ghép tham lam có thể lấy mất hộp của quỹ đạo thứ hai, gây sai ID. Hungarian tìm phương án ghép toàn cục có tổng chi phí nhỏ nhất, trong ràng buộc một-một. Sau khi có kết quả, SORT vẫn cần áp ngưỡng IoU để loại các cặp quá xấu, vì đôi khi thuật toán buộc phải ghép nếu không cấm.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.70em;">
@@ -1333,6 +1625,10 @@
             \]
           </div>
           <p class="caption">Ngưỡng IoU ngăn Hungarian ghép hai hộp rất xa nhau chỉ vì không còn lựa chọn tốt hơn.</p>
+          <aside class="notes">
+            <p>Trình bày ba tình huống sau ghép cặp. Nếu một quỹ đạo và một phát hiện được ghép với IoU đủ cao, ta cập nhật Kalman và giữ ID. Nếu một quỹ đạo không có phát hiện khớp, ta chỉ dự báo tiếp và tăng số khung bị mất. Nếu một phát hiện không khớp quỹ đạo nào, nó có thể là vật mới hoặc báo thừa.</p>
+            <p>Ví dụ một người bị che trong hai khung. Quỹ đạo của người đó không khớp hộp nào, nhưng ta chưa xóa ngay vì có thể người sẽ xuất hiện lại. Ngược lại, một hộp mới ở cửa ra vào có thể là người vừa bước vào, nhưng cũng có thể là phát hiện sai trên bóng hoặc gương. Vì vậy hệ thống thường có giai đoạn thử nghiệm trước khi xác nhận quỹ đạo mới. Ngưỡng IoU giúp tránh ghép bừa hai hộp quá xa.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1341,6 +1637,10 @@
             <img src="img/lec-13/sort-track-lifecycle.svg" alt="Vòng đời quỹ đạo trong SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Không phải phát hiện nào cũng thành ID ổn định; SORT dùng quy tắc sinh, xác nhận và xóa quỹ đạo.</p>
+          <aside class="notes">
+            <p>Giải thích vòng đời quỹ đạo như quản lý một danh sách đối tượng đang sống. Khi có phát hiện chưa khớp, hệ thống tạo quỹ đạo mới ở trạng thái thử nghiệm. Nếu quỹ đạo được khớp liên tiếp trong vài khung, nó được xác nhận. Nếu một quỹ đạo đã xác nhận bị mất quá lâu, nó bị xóa.</p>
+            <p>Ví dụ camera trong mưa có thể sinh nhiều hộp phát hiện sai trong một khung. Nếu ta tạo ID ổn định ngay cho mọi hộp, kết quả sẽ đầy quỹ đạo giả. Quy tắc xác nhận giúp lọc bớt báo thừa ngắn. Ngược lại, nếu xóa quỹ đạo quá nhanh khi bị che một khung, ta sẽ làm đứt ID. Các tham số như số khung cần xác nhận và số khung cho phép mất là đánh đổi giữa ổn định và khả năng phản ứng nhanh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1349,6 +1649,10 @@
             <img src="img/lec-13/sort-occlusion-failure.svg" alt="SORT dễ đổi ID khi che khuất hoặc giao cắt" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">SORT không có bộ nhớ ngoại hình; khi hai người giao cắt hoặc mất dấu lâu, hình học có thể đánh lừa ghép cặp.</p>
+          <aside class="notes">
+            <p>Kết thúc phần SORT bằng hạn chế chính: nó không biết ngoại hình. Khi hai đối tượng gần nhau hoặc che nhau, dự báo hình học có thể không đủ. Sau khi hết che khuất, hộp của người A và người B có thể đổi vị trí tương đối, khiến IoU dẫn đến ghép nhầm.</p>
+            <p>Ví dụ hai người đi ngược chiều trên hành lang và lướt qua nhau. Trong vài khung giao cắt, hộp chồng lấn và bộ phát hiện có thể dao động. SORT chỉ nhìn vị trí và vận tốc nên có thể đổi ID của hai người sau khi họ tách ra. Với xe ở ngã tư cũng tương tự: xe rẽ hoặc bị xe lớn che có thể làm dự báo sai. Hạn chế này mở đường cho DeepSORT, nơi mỗi quỹ đạo có thêm bộ nhớ ngoại hình để phân biệt các đối tượng gần nhau.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1357,6 +1661,10 @@
             <img src="img/lec-13/deepsort-motivation.svg" alt="DeepSORT thêm đặc trưng ngoại hình vào SORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">DeepSORT giữ khung Kalman + Hungarian, nhưng thay chi phí hình học đơn thuần bằng chi phí có ngoại hình.</p>
+          <aside class="notes">
+            <p>Giải thích DeepSORT là mở rộng bảo thủ, không phải thay toàn bộ SORT. Nó vẫn dùng bộ phát hiện để lấy hộp, vẫn dùng Kalman để dự báo chuyển động, vẫn dùng Hungarian để ghép cặp. Phần được thêm vào là đặc trưng ngoại hình: mỗi hộp phát hiện được đưa qua một mạng nhận dạng lại để lấy véc-tơ mô tả đối tượng.</p>
+            <p>Ví dụ hai người đi gần nhau. SORT chỉ thấy hai hộp gần nhau và hai dự báo gần nhau, nên dễ nhầm. DeepSORT còn biết người thứ nhất thường có áo xanh, người thứ hai có áo trắng, hoặc nói chính xác hơn là véc-tơ ngoại hình của họ khác nhau. Khi họ tách ra sau che khuất, thông tin ngoại hình giúp nối lại đúng ID. Đổi lại, DeepSORT cần thêm mô hình học ngoại hình và tốn thêm thời gian tính toán.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1365,6 +1673,10 @@
             <img src="img/lec-13/deepsort-embedding.svg" alt="CNN ReID trích véc-tơ ngoại hình cho DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Bộ ReID được học ngoại tuyến; khi chạy, mỗi hộp phát hiện chỉ đi qua CNN để lấy véc-tơ so khớp.</p>
+          <aside class="notes">
+            <p>Giải thích đặc trưng ngoại hình là một véc-tơ số rút ra từ miếng ảnh trong hộp. Mạng học sao cho các ảnh của cùng một người hoặc cùng một vật có véc-tơ gần nhau, còn các danh tính khác có véc-tơ xa nhau. Trong DeepSORT, véc-tơ này thường được chuẩn hóa để so sánh bằng khoảng cách cosine.</p>
+            <p>Ví dụ một người mặc áo vàng có thể xuất hiện ở nhiều khung với góc nhìn hơi khác nhau. Mạng ngoại hình không chỉ lưu màu vàng đơn giản, mà cố học các dấu hiệu phân biệt đủ ổn định như màu, hoa văn, dáng và bố cục. Khi chạy bám bắt, mỗi hộp phát hiện được cắt ra và đưa qua mạng để lấy véc-tơ. Quỹ đạo lưu một số véc-tơ gần đây, tạo thành bộ nhớ ngoại hình để so với phát hiện mới.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1373,6 +1685,10 @@
             <img src="img/lec-13/deepsort-mahalanobis.svg" alt="Khoảng cách Mahalanobis và cổng chuyển động trong DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Cổng chuyển động loại các phát hiện không hợp lý theo dự báo Kalman trước khi xét ngoại hình.</p>
+          <aside class="notes">
+            <p>Trước khi dùng ngoại hình, DeepSORT vẫn dùng chuyển động để loại các cặp vô lý. Khoảng cách Mahalanobis đo phát hiện mới cách dự báo Kalman bao xa, nhưng có xét đến bất định của dự báo. Nếu quỹ đạo đang rất chắc, một phát hiện xa sẽ bị xem là không hợp lý. Nếu quỹ đạo vừa mất dấu và bất định lớn, phạm vi chấp nhận có thể rộng hơn.</p>
+            <p>Ví dụ một người đang đi chậm ở bên trái ảnh. Một hộp phát hiện ở bên phải ảnh có áo giống người đó, nhưng chuyển động không thể nhảy xa như vậy trong một khung. Cổng chuyển động sẽ loại cặp này trước, tránh để ngoại hình kéo ghép sai. Đây là điểm quan trọng: DeepSORT không bỏ hình học, mà dùng hình học như điều kiện hợp lý, rồi dùng ngoại hình để phân biệt trong các cặp còn khả thi.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1398,6 +1714,10 @@
             </div>
           </div>
           <p class="caption">Mahalanobis không chỉ đo “xa bao nhiêu”, mà còn xét quỹ đạo đang chắc hay đang bất định.</p>
+          <aside class="notes">
+            <p>Đọc công thức \(d^{(1)}(i,j)\). \(y_i\) là vị trí đo được mà quỹ đạo \(i\) dự báo, \(S_i\) là hiệp phương sai thể hiện độ bất định, còn \(d_j\) là phát hiện mới. Phần \(d_j-y_i\) là sai khác vị trí. Nhân với \(S_i^{-1}\) nghĩa là sai khác được chuẩn hóa theo độ chắc chắn của dự báo.</p>
+            <p>Nếu dự báo rất chắc và phát hiện lệch xa, khoảng cách sẽ lớn. Nếu dự báo bất định, cùng một độ lệch có thể được chấp nhận hơn. Biến \(b^{(1)}_{ij}\) là cổng nhị phân: nếu khoảng cách dưới ngưỡng thì cặp được phép xét, nếu vượt ngưỡng thì loại. Ví dụ sau che khuất ngắn, quỹ đạo có thể bất định hơn, nên cổng rộng hơn; nhưng một phát hiện quá xa vẫn không được ghép chỉ vì ngoại hình giống.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1406,6 +1726,10 @@
             <img src="img/lec-13/deepsort-cosine-distance.svg" alt="Khoảng cách cosine giữa các véc-tơ ngoại hình" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Ngoại hình giúp nối lại ID khi vật bị che khuất ngắn hoặc đi qua vùng đông người.</p>
+          <aside class="notes">
+            <p>Cổng ngoại hình trả lời câu hỏi: phát hiện mới có đủ giống bộ nhớ ngoại hình của quỹ đạo không. Khoảng cách cosine nhìn vào hướng của véc-tơ đặc trưng. Nếu hai véc-tơ cùng hướng, nghĩa là đặc trưng giống nhau, khoảng cách nhỏ. Nếu khác hướng, khoảng cách lớn.</p>
+            <p>Ví dụ một người bị che vài khung rồi xuất hiện lại hơi lệch vị trí dự báo. Chuyển động có thể không còn quá chắc, nhưng ngoại hình áo quần vẫn giống các quan sát trước. Cổng ngoại hình cho phép giữ lại cặp đó nếu véc-tơ đủ giống. Ngược lại, một người khác đứng gần nhưng mặc đồ khác sẽ bị loại dù vị trí có vẻ hợp lý. Cần lưu ý ngoại hình cũng có thể sai khi nhiều người mặc đồng phục hoặc ánh sáng thay đổi mạnh.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1432,6 +1756,10 @@
             </div>
           </div>
           <p class="caption">DeepSORT dùng bộ nhớ ngoại hình ngắn để không bị một khung ảnh xấu làm hỏng toàn bộ quỹ đạo.</p>
+          <aside class="notes">
+            <p>Giải thích \(R_i\) là bộ nhớ các véc-tơ ngoại hình đã lưu của quỹ đạo \(i\). Phát hiện mới có véc-tơ \(r_j\). Ta so \(r_j\) với từng véc-tơ cũ trong bộ nhớ và lấy khoảng cách nhỏ nhất. Nếu phát hiện giống ít nhất một quan sát gần đây của quỹ đạo, khoảng cách ngoại hình được xem là nhỏ.</p>
+            <p>Ví dụ người đang quay lưng ở một khung có thể trông khác lúc nhìn nghiêng, nhưng trong bộ nhớ có thể còn một véc-tơ từ góc nhìn gần với hiện tại. Lấy giá trị nhỏ nhất giúp nối lại tốt hơn so với chỉ dùng trung bình. Tuy nhiên bộ nhớ không nên quá dài nếu ngoại hình thay đổi theo thời gian hoặc chứa quan sát xấu. Vì vậy DeepSORT thường giới hạn số véc-tơ lưu gần đây.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1462,6 +1790,10 @@
             </div>
           </div>
           <p class="caption">DeepSORT không chỉ hỏi “gần không?”, mà còn hỏi “có giống người này không?”.</p>
+          <aside class="notes">
+            <p>Giải thích chi phí DeepSORT là kết hợp hai khoảng cách. \(d^{(1)}\) là khoảng cách chuyển động, \(d^{(2)}\) là khoảng cách ngoại hình. Hệ số \(\lambda\) điều chỉnh mức tin vào chuyển động so với ngoại hình. Ngoài chi phí mềm, còn có cổng \(b_{ij}\): nếu cặp không qua cổng chuyển động hoặc cổng ngoại hình, chi phí bị đặt thành vô cùng và không được ghép.</p>
+            <p>Ví dụ trong cảnh thưa, chuyển động thường đủ mạnh, nên \(\lambda\) có thể cao hơn. Trong cảnh đông người và nhiều che khuất, ngoại hình quan trọng hơn. Nhưng nếu chỉ tin ngoại hình, những người mặc giống nhau có thể bị ghép nhầm ở vị trí vô lý. Nếu chỉ tin chuyển động, hai người giao cắt dễ đổi ID. DeepSORT dùng cả hai để cân bằng hai nguồn thông tin.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1470,6 +1802,10 @@
             <img src="img/lec-13/deepsort-matching-cascade.svg" alt="Ghép tầng ưu tiên quỹ đạo vừa cập nhật trong DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Ghép tầng tránh để các quỹ đạo mất dấu lâu, có dự báo bất định lớn, chiếm nhầm phát hiện của quỹ đạo mới thấy.</p>
+          <aside class="notes">
+            <p>Giải thích ghép tầng là một quy tắc ưu tiên. Các quỹ đạo vừa được cập nhật gần đây thường có dự báo đáng tin hơn. Các quỹ đạo mất dấu lâu có bất định lớn và dễ tranh nhầm phát hiện của quỹ đạo khác. Vì vậy DeepSORT ưu tiên ghép các quỹ đạo mới thấy trước, rồi mới xét các quỹ đạo cũ hơn.</p>
+            <p>Ví dụ có một người vừa bị che mất năm khung và một người khác đang được thấy liên tục. Khi xuất hiện một hộp phát hiện gần người đang thấy, ta nên để quỹ đạo mới thấy có cơ hội ghép trước. Nếu để quỹ đạo mất lâu tranh ngang hàng, nó có thể chiếm nhầm hộp vì ngoại hình hoặc cổng quá rộng. Ghép tầng là một cách đơn giản để giảm sai ID trong tình huống nhiều quỹ đạo có mức chắc chắn khác nhau.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1478,6 +1814,10 @@
             <img src="img/lec-13/deepsort-reid-loss.svg" alt="Mất mát ReID kéo cùng ID gần nhau và đẩy khác ID ra xa" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">Mất mát này không chạy trong bước bám bắt trực tuyến; nó dùng để học bộ trích đặc trưng ngoại hình trước.</p>
+          <aside class="notes">
+            <p>Nhấn mạnh mạng ngoại hình của DeepSORT được học trước bằng dữ liệu nhận dạng lại. Mục tiêu học là kéo ảnh cùng danh tính lại gần trong không gian đặc trưng và đẩy ảnh khác danh tính ra xa. Khi chạy bám bắt, ta không huấn luyện mạng này lại từng khung; ta chỉ dùng nó để trích véc-tơ.</p>
+            <p>Ví dụ tập huấn luyện có nhiều ảnh của cùng một người từ các camera hoặc thời điểm khác nhau. Mạng được dạy rằng các ảnh đó phải có véc-tơ giống nhau dù góc nhìn và ánh sáng khác. Đồng thời, ảnh của người khác phải tách ra. Nếu dữ liệu huấn luyện giống miền chạy thật, ví dụ cùng kiểu camera giám sát người, đặc trưng sẽ hữu ích. Nếu dùng mô hình học trên người để bám xe hoặc vật trong nhà máy, chất lượng có thể giảm vì miền dữ liệu không phù hợp.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1501,6 +1841,10 @@
             </div>
           </div>
           <p class="caption">Cách này biến ReID thành bài toán phân loại danh tính trên dữ liệu huấn luyện.</p>
+          <aside class="notes">
+            <p>Giải thích mất mát phân loại theo ID như bài toán nhận lớp, nhưng lớp ở đây là danh tính trong tập huấn luyện. Véc-tơ đặc trưng \(r\) đi vào một tầng phân loại, và mạng bị phạt nếu không dự đoán đúng ID \(y\). Qua quá trình này, \(r\) phải chứa thông tin phân biệt danh tính.</p>
+            <p>Ví dụ trong tập huấn luyện có 1000 người. Ảnh của người số 37 phải được phân loại đúng là ID 37, không phải 12 hay 842. Để làm được, mạng học các dấu hiệu ngoại hình ổn định. Khi đem sang bám bắt, ta bỏ tầng phân loại cuối và dùng véc-tơ \(r\) để so sánh. Lưu ý các ID trong tập huấn luyện không nhất thiết xuất hiện khi chạy thật; điều ta cần là không gian đặc trưng có khả năng phân biệt người mới.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.68em;">
@@ -1528,6 +1872,10 @@
             </div>
           </div>
           <p class="caption">Mất mát chỉ bằng 0 khi mẫu dương gần mẫu gốc hơn mẫu âm ít nhất một biên \(m\).</p>
+          <aside class="notes">
+            <p>Giải thích mất mát bộ ba bằng ba mẫu: mẫu gốc, mẫu dương cùng ID, và mẫu âm khác ID. Mạng được dạy rằng khoảng cách từ mẫu gốc đến mẫu dương phải nhỏ hơn khoảng cách từ mẫu gốc đến mẫu âm ít nhất một biên \(m\). Nếu điều này đã đúng, mất mát bằng 0; nếu chưa, mạng bị phạt.</p>
+            <p>Ví dụ ảnh gốc là một người áo xanh nhìn nghiêng, ảnh dương là cùng người nhìn từ sau, ảnh âm là người khác cũng mặc áo xanh. Đây là cặp khó vì màu giống nhau, nên mạng phải học dấu hiệu tinh hơn. Mất mát bộ ba trực tiếp định hình không gian khoảng cách, rất phù hợp với việc so véc-tơ trong DeepSORT. Trong thực tế, chọn các bộ ba khó nhưng hợp lý là yếu tố quan trọng để học đặc trưng tốt.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.74em;">
@@ -1536,6 +1884,10 @@
             <img src="img/lec-13/sort-deepsort-comparison.svg" alt="So sánh SORT và DeepSORT" style="max-width:100%; max-height:62vh; object-fit:contain;" />
           </div>
           <p class="caption">DeepSORT đổi thêm chi phí tính toán và dữ liệu huấn luyện để giảm đổi ID trong các cảnh khó.</p>
+          <aside class="notes">
+            <p>Tổng kết so sánh SORT và DeepSORT. SORT mạnh ở sự đơn giản: cần hộp phát hiện, bộ lọc Kalman, chi phí IoU và Hungarian. Nó rất nhanh, dễ hiểu, dễ dùng làm đường cơ sở. Trong cảnh thưa, chuyển động mượt, ít che khuất, SORT có thể đủ tốt.</p>
+            <p>DeepSORT thêm mạng ngoại hình và các cổng ghép cặp, nên giảm đổi ID tốt hơn trong cảnh đông hoặc khi đối tượng bị che ngắn. Ví dụ theo dõi người trong trung tâm thương mại thường cần DeepSORT hơn SORT vì người đi gần nhau và giao cắt nhiều. Tuy nhiên DeepSORT tốn tính toán hơn và phụ thuộc mô hình ngoại hình phù hợp. Nếu bám các vật không có đặc trưng ngoại hình rõ, hoặc dữ liệu khác xa tập học, lợi ích có thể giảm.</p>
+          </aside>
         </section>
 
       </section>
@@ -1544,6 +1896,10 @@
         <section>
           <h1><span class="text-light">5.</span><br />Tổng kết</h1>
           <p>So sánh · tự kiểm tra · bài tập mở rộng</p>
+          <aside class="notes">
+            <p>Mở phần tổng kết bằng cách quay lại câu hỏi đầu bài: làm sao biến các hộp rời rạc thành quỹ đạo ổn định có danh tính. Bài học đi qua hai hướng. Bám một mục tiêu dùng mẫu ban đầu để tìm lại cùng vật. Bám nhiều mục tiêu dùng phát hiện từng khung rồi liên kết hộp thành nhiều ID.</p>
+            <p>Nhắc sinh viên rằng các phương pháp không tách rời nhau hoàn toàn. SiamFC và SiamRPN cho thấy sức mạnh của so khớp theo mẫu. SORT và DeepSORT cho thấy bám bắt nhiều mục tiêu thường là bài toán ghép dữ liệu theo thời gian. Khi đi vào ứng dụng, điều quan trọng là đọc được giả thiết của từng phương pháp: có một hay nhiều mục tiêu, có hộp khởi tạo hay cần phát hiện, cảnh có che khuất nhiều không, và có cần giữ ID lâu dài không.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1567,6 +1923,10 @@
             </div>
           </div>
           <p class="caption">SOT đặt nặng “giống mẫu nào nhất”; MOT đặt nặng “hộp mới thuộc về quỹ đạo nào”.</p>
+          <aside class="notes">
+            <p>Tóm tắt nội dung chính theo hai cột. Với SOT, ta bắt đầu từ một mục tiêu đã biết. SiamFC học hàm so khớp nhanh giữa mẫu và vùng tìm kiếm. SiamRPN thêm hộp neo và hồi quy để hộp sát hơn. Câu hỏi trung tâm của SOT là “ở khung mới, vùng nào giống mẫu nhất”.</p>
+            <p>Với MOT, số mục tiêu nhiều và thay đổi theo thời gian. Bộ phát hiện sinh hộp, SORT dùng Kalman và Hungarian để nối hộp, DeepSORT thêm ngoại hình để giữ ID trong cảnh khó. Câu hỏi trung tâm của MOT là “hộp mới thuộc về quỹ đạo nào”. Ví dụ bám một quả bóng được chọn trước là SOT; theo dõi tất cả cầu thủ trong sân, mỗi người một ID, là MOT. Hai bài toán có mục tiêu và lỗi khác nhau, nên độ đo cũng khác nhau.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.56em;">
@@ -1613,6 +1973,10 @@
             </tbody>
           </table>
           <p class="caption">Các phương pháp mạnh lên bằng cách thêm tín hiệu: vị trí → hộp → chuyển động → ngoại hình.</p>
+          <aside class="notes">
+            <p>Dùng bảng này để so sánh theo tín hiệu mà mỗi phương pháp dùng. SiamFC dùng mẫu và vùng tìm để tạo bản đồ đáp ứng, mạnh ở tốc độ và sự đơn giản. SiamRPN thêm hộp neo và hồi quy hộp, nên định vị tốt hơn. SORT dùng phát hiện, chuyển động và ghép cặp, phù hợp với nhiều mục tiêu. DeepSORT thêm ngoại hình, nên giữ ID tốt hơn khi có giao cắt.</p>
+            <p>Ví dụ nếu yêu cầu là bám một vật bất kỳ do người dùng khoanh, SiamFC hoặc SiamRPN phù hợp hơn. Nếu yêu cầu là theo dõi mọi người trong camera, SORT hoặc DeepSORT phù hợp hơn. Nếu cảnh ít người và cần tốc độ, SORT là lựa chọn tốt. Nếu cảnh đông người và đổi ID là lỗi nghiêm trọng, DeepSORT đáng dùng. Bảng này giúp sinh viên không nhớ tên thuật toán một cách rời rạc, mà nhớ theo tín hiệu và đánh đổi.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.72em;">
@@ -1636,6 +2000,10 @@
             </div>
           </div>
           <p class="caption">Không có bộ bám bắt “tốt nhất” chung; lựa chọn phụ thuộc số mục tiêu, độ che khuất, tốc độ và yêu cầu giữ ID.</p>
+          <aside class="notes">
+            <p>Nhấn mạnh cách chọn phương pháp theo bối cảnh. Nếu chỉ có một vật và ta có hộp khởi tạo, dùng SOT. SiamFC phù hợp khi cần nhanh và hộp không cần quá tinh; SiamRPN phù hợp khi hộp cần sát hơn. Nếu có nhiều vật và bộ phát hiện đã tốt, chuyển sang MOT.</p>
+            <p>Ví dụ đếm xe trên cao tốc ít che khuất: SORT có thể đủ, vì xe di chuyển có quy luật và ít giao cắt. Ví dụ theo dõi người trong nhà ga: DeepSORT hữu ích hơn vì người che nhau và ngoại hình giúp giữ ID. Nếu cần báo cáo kết quả học thuật, chọn độ đo theo bài toán: SOT dùng IoU, AUC, precision; MOT cần MOTA, IDF1, HOTA. Không nên chỉ hỏi “thuật toán nào tốt nhất”, mà phải hỏi “tốt nhất theo yêu cầu nào”.</p>
+          </aside>
         </section>
 
         <section style="font-size:0.62em;">
@@ -1661,6 +2029,10 @@
               </ul>
             </div>
           </div>
+          <aside class="notes">
+            <p>Kết bài bằng các câu hỏi tự kiểm tra. Câu về SiamFC giúp sinh viên nhớ rằng bản đồ đáp ứng cho biết vị trí, không chỉ một điểm phân loại. Câu về SiamRPN kiểm tra sự khác biệt giữa tìm đỉnh đáp ứng và dự đoán hộp neo có hồi quy. Câu về Hungarian kiểm tra hiểu biết về ghép một-một toàn cục. Câu về DeepSORT kiểm tra vai trò của đặc trưng ngoại hình.</p>
+            <p>Phần đọc tiếp có thể giao như tài liệu tự học. Khi đọc bài SiamFC, sinh viên nên chú ý cách tạo cặp mẫu và vùng tìm. Khi đọc SiamRPN, chú ý hộp neo và mất mát đa nhiệm. Khi đọc SORT, chú ý sự đơn giản của Kalman và Hungarian. Khi đọc DeepSORT, chú ý học đặc trưng nhận dạng lại. Có thể giao bài tập nhỏ: chạy một bộ phát hiện trên đoạn phim ngắn, rồi thử ghép bằng IoU đơn giản để thấy vì sao đổi ID xảy ra.</p>
+          </aside>
         </section>
       </section>
 
