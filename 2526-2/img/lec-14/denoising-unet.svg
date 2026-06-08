@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="U-Net dự đoán nhiễu trong DDPM">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">U-Net khử nhiễu: nhận ảnh nhiễu và thời điểm</text>
+
+  <g transform="translate(70,170)">
+    <rect x="0" y="0" width="150" height="100" rx="12" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <text class="label" x="75" y="44">Ảnh nhiễu x<tspan baseline-shift="sub" font-size="14">t</tspan></text>
+    <text class="tiny" x="75" y="73">tại bước t</text>
+  </g>
+  <g transform="translate(70,330)">
+    <rect x="0" y="0" width="150" height="80" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="75" y="35">Thời điểm t</text>
+    <text class="tiny" x="75" y="60">mức nhiễu</text>
+  </g>
+
+  <g transform="translate(310,110)">
+    <rect x="0" y="120" width="120" height="220" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="60" y="102">Giảm mẫu</text>
+    <text class="tiny" x="60" y="235">ngữ cảnh rộng</text>
+  </g>
+  <g transform="translate(500,150)">
+    <rect x="0" y="120" width="110" height="140" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="55" y="102">Nút thắt</text>
+    <text class="tiny" x="55" y="200">đặc trưng sâu</text>
+  </g>
+  <g transform="translate(690,110)">
+    <rect x="0" y="120" width="120" height="220" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="60" y="102">Tăng mẫu</text>
+    <text class="tiny" x="60" y="235">giữ chi tiết</text>
+  </g>
+  <g transform="translate(950,190)">
+    <rect x="0" y="0" width="170" height="100" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+    <text class="label" x="85" y="42">ε<tspan baseline-shift="sub" font-size="14">θ</tspan>(x<tspan baseline-shift="sub" font-size="14">t</tspan>, t)</text>
+    <text class="tiny" x="85" y="72">nhiễu dự đoán</text>
+  </g>
+
+  <path d="M230 220 L300 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M230 370 L300 330" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M435 300 L490 300" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M615 300 L680 300" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M815 250 L938 240" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M430 245 C520 175 600 175 690 245" stroke="#7b1fa2" stroke-width="4" fill="none" stroke-dasharray="8 8"/>
+  <text class="tiny" x="560" y="178">kết nối tắt giữ chi tiết</text>
+
+  <rect x="305" y="525" width="590" height="54" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="546">Mạng không đoán ảnh sạch trực tiếp;</text>
+  <text class="small" x="600" y="570">thường đoán nhiễu đã được thêm.</text>
+</svg>

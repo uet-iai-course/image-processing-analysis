@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Huấn luyện và lấy mẫu VAE">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">VAE dùng hai đường: huấn luyện và sinh ảnh</text>
+
+  <rect x="80" y="115" width="1040" height="210" rx="18" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+  <text class="label" x="165" y="155">Huấn luyện</text>
+  <g transform="translate(225,190)">
+    <rect x="0" y="0" width="130" height="70" rx="12" fill="#fff" stroke="#90a4ae" stroke-width="2"/>
+    <text class="small" x="65" y="43">Ảnh thật</text>
+  </g>
+  <g transform="translate(425,190)">
+    <rect x="0" y="0" width="150" height="70" rx="12" fill="#fff" stroke="#1565c0" stroke-width="3"/>
+    <text class="small" x="75" y="33">Bộ mã hóa</text>
+    <text class="tiny" x="75" y="56">hậu nghiệm</text>
+  </g>
+  <g transform="translate(645,190)">
+    <rect x="0" y="0" width="120" height="70" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="60" y="43">Mã ẩn</text>
+  </g>
+  <g transform="translate(835,190)">
+    <rect x="0" y="0" width="150" height="70" rx="12" fill="#fff" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="75" y="33">Bộ giải mã</text>
+    <text class="tiny" x="75" y="56">ảnh tái tạo</text>
+  </g>
+  <path d="M360 225 L414 225" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M580 225 L634 225" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M770 225 L824 225" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <text class="tiny" x="600" y="300">dùng ảnh thật để học hậu nghiệm và bộ giải mã</text>
+
+  <rect x="80" y="375" width="1040" height="210" rx="18" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+  <text class="label" x="165" y="415">Sinh ảnh</text>
+  <g transform="translate(280,450)">
+    <rect x="0" y="0" width="165" height="70" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="82" y="33">Lấy mẫu tiên nghiệm</text>
+    <text class="tiny" x="82" y="56">không cần ảnh vào</text>
+  </g>
+  <g transform="translate(550,450)">
+    <rect x="0" y="0" width="120" height="70" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="60" y="43">Mã ẩn</text>
+  </g>
+  <g transform="translate(775,450)">
+    <rect x="0" y="0" width="160" height="70" rx="12" fill="#fff" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="80" y="33">Bộ giải mã</text>
+    <text class="tiny" x="80" y="56">ảnh mới</text>
+  </g>
+  <path d="M450 485 L538 485" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M675 485 L763 485" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <text class="tiny" x="600" y="560">lúc sinh ảnh chỉ cần tiên nghiệm và bộ giải mã đã học</text>
+</svg>

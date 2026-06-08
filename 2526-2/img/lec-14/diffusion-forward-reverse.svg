@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Quá trình thuận và ngược của mô hình khuếch tán">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Khuếch tán: học đường ngược từ nhiễu về ảnh</text>
+
+  <text class="label" x="170" y="120">Quá trình thuận</text>
+  <text class="tiny" x="170" y="148">thêm nhiễu theo lịch cố định</text>
+  <g transform="translate(70,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="60" y="52">x<tspan baseline-shift="sub" font-size="12">0</tspan></text>
+  </g>
+  <g transform="translate(245,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3" opacity="0.9"/>
+    <text class="small" x="60" y="52">x<tspan baseline-shift="sub" font-size="12">t</tspan></text>
+  </g>
+  <g transform="translate(420,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#bbdefb" stroke="#1565c0" stroke-width="3" opacity="0.8"/>
+    <text class="small" x="60" y="52">nhiễu hơn</text>
+  </g>
+  <g transform="translate(595,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <text class="small" x="60" y="52">x<tspan baseline-shift="sub" font-size="12">T</tspan></text>
+  </g>
+  <path d="M195 230 L235 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M370 230 L410 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M545 230 L585 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <text class="label" x="1030" y="120">Quá trình ngược</text>
+  <text class="tiny" x="1030" y="148">học khử nhiễu từng bước</text>
+  <g transform="translate(1010,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <text class="small" x="60" y="52">x<tspan baseline-shift="sub" font-size="12">T</tspan></text>
+  </g>
+  <g transform="translate(835,185)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#bbdefb" stroke="#1565c0" stroke-width="3" opacity="0.8"/>
+    <text class="small" x="60" y="52">bớt nhiễu</text>
+  </g>
+  <g transform="translate(835,355)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3" opacity="0.9"/>
+    <text class="small" x="60" y="52">rõ hơn</text>
+  </g>
+  <g transform="translate(1010,355)">
+    <rect x="0" y="0" width="120" height="90" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="60" y="52">x<tspan baseline-shift="sub" font-size="12">0</tspan></text>
+  </g>
+  <path d="M1005 230 L965 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M895 280 L895 345" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M960 400 L1000 400" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="260" y="510" width="680" height="60" rx="14" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="535">Huấn luyện biết ảnh sạch và nhiễu đã thêm.</text>
+  <text class="small" x="600" y="560">Lấy mẫu bắt đầu từ nhiễu rồi khử nhiễu ngược.</text>
+</svg>

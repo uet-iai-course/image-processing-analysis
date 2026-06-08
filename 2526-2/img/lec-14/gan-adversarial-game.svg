@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Trò chơi sinh đối nghịch GAN">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 23px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">GAN: bộ sinh và bộ phân biệt kéo nhau theo hai hướng</text>
+
+  <g transform="translate(70,155)">
+    <rect x="0" y="0" width="160" height="100" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="80" y="38">Nhiễu z</text>
+    <text class="small" x="80" y="70">z ~ p(z)</text>
+  </g>
+  <g transform="translate(300,135)">
+    <rect x="0" y="0" width="230" height="140" rx="16" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="115" y="42">Bộ sinh G<tspan baseline-shift="sub" font-size="14">θ</tspan></text>
+    <text class="small" x="115" y="78">x giả = G<tspan baseline-shift="sub" font-size="12">θ</tspan>(z)</text>
+    <text class="tiny" x="115" y="112">muốn bị nhận là thật</text>
+  </g>
+  <g transform="translate(605,80)">
+    <rect x="0" y="0" width="150" height="110" rx="14" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="75" y="48">Ảnh thật</text>
+    <text class="tiny" x="75" y="78">từ dữ liệu</text>
+  </g>
+  <g transform="translate(605,245)">
+    <rect x="0" y="0" width="150" height="110" rx="14" fill="#fff" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="75" y="48">G<tspan baseline-shift="sub" font-size="14">θ</tspan>(z)</text>
+    <text class="tiny" x="75" y="78">từ bộ sinh</text>
+  </g>
+  <g transform="translate(850,150)">
+    <rect x="0" y="0" width="240" height="150" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="120" y="45">Bộ phân biệt D<tspan baseline-shift="sub" font-size="14">ψ</tspan></text>
+    <text class="small" x="120" y="82">D<tspan baseline-shift="sub" font-size="12">ψ</tspan>(x) ∈ [0,1]</text>
+    <text class="tiny" x="120" y="116">muốn bắt ảnh giả</text>
+  </g>
+
+  <path d="M235 205 L288 205" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M535 205 L594 300" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M760 135 L838 205" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M760 300 L838 235" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="240" y="445" width="720" height="92" rx="14" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="480">Bộ phân biệt học ranh giới thật / giả.</text>
+  <text class="small" x="600" y="510">Bộ sinh học cách vượt qua ranh giới đó.</text>
+</svg>

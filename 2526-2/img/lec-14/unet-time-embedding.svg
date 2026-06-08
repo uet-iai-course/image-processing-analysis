@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="U-Net tích hợp mã hóa vị trí thời điểm">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 21px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .math{font:700 20px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="54">U-Net khử nhiễu dùng mã hóa thời điểm</text>
+
+  <g transform="translate(55,235)">
+    <rect x="0" y="0" width="150" height="120" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="75" y="38">Ảnh nhiễu</text>
+    <text class="math" x="75" y="78">x<tspan baseline-shift="sub" font-size="13">t</tspan></text>
+  </g>
+
+  <g transform="translate(255,120)">
+    <rect x="0" y="0" width="150" height="350" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="75" y="40">Nhánh xuống</text>
+    <rect x="35" y="85" width="80" height="44" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+    <text class="tiny" x="75" y="113">ResBlock</text>
+    <rect x="35" y="155" width="80" height="44" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+    <text class="tiny" x="75" y="183">giảm mẫu</text>
+    <rect x="35" y="225" width="80" height="44" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+    <text class="tiny" x="75" y="253">ResBlock</text>
+    <text class="tiny" x="75" y="318">lưu đặc trưng</text>
+  </g>
+
+  <g transform="translate(500,200)">
+    <rect x="0" y="0" width="180" height="190" rx="16" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
+    <text class="label" x="90" y="42">Nút giữa</text>
+    <text class="tiny" x="90" y="80">ngữ cảnh rộng</text>
+    <text class="tiny" x="90" y="112">nhiễu mạnh</text>
+    <text class="math" x="90" y="152">h<tspan baseline-shift="sub" font-size="13">mid</tspan></text>
+  </g>
+
+  <g transform="translate(780,120)">
+    <rect x="0" y="0" width="150" height="350" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="75" y="40">Nhánh lên</text>
+    <rect x="35" y="85" width="80" height="44" rx="8" fill="#ffe0b2" stroke="#ef6c00" stroke-width="2"/>
+    <text class="tiny" x="75" y="113">ResBlock</text>
+    <rect x="35" y="155" width="80" height="44" rx="8" fill="#ffe0b2" stroke="#ef6c00" stroke-width="2"/>
+    <text class="tiny" x="75" y="183">tăng mẫu</text>
+    <rect x="35" y="225" width="80" height="44" rx="8" fill="#ffe0b2" stroke="#ef6c00" stroke-width="2"/>
+    <text class="tiny" x="75" y="253">ResBlock</text>
+    <text class="tiny" x="75" y="318">nối tắt từ nhánh xuống</text>
+  </g>
+
+  <g transform="translate(1005,235)">
+    <rect x="0" y="0" width="150" height="120" rx="14" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+    <text class="label" x="75" y="38">Nhiễu dự đoán</text>
+    <text class="math" x="75" y="78">ε<tspan baseline-shift="sub" font-size="13">θ</tspan>(x<tspan baseline-shift="sub" font-size="13">t</tspan>,t)</text>
+  </g>
+
+  <path d="M210 295 L243 295" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M415 295 L488 295" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M690 295 L768 295" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M940 295 L993 295" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M410 165 C520 70 675 70 785 165" stroke="#607d8b" stroke-width="3" fill="none" stroke-dasharray="8 8" marker-end="url(#arr)"/>
+
+  <g transform="translate(310,535)">
+    <rect x="0" y="0" width="580" height="82" rx="14" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="290" y="30">Mã hóa thời điểm</text>
+    <text class="math" x="155" y="62">t → PE(t)</text>
+    <text class="math" x="420" y="62">e<tspan baseline-shift="sub" font-size="13">t</tspan> = MLP(PE(t))</text>
+  </g>
+
+  <circle cx="330" cy="478" r="8" fill="#7b1fa2"/>
+  <circle cx="590" cy="398" r="8" fill="#7b1fa2"/>
+  <circle cx="855" cy="478" r="8" fill="#7b1fa2"/>
+  <path d="M445 535 C425 505 360 505 330 490" stroke="#7b1fa2" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M600 535 C600 490 595 445 590 410" stroke="#7b1fa2" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M755 535 C785 505 835 505 855 490" stroke="#7b1fa2" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+</svg>

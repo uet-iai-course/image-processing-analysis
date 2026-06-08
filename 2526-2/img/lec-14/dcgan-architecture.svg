@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Kiến trúc DCGAN">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 21px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">DCGAN: ràng buộc tích chập giúp GAN ổn định hơn</text>
+
+  <g transform="translate(70,130)">
+    <rect x="0" y="70" width="135" height="110" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="67" y="45">Mã nhiễu z</text>
+    <text class="small" x="67" y="132">z ~ p(z)</text>
+  </g>
+  <g transform="translate(250,120)">
+    <rect x="0" y="60" width="145" height="140" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="72" y="36">Chiếu lên</text>
+    <text class="small" x="72" y="118">bản đồ nhỏ</text>
+    <text class="tiny" x="72" y="150">nhiều kênh</text>
+  </g>
+  <g transform="translate(455,105)">
+    <rect x="0" y="60" width="155" height="170" rx="12" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="77" y="36">Tăng mẫu</text>
+    <text class="small" x="77" y="118">tăng cao</text>
+    <text class="small" x="77" y="145">tăng rộng</text>
+    <text class="tiny" x="77" y="178">giảm kênh</text>
+  </g>
+  <g transform="translate(675,105)">
+    <rect x="0" y="60" width="155" height="170" rx="12" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="77" y="36">Tích chập</text>
+    <text class="small" x="77" y="118">sinh chi tiết</text>
+    <text class="small" x="77" y="145">cục bộ</text>
+    <text class="tiny" x="77" y="178">chuẩn hóa lô</text>
+  </g>
+  <g transform="translate(910,130)">
+    <rect x="0" y="70" width="150" height="110" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="75" y="45">Ảnh giả</text>
+    <text class="small" x="75" y="132">G<tspan baseline-shift="sub" font-size="12">θ</tspan>(z)</text>
+  </g>
+
+  <path d="M210 255 L238 255" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M405 255 L443 255" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M620 255 L663 255" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M840 255 L898 255" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="155" y="450" width="280" height="80" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text class="small" x="295" y="482">Không dùng pooling</text>
+  <text class="tiny" x="295" y="508">dùng stride để học giảm / tăng mẫu</text>
+  <rect x="460" y="450" width="280" height="80" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text class="small" x="600" y="482">Dùng chuẩn hóa lô</text>
+  <text class="tiny" x="600" y="508">giúp đạo hàm ổn định hơn</text>
+  <rect x="765" y="450" width="280" height="80" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text class="small" x="905" y="482">Dùng hàm kích hoạt rõ</text>
+  <text class="tiny" x="905" y="508">ReLU / LeakyReLU / Tanh</text>
+</svg>

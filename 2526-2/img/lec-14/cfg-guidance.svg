@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Classifier-free guidance">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+
+  <g transform="translate(95,110)">
+    <rect x="0" y="0" width="310" height="180" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="155" y="42">Không điều kiện</text>
+    <text class="small" x="155" y="80">ε<tspan baseline-shift="sub" font-size="13">uncond</tspan> = ε<tspan baseline-shift="sub" font-size="13">θ</tspan>(z<tspan baseline-shift="sub" font-size="13">t</tspan>, t, ∅)</text>
+    <text class="tiny" x="155" y="118">bỏ mô tả văn bản</text>
+    <text class="tiny" x="155" y="145">vẫn là mạng khử nhiễu đó</text>
+  </g>
+  <g transform="translate(95,360)">
+    <rect x="0" y="0" width="310" height="180" rx="16" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="155" y="42">Có điều kiện</text>
+    <text class="small" x="155" y="80">ε<tspan baseline-shift="sub" font-size="13">cond</tspan> = ε<tspan baseline-shift="sub" font-size="13">θ</tspan>(z<tspan baseline-shift="sub" font-size="13">t</tspan>, t, c<tspan baseline-shift="sub" font-size="13">text</tspan>)</text>
+    <text class="tiny" x="155" y="118">dùng mô tả văn bản</text>
+    <text class="tiny" x="155" y="145">cùng trọng số θ</text>
+  </g>
+  <g transform="translate(505,240)">
+    <rect x="0" y="0" width="250" height="160" rx="16" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="125" y="40">Một U-Net</text>
+    <text class="small" x="125" y="73">học cả hai chế độ</text>
+    <text class="tiny" x="125" y="108">khi huấn luyện:</text>
+    <text class="tiny" x="125" y="132">ngẫu nhiên bỏ điều kiện</text>
+  </g>
+  <g transform="translate(855,230)">
+    <rect x="0" y="0" width="280" height="180" rx="16" fill="#ffebee" stroke="#c62828" stroke-width="4"/>
+    <text class="label" x="140" y="40">Nhiễu dùng để lấy mẫu</text>
+    <text class="small" x="140" y="78">ε̂ = ε<tspan baseline-shift="sub" font-size="13">uncond</tspan></text>
+    <text class="small" x="140" y="108">+ s(ε<tspan baseline-shift="sub" font-size="13">cond</tspan> - ε<tspan baseline-shift="sub" font-size="13">uncond</tspan>)</text>
+    <text class="tiny" x="140" y="145">bám điều kiện mạnh hơn</text>
+  </g>
+  <path d="M415 200 L493 295" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M415 450 L493 345" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M765 320 L843 320" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="270" y="560" width="660" height="46" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="580">Hệ số s cao: bám văn bản hơn</text>
+  <text class="small" x="600" y="604">nhưng dễ mất tự nhiên hoặc giảm đa dạng.</text>
+</svg>

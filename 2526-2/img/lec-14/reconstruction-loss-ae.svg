@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-label="Hàm mất mát tái tạo trong tự mã hóa">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 23px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="620" fill="#fafafa"/>
+  <text class="title" x="600" y="48">Hàm mất mát tái tạo đặt lực ở từng điểm ảnh</text>
+
+  <g transform="translate(145,115)">
+    <rect x="0" y="0" width="230" height="285" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="115" y="38">Ảnh thật</text>
+    <rect x="62" y="76" width="106" height="106" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <circle cx="100" cy="120" r="21" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <path d="M84 160 C116 122 158 136 153 170 L73 170 C74 166 78 162 84 160 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <text class="small" x="115" y="228">mục tiêu cố định</text>
+    <text class="tiny" x="115" y="254">chính là ảnh đầu vào</text>
+  </g>
+
+  <g transform="translate(825,115)">
+    <rect x="0" y="0" width="230" height="285" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="115" y="38">Ảnh tái tạo</text>
+    <rect x="62" y="76" width="106" height="106" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <circle cx="101" cy="122" r="20" fill="#ffd699" stroke="#ef6c00" stroke-width="3" opacity="0.88"/>
+    <path d="M84 161 C114 125 156 139 150 170 L75 170 C76 166 79 163 84 161 Z" fill="#a9d8f7" stroke="#1565c0" stroke-width="3" opacity="0.88"/>
+    <text class="small" x="115" y="228">dự đoán của mô hình</text>
+    <text class="tiny" x="115" y="254">phụ thuộc vào mã ẩn</text>
+  </g>
+
+  <path d="M395 282 L805 282" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <rect x="438" y="145" width="324" height="82" rx="14" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="label" x="600" y="178">so sánh từng điểm ảnh</text>
+  <text class="small" x="600" y="207">sai khác càng nhỏ càng tốt</text>
+
+  <g transform="translate(185,455)">
+    <rect x="0" y="0" width="230" height="58" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text class="small" x="115" y="24">L2</text>
+    <text class="tiny" x="115" y="46">phạt mạnh lỗi lớn</text>
+  </g>
+  <g transform="translate(485,455)">
+    <rect x="0" y="0" width="230" height="58" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text class="small" x="115" y="24">L1</text>
+    <text class="tiny" x="115" y="46">ít trung bình hóa hơn</text>
+  </g>
+  <g transform="translate(785,455)">
+    <rect x="0" y="0" width="230" height="58" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+    <text class="small" x="115" y="24">BCE</text>
+    <text class="tiny" x="115" y="46">mô hình hóa điểm ảnh</text>
+  </g>
+</svg>

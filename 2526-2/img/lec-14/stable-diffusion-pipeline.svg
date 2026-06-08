@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Quy trình Stable Diffusion">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 21px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="44">Stable Diffusion: khuếch tán trong không gian ẩn</text>
+  <text class="title" x="600" y="80">có điều kiện văn bản</text>
+
+  <g transform="translate(65,135)">
+    <rect x="0" y="0" width="160" height="100" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="80" y="38">Văn bản</text>
+    <text class="tiny" x="80" y="65">mô tả ảnh</text>
+  </g>
+  <g transform="translate(285,135)">
+    <rect x="0" y="0" width="180" height="100" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="90" y="36">Mã hóa chữ</text>
+    <text class="tiny" x="90" y="64">c<tspan baseline-shift="sub" font-size="10">text</tspan></text>
+  </g>
+  <g transform="translate(535,95)">
+    <rect x="0" y="0" width="230" height="180" rx="16" fill="#ffebee" stroke="#c62828" stroke-width="4"/>
+    <text class="label" x="115" y="42">U-Net ε<tspan baseline-shift="sub" font-size="14">θ</tspan></text>
+    <text class="small" x="115" y="78">khử nhiễu mã ẩn</text>
+    <text class="tiny" x="115" y="118">nhận điều kiện văn bản</text>
+    <text class="tiny" x="115" y="145">và thời điểm nhiễu</text>
+  </g>
+  <g transform="translate(835,135)">
+    <rect x="0" y="0" width="160" height="100" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="80" y="38">Mã ẩn z<tspan baseline-shift="sub" font-size="14">0</tspan></text>
+    <text class="tiny" x="80" y="65">sau nhiều bước</text>
+  </g>
+  <g transform="translate(1040,135)">
+    <rect x="0" y="0" width="120" height="100" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="60" y="38">Ảnh</text>
+    <text class="tiny" x="60" y="65">giải mã</text>
+  </g>
+
+  <g transform="translate(400,360)">
+    <rect x="0" y="0" width="170" height="86" rx="12" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <text class="label" x="85" y="35">Nhiễu ẩn z<tspan baseline-shift="sub" font-size="14">T</tspan></text>
+    <text class="tiny" x="85" y="60">điểm bắt đầu</text>
+  </g>
+  <g transform="translate(745,360)">
+    <rect x="0" y="0" width="170" height="86" rx="12" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <text class="label" x="85" y="35">Bộ giải mã g<tspan baseline-shift="sub" font-size="14">θ</tspan></text>
+    <text class="tiny" x="85" y="60">từ mã ẩn ra ảnh</text>
+  </g>
+
+  <path d="M230 185 L275 185" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M475 185 L523 185" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M575 360 L625 285" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M770 185 L823 185" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M1002 185 L1030 185" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M915 403 C980 350 1015 270 1040 220" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="230" y="535" width="740" height="58" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="558">Điểm then chốt: khử nhiễu không chạy trực tiếp trên ảnh lớn,</text>
+  <text class="small" x="600" y="582">mà chạy trên mã ẩn đã được nén.</text>
+</svg>

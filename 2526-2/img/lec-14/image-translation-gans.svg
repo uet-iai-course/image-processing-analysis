@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Pix2Pix và CycleGAN">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Dịch ảnh có điều kiện: có cặp ảnh và không có cặp ảnh</text>
+
+  <g transform="translate(70,125)">
+    <rect x="0" y="0" width="500" height="390" rx="18" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="250" y="44">Pix2Pix: có cặp ảnh</text>
+    <rect x="50" y="120" width="120" height="90" rx="12" fill="#fff" stroke="#90a4ae" stroke-width="2"/>
+    <text class="small" x="110" y="172">ảnh vào</text>
+    <rect x="215" y="112" width="120" height="106" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="275" y="154">G<tspan baseline-shift="sub" font-size="12">θ</tspan>(x)</text>
+    <text class="tiny" x="275" y="184">U-Net bộ sinh</text>
+    <rect x="380" y="120" width="90" height="90" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+    <text class="small" x="425" y="172">ảnh ra</text>
+    <path d="M175 165 L205 165" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M340 165 L370 165" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <rect x="102" y="270" width="296" height="58" rx="12" fill="#fff" stroke="#1565c0" stroke-width="2"/>
+    <text class="small" x="250" y="294">Ảnh sinh phải giống ảnh đích</text>
+    <text class="tiny" x="250" y="316">vừa đúng nội dung, vừa nhìn thật</text>
+  </g>
+
+  <g transform="translate(630,125)">
+    <rect x="0" y="0" width="500" height="390" rx="18" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="250" y="44">CycleGAN: không cần cặp ảnh</text>
+    <rect x="55" y="115" width="95" height="80" rx="12" fill="#fff" stroke="#1565c0" stroke-width="2"/>
+    <text class="small" x="102" y="162">miền A</text>
+    <rect x="205" y="105" width="90" height="60" rx="12" fill="#fff" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="250" y="142">G<tspan baseline-shift="sub" font-size="12">A→B</tspan></text>
+    <rect x="350" y="115" width="95" height="80" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+    <text class="small" x="397" y="162">miền B</text>
+    <rect x="205" y="245" width="90" height="60" rx="12" fill="#fff" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="250" y="282">G<tspan baseline-shift="sub" font-size="12">B→A</tspan></text>
+    <path d="M155 155 L195 135" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M300 135 L340 155" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M397 202 C382 260 325 282 305 278" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M195 278 C150 272 110 232 102 204" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <rect x="90" y="330" width="320" height="42" rx="12" fill="#fff" stroke="#ef6c00" stroke-width="2"/>
+    <text class="tiny" x="250" y="357">dịch đi rồi dịch về phải giữ nội dung</text>
+  </g>
+</svg>

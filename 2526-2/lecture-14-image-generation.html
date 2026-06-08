@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 14: Tạo sinh ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+  <style>
+    .reveal .gen-card {
+      border-radius: 8px;
+      padding: 9px 12px;
+      border-left: 5px solid #90a4ae;
+      background: #fafafa;
+    }
+
+    .reveal .gen-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .reveal .gen-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .gen-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .gen-imgbox {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .reveal .gen-imgbox img {
+      max-width: 100%;
+      max-height: 62vh;
+      object-fit: contain;
+    }
+
+    .reveal .eqbox {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .reveal .mini {
+      font-size: 0.78em;
+      color: #555;
+    }
+
+    .reveal .stub-list {
+      display: grid;
+      gap: 0.45em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================== MỞ ĐẦU ===================== -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 14: Tạo sinh ảnh</h3>
+          <p>Tự mã hóa · VAE · DCGAN · Pix2Pix · CycleGAN · DDPM · DDIM · Flow Matching · Stable Diffusion · CLIP</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="gen-grid-4" style="margin-top:0.5em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Khái niệm</strong>
+              <p style="margin:0.35em 0 0;">Mô hình sinh học phân phối dữ liệu theo những cách nào.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Tự mã hóa</strong>
+              <p style="margin:0.35em 0 0;">AE, VAE, biến ẩn, ELBO và tái tham số hóa.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Sinh đối nghịch</strong>
+              <p style="margin:0.35em 0 0;">GAN, DCGAN, Pix2Pix, CycleGAN và các hàm mất mát.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Mô hình sinh hiện đại</strong>
+              <p style="margin:0.35em 0 0;">DDPM, DDIM, Flow Matching, Stable Diffusion.</p>
+            </div>
+          </div>
+          <p class="caption">Bài học đi từ cách nén ảnh sang không gian ẩn, đến mô hình sinh đối nghịch, rồi đến học quá trình ngược từ nhiễu về mẫu ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Câu hỏi xuyên suốt buổi học</h2>
+          <div class="gen-imgbox" style="padding:5px;">
+            <img src="img/lec-14/generative-task.svg" alt="Bài toán tạo sinh ảnh" style="max-height:50vh;" />
+          </div>
+          <div style="margin-top:0.35em; background:#fff3e0; padding:8px 12px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
+            <span style="font-style:italic;">Làm thế nào một mô hình tạo được ảnh mới, không sao chép ảnh huấn luyện, nhưng vẫn nằm trong cùng phân phối dữ liệu?</span>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đọc được kiến trúc</strong>
+              <p style="margin:0.35em 0 0;">Bộ mã hóa, bộ giải mã, bộ sinh, bộ phân biệt, mạng khử nhiễu, điều kiện.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Giải thích được hàm mất mát</strong>
+              <p style="margin:0.35em 0 0;">Hàm mất mát tái tạo, khớp phân phối, đánh lừa, khử nhiễu hay khớp trường vận tốc.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">So sánh cách tiếp cận</strong>
+              <p style="margin:0.35em 0 0;">VAE, GAN, khuếch tán, khớp dòng.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Mô hình hiện đại</strong>
+              <p style="margin:0.35em 0 0;">Stable Diffusion là tổ hợp của tự mã hóa, khuếch tán trong không gian ẩn và điều kiện văn bản.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 1 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Mô hình sinh ảnh</h1>
+          <p>Phân phối dữ liệu · Mật độ xác suất · Lấy mẫu · Điều kiện · Hàm mất mát</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Từ nhận dạng sang tạo sinh</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Nhận dạng ảnh</strong>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  p_\theta(y \mid x)
+                \]
+              </div>
+              <ul>
+                <li>Đầu vào là ảnh \(x\).</li>
+                <li>Đầu ra là nhãn, hộp, mặt nạ hoặc lớp.</li>
+                <li>Mô hình học ranh giới quyết định.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tạo sinh ảnh</strong>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  p_\theta(x) \quad \text{hoặc} \quad p_\theta(x \mid c)
+                \]
+              </div>
+              <ul>
+                <li>Đầu ra là ảnh mới \(x\).</li>
+                <li>Điều kiện \(c\) có thể là nhãn, ảnh, văn bản.</li>
+                <li>Mô hình học cấu trúc của dữ liệu.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Bước chuyển tư duy: không chỉ hỏi ảnh thuộc lớp nào, mà hỏi ảnh hợp lệ trong phân phối dữ liệu trông như thế nào.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Phân phối dữ liệu là đối tượng cần học</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/density-vs-sampling.svg" alt="Học mật độ so với học lấy mẫu" />
+          </div>
+          <p class="caption">Một số mô hình cố tính hoặc xấp xỉ \(p(x)\); một số mô hình chỉ cần tạo mẫu nhìn như đến từ \(p_{\text{data}}(x)\).</p>
+        </section>
+
+        <section style="font-size:0.58em;">
+          <h2 style="font-size:1.55em; margin-bottom:0.25em;">Không gian ảnh</h2>
+          <div class="eqbox" style="padding:6px 10px; margin:0 auto 0.55em; max-width:920px;">
+            \[
+              x \in \mathbb{R}^{H \times W \times C},\quad
+              256 \times 256 \times 3 = 196{,}608
+            \]
+          </div>
+          <div class="gen-grid-3" style="gap:8px;">
+            <div class="gen-card" style="padding:7px 10px; background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Rất nhiều chiều</strong>
+              <p style="margin:0.25em 0 0;">Chọn ngẫu nhiên từng điểm ảnh gần như chắc chắn tạo ra nhiễu.</p>
+            </div>
+            <div class="gen-card" style="padding:7px 10px; background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Miền ảnh hợp lệ rất hẹp</strong>
+              <p style="margin:0.25em 0 0;">Ảnh tự nhiên có cấu trúc: cạnh, vùng, vật thể, bố cục.</p>
+            </div>
+            <div class="gen-card" style="padding:7px 10px; background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Mô hình sinh học miền đó</strong>
+              <p style="margin:0.25em 0 0;">Mỗi họ mô hình mô tả miền ảnh hợp lệ theo một cách riêng.</p>
+            </div>
+          </div>
+          <p class="caption" style="margin-top:0.45em;">Tạo sinh ảnh khó vì phần lớn không gian ảnh chỉ là nhiễu không có nghĩa.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>2 cách tiếp cận: mật độ và lấy mẫu</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/generative-taxonomy.svg" alt="Phân loại mô hình sinh ảnh" />
+          </div>
+          <p class="caption">CS231n nhấn mạnh trục chính: mô hình có tính được \(p(x)\) không, và quá trình lấy mẫu là trực tiếp hay lặp nhiều bước.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mỗi mô hình sinh trả lời bốn câu hỏi</h2>
+          <div class="gen-grid-4">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Biểu diễn gì?</strong>
+              <p style="margin:0.35em 0 0;">Ảnh, mã ẩn, nhiễu, trường vận tốc hay điều kiện.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Học bằng hàm mất mát nào?</strong>
+              <p style="margin:0.35em 0 0;">Tái tạo, ELBO, sinh đối nghịch, khử nhiễu, khớp dòng.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Lấy mẫu ra sao?</strong>
+              <p style="margin:0.35em 0 0;">Một bước sinh hay lặp nhiều bước.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Sai lỗi ở đâu?</strong>
+              <p style="margin:0.35em 0 0;">Mờ, sụp kiểu mẫu, không khớp điều kiện, nhiều bước suy luận.</p>
+            </div>
+          </div>
+          <p class="caption">Các phần sau dùng cùng khung đọc này để tránh học thuộc tên mô hình rời rạc.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Hàm mất mát là cách đặt lực lên phân phối</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hàm mất mát dựa trên từng ảnh</strong>
+              <ul>
+                <li>Tái tạo ảnh: phạt sai khác giữa \(x\) và \(\hat{x}\).</li>
+                <li>Khử nhiễu: phạt sai khác giữa nhiễu thật và nhiễu dự đoán.</li>
+                <li>Khớp dòng: phạt sai khác giữa vận tốc thật và vận tốc dự đoán.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hàm mất mát dựa trên phân phối</strong>
+              <ul>
+                <li>KL trong VAE: ép phân phối mã ẩn gần phân phối chuẩn.</li>
+                <li>Sinh đối nghịch trong GAN: ép ảnh sinh khó phân biệt với ảnh thật.</li>
+                <li>Tương phản trong CLIP: ép ảnh và văn bản đúng gần nhau.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Không có hàm mất mát chung cho mọi mô hình sinh; mỗi hàm mất mát phản ánh một cách nhìn về “ảnh hợp lệ”.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== PHẦN 2 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />Mô hình tự mã hóa và VAE</h1>
+          <p>Bộ mã hóa · Bộ giải mã · Không gian ẩn · ELBO · KL · Tái tham số hóa</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>2.1 Vấn đề: ảnh nằm trong không gian quá lớn</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Sinh trực tiếp trong không gian ảnh</strong>
+              <ul>
+                <li>Mỗi điểm ảnh là một biến.</li>
+                <li>Ảnh \(256 \times 256 \times 3\) có 196.608 chiều.</li>
+                <li>Đa số điểm trong không gian này là nhiễu.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ý tưởng tự mã hóa</strong>
+              <ul>
+                <li>Ép ảnh đi qua một biểu diễn gọn \(z\).</li>
+                <li>Chỉ giữ yếu tố cần để dựng lại ảnh.</li>
+                <li>Học cấu trúc dữ liệu không cần nhãn.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Tự mã hóa không bắt đầu bằng câu hỏi “ảnh này thuộc lớp nào”, mà hỏi “cần giữ thông tin gì để dựng lại ảnh này”.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Luồng dữ liệu của mô hình tự mã hóa</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/autoencoder-pipeline.svg" alt="Luồng dữ liệu của mô hình tự mã hóa" style="max-height:43vh;" />
+          </div>
+          <div class="eqbox" style="margin-top:0.3em; padding:5px 10px; font-size:0.86em;">
+            \[
+              \mathcal{L}_{reconstruction}
+              =
+              \|x-\widehat{x}\|_2^2
+              =
+              \|x-g_\theta(f_\phi(x))\|_2^2
+            \]
+          </div>
+          <p class="caption">Bộ mã hóa biến ảnh thành mã ẩn \(z\); bộ giải mã biến \(z\) thành ảnh tái tạo \(\hat{x}\).</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Kiến trúc ảnh: nén không gian, tăng kênh, rồi dựng lại</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/conv-autoencoder-architecture.svg" alt="Kiến trúc tự mã hóa tích chập" />
+          </div>
+          <p class="caption">Với ảnh, bộ mã hóa thường dùng tích chập và giảm mẫu; bộ giải mã dùng tăng mẫu để phục hồi kích thước không gian.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bộ mã hóa phải chọn thông tin nào được giữ</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đặc trưng cục bộ</strong>
+              <p style="margin:0.35em 0 0;">Các tầng đầu giữ cạnh, vùng màu, hướng và kết cấu gần nhau trong ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đặc trưng trừu tượng</strong>
+              <p style="margin:0.35em 0 0;">Các tầng sâu gom thông tin về hình dạng, bố cục và thành phần chính.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Nút thắt</strong>
+              <p style="margin:0.35em 0 0;">Nếu \(z\) quá rộng, mạng chỉ sao chép; nếu quá hẹp, ảnh tái tạo mất chi tiết.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.75em;">
+            \[
+              z = f_\phi(x), \qquad \hat{x}=g_\theta(z)
+            \]
+          </div>
+          <p class="caption">Chất lượng của mã ẩn phụ thuộc vào áp lực nén: mô hình phải bỏ thông tin ít quan trọng trước.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bộ giải mã không đảo ngược bộ mã hóa một cách hoàn hảo</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Dữ liệu đi xuống</strong>
+              <ul>
+                <li>Giảm kích thước không gian.</li>
+                <li>Tăng số kênh đặc trưng.</li>
+                <li>Gộp thông tin lân cận.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dữ liệu đi lên</strong>
+              <ul>
+                <li>Tăng kích thước không gian.</li>
+                <li>Giảm số kênh về ảnh RGB.</li>
+                <li>Phải đoán lại chi tiết đã mất.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Bộ giải mã học một phép dựng ảnh hợp lý từ mã ẩn, không khôi phục từng chi tiết nếu chi tiết đó đã bị bộ mã hóa loại bỏ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Hàm mất mát tái tạo: học bằng chính ảnh đầu vào</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/reconstruction-loss-ae.svg" alt="Hàm mất mát tái tạo trong tự mã hóa" style="max-height:52vh;" />
+          </div>
+          <p class="caption">Hàm mất mát tái tạo phạt khoảng cách giữa ảnh thật \(x\) và ảnh tái tạo \(\hat{x}\), nên không cần nhãn lớp.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>L2 dễ làm ảnh tái tạo bị mượt</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{rec}^{L2}=\|x-\hat{x}\|_2^2
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Lực học</strong>
+              <p style="margin:0.35em 0 0;">Mỗi điểm ảnh được kéo về giá trị trung bình làm giảm bình phương sai số.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Khi có nhiều khả năng đúng</strong>
+              <p style="margin:0.35em 0 0;">Mạng có xu hướng chọn phương án trung bình thay vì một chi tiết sắc nét.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Hệ quả</strong>
+              <p style="margin:0.35em 0 0;">Biên, kết cấu nhỏ và chi tiết không chắc chắn thường bị mờ.</p>
+            </div>
+          </div>
+          <p class="caption">Đây là lý do hàm mất mát điểm ảnh đơn giản có thể tái tạo đúng bố cục nhưng không tạo ảnh sắc như ảnh thật.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Mã ẩn của AE chưa phải nơi lấy mẫu tốt</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/latent-space-ae-limit.svg" alt="Giới hạn của không gian ẩn trong tự mã hóa" />
+          </div>
+          <p class="caption">AE chỉ học mã ẩn cho các ảnh đã thấy; nó không ép toàn bộ không gian ẩn thành một phân phối liên tục, dễ lấy mẫu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bước chuyển sang VAE</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/ae-to-vae-bridge.svg" alt="Từ tự mã hóa sang VAE" />
+          </div>
+          <p class="caption">VAE biến bộ mã hóa thành mô hình xác suất: thay vì sinh một mã \(z\), bộ mã hóa sinh phân phối của \(z\) quanh ảnh đầu vào.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>2.2 Bộ tự mã hóa biến phân (VAE)</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Tự mã hóa thường</strong>
+              <ul>
+                <li>Mỗi ảnh đi tới một mã ẩn cụ thể.</li>
+                <li>Hàm mất mát chỉ yêu cầu tái tạo đúng ảnh vào.</li>
+                <li>Không có luật rõ để lấy mẫu mã ẩn mới.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">VAE</strong>
+              <ul>
+                <li>Mỗi ảnh đi tới một phân phối mã ẩn.</li>
+                <li>Mã ẩn được kéo về phân phối chuẩn.</li>
+                <li>Có thể lấy mẫu \(z\) rồi giải mã thành ảnh.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Bước chuyển chính: VAE học không gian ẩn có xác suất, không chỉ học một phép nén tất định.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Kiến trúc VAE</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/vae-architecture.svg" alt="Kiến trúc VAE" />
+          </div>
+          <p class="caption">Bộ mã hóa sinh tham số của phân phối mã ẩn; bộ giải mã nhận mẫu \(z\) và mô hình hóa xác suất sinh ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Mô hình sinh của VAE đi từ \(z\) đến ảnh</h2>
+          <div class="eqbox">
+            \[
+              z \sim p(z), \qquad x \sim p_\theta(x \mid z)
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Tiên nghiệm</strong>
+              <p style="margin:0.35em 0 0;">Thường chọn \(p(z)=\mathcal{N}(0,I)\) để lấy mẫu đơn giản.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Mã ẩn</strong>
+              <p style="margin:0.35em 0 0;">\(z\) chứa biến thiên chính: kiểu dáng, hướng, bố cục, nét viết.</p>
+            </div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bộ giải mã</strong>
+              <p style="margin:0.35em 0 0;">Biến \(z\) thành phân phối trên ảnh, không chỉ một ảnh duy nhất.</p>
+            </div>
+          </div>
+          <p class="caption">Khi sinh ảnh mới, VAE không cần ảnh đầu vào: lấy mẫu \(z\) từ tiên nghiệm rồi chạy bộ giải mã.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Bộ mã hóa xấp xỉ hậu nghiệm</h2>
+          <div class="eqbox">
+            \[
+              q_\phi(z \mid x)=\mathcal{N}\!\left(\mu_\phi(x),\operatorname{diag}(\sigma_\phi^2(x))\right)
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(\mu_\phi(x)\): trung tâm</strong>
+              <p style="margin:0.35em 0 0;">Cho biết ảnh nên nằm gần đâu trong không gian ẩn.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(\sigma_\phi(x)\): độ bất định</strong>
+              <p style="margin:0.35em 0 0;">Cho biết vùng mã ẩn quanh ảnh rộng hay hẹp.</p>
+            </div>
+          </div>
+          <p class="caption">Bộ mã hóa của VAE không trả về một mã duy nhất; nó trả về một phân phối để lấy mẫu mã ẩn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bộ giải mã là mô hình xác suất trên ảnh</h2>
+          <div class="eqbox">
+            \[
+              p_\theta(x \mid z)
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Ảnh nhị phân</strong>
+              <p style="margin:0.35em 0 0;">Có thể dùng Bernoulli cho từng điểm ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ảnh liên tục</strong>
+              <p style="margin:0.35em 0 0;">Thường dùng Gaussian; mạng dự đoán trung bình ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Hệ quả</strong>
+              <p style="margin:0.35em 0 0;">Mô hình điểm ảnh đơn giản dễ làm ảnh sinh bị mượt.</p>
+            </div>
+          </div>
+          <p class="caption">Chọn dạng \(p_\theta(x \mid z)\) quyết định hàm mất mát tái tạo và loại lỗi mà VAE bị phạt.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Huấn luyện và sinh ảnh dùng hai đường khác nhau</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/vae-training-sampling.svg" alt="Huấn luyện và lấy mẫu VAE" />
+          </div>
+          <p class="caption">Khi huấn luyện cần ảnh thật để học hậu nghiệm xấp xỉ; khi sinh ảnh chỉ cần lấy mẫu từ tiên nghiệm và chạy bộ giải mã.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>2.3 Vì sao không tối đa hóa trực tiếp \(p_\theta(x)\)?</h2>
+          <div class="eqbox">
+            \[
+              p_\theta(x)=\int p_\theta(x \mid z)p(z)\,dz
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Vấn đề tích phân</strong>
+              <p style="margin:0.35em 0 0;">Phải cộng đóng góp của mọi mã ẩn \(z\); với mạng sâu, tích phân này không tính được trực tiếp.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cách đi của VAE</strong>
+              <p style="margin:0.35em 0 0;">Tối ưu một cận dưới có thể tính được: ELBO.</p>
+            </div>
+          </div>
+          <p class="caption">ELBO xuất hiện vì xác suất sinh ảnh cần tích phân qua biến ẩn.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>ELBO: cận dưới của log xác suất sinh dữ liệu</h2>
+          <div class="eqbox">
+            \[
+              \log p_\theta(x)
+              \ge
+              \mathbb{E}_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)]
+              -
+              D_{KL}\!\left(q_\phi(z\mid x)\,\|\,p(z)\right)
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Hạng tái tạo</strong>
+              <p style="margin:0.35em 0 0;">Tăng khi bộ giải mã sinh lại ảnh thật tốt từ \(z\).</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hạng KL</strong>
+              <p style="margin:0.35em 0 0;">Giảm khi phân phối mã ẩn của ảnh lệch quá xa phân phối chuẩn.</p>
+            </div>
+          </div>
+          <p class="caption">Tối đa hóa ELBO tương đương vừa tái tạo ảnh tốt, vừa giữ không gian ẩn có luật để lấy mẫu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Hai thành phần của ELBO</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/elbo-components.svg" alt="Hai thành phần của ELBO" />
+          </div>
+          <p class="caption">Hạng tái tạo kéo ảnh ra về dữ liệu; hạng KL kéo phân phối mã ẩn về tiên nghiệm chuẩn.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Hàm mất mát VAE thường viết dưới dạng cần tối thiểu hóa</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{VAE}
+              =
+              -\mathbb{E}_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)]
+              +
+              D_{KL}\!\left(q_\phi(z\mid x)\,\|\,p(z)\right)
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Hàm mất mát tái tạo</strong>
+              <p style="margin:0.35em 0 0;">Phạt ảnh tái tạo khác ảnh thật; dạng cụ thể phụ thuộc giả định điểm ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hàm mất mát KL</strong>
+              <p style="margin:0.35em 0 0;">Phạt phân phối mã ẩn quá xa phân phối chuẩn.</p>
+            </div>
+          </div>
+          <p class="caption">Dấu trừ xuất hiện vì ta chuyển từ tối đa hóa ELBO sang tối thiểu hóa hàm mất mát.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>KL có công thức đóng với Gaussian đường chéo</h2>
+          <div class="eqbox">
+            \[
+              D_{KL}\!\left(q_\phi(z\mid x)\,\|\,\mathcal{N}(0,I)\right)
+              =
+              \frac{1}{2}\sum_j
+              \left(\mu_j^2+\sigma_j^2-\log\sigma_j^2-1\right)
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">\(\mu_j^2\)</strong>
+              <p style="margin:0.35em 0 0;">Kéo trung tâm mã ẩn về gần 0.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">\(\sigma_j^2\)</strong>
+              <p style="margin:0.35em 0 0;">Không cho phương sai phình quá lớn.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">\(-\log\sigma_j^2\)</strong>
+              <p style="margin:0.35em 0 0;">Không cho phương sai co về 0.</p>
+            </div>
+          </div>
+          <p class="caption">KL buộc mã ẩn vừa gần chuẩn, vừa không biến thành một điểm cứng cho từng ảnh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>KL làm không gian ẩn dễ lấy mẫu hơn</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/kl-latent-regularization.svg" alt="Vai trò của KL trong không gian ẩn" />
+          </div>
+          <p class="caption">Không có KL, mã ẩn có thể rời rạc và nhiều vùng rỗng; có KL, các mã ẩn bị kéo về vùng mà ta biết cách lấy mẫu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Vấn đề của lấy mẫu trong lúc huấn luyện</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/reparameterization-trick.svg" alt="Thủ thuật tái tham số hóa" />
+          </div>
+          <p class="caption">Nếu lấy mẫu trực tiếp từ phân phối của bộ mã hóa, đường truyền đạo hàm qua bước ngẫu nhiên bị đứt.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Thủ thuật tái tham số hóa</h2>
+          <div class="eqbox">
+            \[
+              \epsilon \sim \mathcal{N}(0,I), \qquad
+              z = \mu_\phi(x) + \sigma_\phi(x) \odot \epsilon
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Nhiễu tách riêng</strong>
+              <p style="margin:0.35em 0 0;">Nguồn ngẫu nhiên không phụ thuộc tham số mạng.</p>
+            </div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Phần khả vi</strong>
+              <p style="margin:0.35em 0 0;">\(z\) là hàm khả vi theo \(\mu_\phi(x)\) và \(\sigma_\phi(x)\).</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hệ quả</strong>
+              <p style="margin:0.35em 0 0;">Có thể lan truyền ngược qua toàn bộ VAE.</p>
+            </div>
+          </div>
+          <p class="caption">Tái tham số hóa không bỏ ngẫu nhiên; nó đặt ngẫu nhiên ở vị trí không chặn đạo hàm.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>2.4 Vì sao VAE thường sinh ảnh mờ?</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/vae-blurry-likelihood.svg" alt="Vì sao VAE dễ sinh ảnh mờ" />
+          </div>
+          <p class="caption">Khi nhiều chi tiết đều hợp lý, hàm mất mát điểm ảnh có thể thưởng ảnh trung bình hơn là một chi tiết sắc nét cụ thể.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Cân bằng chính của VAE</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Điểm mạnh</strong>
+              <ul>
+                <li>Có mục tiêu xác suất rõ ràng.</li>
+                <li>Không gian ẩn liên tục và có thể nội suy.</li>
+                <li>Huấn luyện ổn định hơn GAN.</li>
+              </ul>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Điểm yếu</strong>
+              <ul>
+                <li>Ảnh sinh dễ mờ khi xác suất điểm ảnh quá đơn giản.</li>
+                <li>KL quá mạnh làm mã ẩn mang ít thông tin.</li>
+                <li>Chất lượng mẫu thường kém GAN và các mô hình sinh hiện đại.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">VAE đổi độ sắc của mẫu lấy không gian ẩn có cấu trúc và cách huấn luyện có cơ sở xác suất.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>VAE vẫn là ý tưởng nền cho mô hình hiện đại</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Nén ảnh</strong>
+              <p style="margin:0.35em 0 0;">Đưa ảnh lớn về không gian ẩn gọn để giảm chi phí tính toán.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Không gian ẩn có nghĩa</strong>
+              <p style="margin:0.35em 0 0;">Nội suy giữa mã ẩn thường tạo chuyển đổi mượt hơn nội suy điểm ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Khuếch tán trong không gian ẩn</strong>
+              <p style="margin:0.35em 0 0;">Stable Diffusion dùng bộ tự mã hóa để làm việc trên mã ẩn thay vì trực tiếp trên ảnh.</p>
+            </div>
+          </div>
+          <p class="caption">Ngay cả khi VAE không phải mô hình sinh ảnh sắc nhất, tư duy “sinh trong không gian ẩn” vẫn rất quan trọng.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== PHẦN 3 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />Mô hình sinh đối nghịch</h1>
+          <p>GAN · DCGAN · Pix2Pix · CycleGAN · Hàm mất mát sinh đối nghịch · Hàm mất mát tái tạo · Hàm mất mát cảm quan</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Trò chơi sinh đối nghịch</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/gan-adversarial-game.svg" alt="Trò chơi sinh đối nghịch GAN" />
+          </div>
+          <p class="caption">Bộ phân biệt học phát hiện ảnh giả; bộ sinh học tạo ảnh làm bộ phân biệt nhầm là thật.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Hàm mục tiêu GAN gốc</h2>
+          <div class="eqbox">
+            \[
+              \min_G \max_D
+              \mathbb{E}_{x\sim p_{data}}[\log D(x)]
+              +
+              \mathbb{E}_{z\sim p(z)}[\log(1-D(G(z)))]
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bộ phân biệt</strong>
+              <p style="margin:0.35em 0 0;">Tăng \(D(x)\) với ảnh thật, giảm \(D(G(z))\) với ảnh giả.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bộ sinh</strong>
+              <p style="margin:0.35em 0 0;">Điều chỉnh \(G(z)\) để ảnh giả được chấm giống ảnh thật.</p>
+            </div>
+          </div>
+          <p class="caption">GAN không cần viết rõ mật độ \(p(x)\); mô hình học qua tín hiệu phân biệt thật-giả.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Huấn luyện GAN: cập nhật luân phiên</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">1. Cập nhật bộ phân biệt</strong>
+              <p style="margin:0.35em 0 0;">Giữ bộ sinh cố định, học phân biệt ảnh thật và ảnh giả.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">2. Cập nhật bộ sinh</strong>
+              <p style="margin:0.35em 0 0;">Giữ bộ phân biệt cố định, học tạo ảnh làm bộ phân biệt nhầm.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">3. Cân bằng khó</strong>
+              <p style="margin:0.35em 0 0;">Một bên quá mạnh làm bên kia nhận tín hiệu đạo hàm yếu.</p>
+            </div>
+          </div>
+          <p class="caption">Sự khó của GAN nằm ở động lực hai mạng cùng thay đổi, không phải chỉ ở một hàm mất mát cố định.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Lỗi thường gặp của GAN</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Suy biến mode</strong>
+              <p style="margin:0.35em 0 0;">Bộ sinh tạo ít kiểu ảnh lặp lại nhưng vẫn qua mặt bộ phân biệt.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dao động huấn luyện</strong>
+              <p style="margin:0.35em 0 0;">Hai mạng đuổi nhau, mất mát không giảm đều.</p>
+            </div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đánh giá khó</strong>
+              <p style="margin:0.35em 0 0;">Ảnh sắc không đồng nghĩa bao phủ đủ phân phối dữ liệu.</p>
+            </div>
+          </div>
+          <p class="caption">GAN giỏi tạo ảnh sắc, nhưng phải kiểm tra cả chất lượng lẫn độ đa dạng của mẫu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>DCGAN: đưa cấu trúc ảnh vào GAN</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/dcgan-architecture.svg" alt="Kiến trúc DCGAN" />
+          </div>
+          <p class="caption">DCGAN thay mạng kết nối đầy đủ bằng kiến trúc tích chập, để bộ sinh học cấu trúc không gian của ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Vì sao DCGAN ổn định hơn GAN gốc?</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Tích chập</strong>
+              <p style="margin:0.35em 0 0;">Tận dụng cấu trúc cục bộ và tính dịch chuyển trong ảnh.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Chuẩn hóa lô</strong>
+              <p style="margin:0.35em 0 0;">Giảm dao động phân phối kích hoạt giữa các tầng.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tăng mẫu học được</strong>
+              <p style="margin:0.35em 0 0;">Bộ sinh học cách dựng chi tiết thay vì nội suy cố định.</p>
+            </div>
+          </div>
+          <p class="caption">DCGAN không đổi bản chất đối nghịch, nhưng làm kiến trúc phù hợp hơn với ảnh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Pix2Pix và CycleGAN: sinh ảnh có điều kiện</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/image-translation-gans.svg" alt="Pix2Pix và CycleGAN" />
+          </div>
+          <p class="caption">Pix2Pix cần cặp ảnh cùng nội dung; CycleGAN chỉ cần hai tập ảnh thuộc hai miền khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Pix2Pix: đối nghịch cộng với tái tạo</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{Pix2Pix}
+              =
+              \mathcal{L}_{GAN}(G,D)
+              +
+              \lambda\|y-G(x)\|_1
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hàm mất mát đối nghịch</strong>
+              <p style="margin:0.35em 0 0;">Ép ảnh sinh nhìn giống ảnh thật trong miền đích.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hàm mất mát L1</strong>
+              <p style="margin:0.35em 0 0;">Giữ ảnh sinh gần ảnh đích theo từng vùng tương ứng.</p>
+            </div>
+          </div>
+          <p class="caption">Pix2Pix cần cả “nhìn thật” và “đúng với ảnh điều kiện”.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>CycleGAN: nhất quán chu trình thay cho cặp ảnh</h2>
+          <div class="eqbox">
+            \[
+              x \rightarrow G_{A\to B}(x) \rightarrow G_{B\to A}(G_{A\to B}(x)) \approx x
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dịch miền</strong>
+              <p style="margin:0.35em 0 0;">Ảnh từ miền A phải nhìn như thuộc miền B.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Dịch ngược</strong>
+              <p style="margin:0.35em 0 0;">Dịch về lại phải giữ nội dung ban đầu.</p>
+            </div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Giới hạn</strong>
+              <p style="margin:0.35em 0 0;">Không đảm bảo đúng từng đối tượng nếu miền khác nhau quá mạnh.</p>
+            </div>
+          </div>
+          <p class="caption">Nhất quán chu trình thay nhãn cặp ảnh bằng ràng buộc “đi rồi về phải giống ban đầu”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Hàm mất mát cảm quan</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/perceptual-loss.svg" alt="Hàm mất mát cảm quan" style="max-height:54vh;" />
+          </div>
+          <p class="caption">Thay vì chỉ so sánh từng điểm ảnh, hàm mất mát cảm quan so sánh đặc trưng trích từ một mạng đã huấn luyện trước.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Công thức hàm mất mát cảm quan</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{perceptual}
+              =
+              \sum_l w_l
+              \left\|\phi_l(x)-\phi_l(\widehat{x})\right\|_2^2
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">\(\phi_l\)</strong>
+              <p style="margin:0.35em 0 0;">Đặc trưng tại tầng \(l\) của mạng cố định, thường là VGG.</p>
+            </div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">So với L1/L2</strong>
+              <p style="margin:0.35em 0 0;">Ít ép khớp từng điểm ảnh, chú trọng cấu trúc và kết cấu cảm nhận được.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Vai trò trong sinh ảnh</strong>
+              <p style="margin:0.35em 0 0;">Giảm ảnh mờ khi dùng hàm tái tạo, nhưng vẫn cần đối nghịch để tăng độ sắc.</p>
+            </div>
+          </div>
+          <p class="caption">Trong Pix2Pix, siêu phân giải và chuyển phong cách, hàm cảm quan thường được cộng với L1/L2 và hàm đối nghịch.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== PHẦN 4 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />Mô hình khuếch tán</h1>
+          <p>DDPM · DDIM · Nhiễu thuận · Khử nhiễu ngược · U-Net · Lịch nhiễu</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Quá trình thuận và quá trình ngược</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/diffusion-forward-reverse.svg" alt="Quá trình thuận và ngược của mô hình khuếch tán" />
+          </div>
+          <p class="caption">Quá trình thuận phá ảnh bằng nhiễu đã biết; quá trình ngược học khử nhiễu để sinh ảnh.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Quá trình thuận có công thức đóng</h2>
+          <div class="eqbox">
+            \[
+              \alpha_t\in[0,1],\qquad \bar{\alpha}_t=\prod_{\tau=1}^{t}\alpha_\tau
+            \]
+            \[
+              q(x_t\mid x_0)=\mathcal{N}\left(\sqrt{\bar{\alpha}_t}x_0,\,(1-\bar{\alpha}_t)I\right)
+            \]
+            \[
+              x_t=\sqrt{\bar{\alpha}_t}x_0+\sqrt{1-\bar{\alpha}_t}\epsilon,\quad \epsilon\sim\mathcal{N}(0,I)
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">\(x_0\)</strong><p style="margin:0.35em 0 0;">ảnh sạch từ dữ liệu.</p></div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">\(x_t\)</strong><p style="margin:0.35em 0 0;">ảnh đã thêm nhiễu ở bước \(t\).</p></div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">\(\bar{\alpha}_t\)</strong><p style="margin:0.35em 0 0;">lịch giữ lại tín hiệu ảnh sạch.</p></div>
+          </div>
+          <p class="caption">Ta có thể lấy mẫu ảnh nhiễu ở bất kỳ mức \(t\) mà không cần chạy tuần tự từ đầu.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>U-Net học dự đoán nhiễu</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/denoising-unet.svg" alt="U-Net dự đoán nhiễu trong DDPM" style="max-height:48vh;" />
+          </div>
+          <div class="eqbox" style="margin-top:0.45em; font-size:0.86em;">
+            Từ \(x_t\), mô hình có đoán được nhiễu \(\epsilon\) đã tạo ra nó?
+          </div>
+          <p class="caption">Mạng nhận ảnh nhiễu và thời điểm nhiễu, rồi dự đoán nhiễu cần loại bỏ.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Hàm mất mát khử nhiễu</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{simple}
+              =
+              \mathbb{E}_{x_0,\epsilon,t}
+              \left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Nhãn huấn luyện có sẵn</strong><p style="margin:0.35em 0 0;">Ta tự thêm nhiễu \(\epsilon\), nên biết chính xác nhiễu cần dự đoán.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Bài toán ổn định</strong><p style="margin:0.35em 0 0;">Không có trò chơi hai mạng; chỉ tối thiểu hóa sai số dự đoán nhiễu.</p></div>
+          </div>
+          <p class="caption">Đây là lý do khuếch tán thường dễ huấn luyện ổn định hơn GAN.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>U-Net tích hợp mã hóa thời điểm</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/unet-time-embedding.svg" alt="U-Net tích hợp mã hóa thời điểm" style="max-height:50vh;" />
+          </div>
+          <div class="eqbox" style="margin-top:0.45em; font-size:0.84em;">
+            \[
+              e_t = \mathrm{MLP}(\mathrm{PE}(t)),\qquad \epsilon_\theta=\epsilon_\theta(x_t,e_t)
+            \]
+          </div>
+          <p class="caption">Mã hóa thời điểm cho mạng biết mức nhiễu hiện tại, nên cùng một \(x_t\) được xử lý khác nhau ở các bước \(t\).</p>
+        </section>
+
+        <section style="font-size:0.6em;">
+          <h2>Lấy mẫu DDPM là lặp nhiều bước ngược</h2>
+          <div class="eqbox">
+            \[
+              x_{t-1}
+              =
+              \frac{1}{\sqrt{\alpha_t}}
+              \left(
+                x_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}
+                \epsilon_\theta(x_t,t)
+              \right)
+              +
+              \sigma_t\eta,\quad \eta\sim\mathcal{N}(0,I)
+            \]
+          </div>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">1. Bắt đầu từ nhiễu</strong><p style="margin:0.35em 0 0;">Lấy \(x_T\) từ phân phối chuẩn.</p></div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">2. Dự đoán nhiễu</strong><p style="margin:0.35em 0 0;">U-Net tính \(\epsilon_\theta(x_t,t)\).</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">3. Cập nhật ảnh</strong><p style="margin:0.35em 0 0;">Đi từ \(x_t\) sang \(x_{t-1}\), lặp đến ảnh sạch.</p></div>
+          </div>
+          <p class="caption">Chi phí lấy mẫu cao vì mỗi ảnh cần nhiều lần chạy mạng khử nhiễu.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>DDIM: lấy mẫu ít bước hơn</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/ddim-sampling.svg" alt="DDIM lấy mẫu ít bước hơn DDPM" style="max-height:42vh;" />
+          </div>
+          <div class="eqbox" style="margin-top:0.5em;">
+            \[
+              x_{\tau_{i-1}}
+              =
+              \sqrt{\bar{\alpha}_{\tau_{i-1}}}\,\widehat{x}_0
+              +
+              \sqrt{1-\bar{\alpha}_{\tau_{i-1}}}\,
+              \epsilon_\theta(x_{\tau_i},\tau_i)
+            \]
+          </div>
+          <p class="caption">DDIM giữ mục tiêu huấn luyện nhưng đi theo đường lấy mẫu rút gọn để sinh ảnh nhanh hơn.</p>
+        </section>
+
+        <section style="font-size:0.64em;">
+          <h2>Lịch nhiễu quyết định độ khó từng bước</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Nhiễu ít</strong><p style="margin:0.35em 0 0;">Mạng học sửa chi tiết nhỏ, biên và kết cấu.</p></div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Nhiễu vừa</strong><p style="margin:0.35em 0 0;">Mạng học hình dạng và cấu trúc vùng lớn.</p></div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Nhiễu nhiều</strong><p style="margin:0.35em 0 0;">Mạng học dựng bố cục từ tín hiệu rất yếu.</p></div>
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.7em;">
+            <div class="gen-card" style="background:#f7f7f7; border-left-color:#607d8b;">
+              <strong style="color:#37474f;">Lịch nhiễu tuyến tính</strong>
+              <p style="margin:0.35em 0 0;">Tăng \(\beta_t\) đều theo \(t\): \(\beta_t=\beta_1+\frac{t-1}{T-1}(\beta_T-\beta_1)\), \(\alpha_t=1-\beta_t\).</p>
+            </div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">Lịch nhiễu cosine</strong>
+              <p style="margin:0.35em 0 0;">\(\bar{\alpha}_t=\frac{f(t)}{f(0)}\)</p>
+              <p style="margin:0.2em 0 0; white-space:nowrap; font-size:0.92em;">\(f(t)=\cos^2\left(\frac{t/T+s}{1+s}\cdot\frac{\pi}{2}\right)\).</p>
+              <p style="margin:0.2em 0 0; white-space:nowrap; font-size:0.9em;">\(f(0)=\cos^2\left(\frac{s}{1+s}\cdot\frac{\pi}{2}\right)\).</p>
+            </div>
+          </div>
+          <p class="caption">Huấn luyện ở nhiều mức nhiễu biến bài toán sinh ảnh thành chuỗi bài toán khử nhiễu.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Cân bằng của mô hình khuếch tán</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Điểm mạnh</strong><ul><li>Huấn luyện ổn định.</li><li>Mẫu đa dạng, ít suy biến mode.</li><li>Dễ thêm điều kiện văn bản hoặc ảnh.</li></ul></div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Điểm yếu</strong><ul><li>Lấy mẫu nhiều bước.</li><li>Chi phí tính toán cao.</li><li>Chất lượng phụ thuộc lịch nhiễu và cách hướng dẫn.</li></ul></div>
+          </div>
+          <p class="caption">Khuếch tán ưu tiên ổn định và chất lượng mẫu, đổi lại chi phí suy luận cao.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== PHẦN 5 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">5.</span><br />Khớp dòng và sinh có điều kiện</h1>
+          <p>Flow Matching · CLIP · Stable Diffusion · Điều kiện văn bản · Hướng dẫn không dùng bộ phân loại</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Trường vận tốc là gì?</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/flow-velocity-field.svg" alt="Trường vận tốc trong Flow Matching" style="max-height:52vh;" />
+          </div>
+          <p class="caption">Thay vì hỏi “ảnh này có xác suất bao nhiêu?”, Flow Matching hỏi “điểm hiện tại phải dịch chuyển theo hướng nào?”.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Dòng xác suất được mô tả bằng phương trình vận chuyển</h2>
+          <div class="eqbox">
+            \[
+              \frac{d x_t}{dt}=u_t(x_t),\qquad x_0\sim p_0,\quad x_1\sim p_{data}
+            \]
+            \[
+              \frac{\partial p_t(x)}{\partial t}
+              +
+              \nabla\cdot\left(p_t(x)u_t(x)\right)=0
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">\(p_t(x)\)</strong><p style="margin:0.35em 0 0;">Phân phối trung gian giữa nhiễu và dữ liệu tại thời điểm \(t\).</p></div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">\(u_t(x)\)</strong><p style="margin:0.35em 0 0;">Trường vận tốc thật làm phân phối \(p_t\) chảy từ \(p_0\) sang \(p_{data}\).</p></div>
+          </div>
+          <p class="caption">Nếu biết trường vận tốc thật, ta chỉ cần giải ODE từ nhiễu để nhận được mẫu dữ liệu.</p>
+        </section>
+
+        <section style="font-size:0.64em;">
+          <h2>Trường vận tốc có điều kiện và trường vận tốc biên</h2>
+          <div class="eqbox">
+            \[
+              p_t(x)=\int p_t(x\mid z)q(z)\,dz
+            \]
+            \[
+              u_t(x)=
+              \mathbb{E}_{z\sim q(z\mid x_t=x)}
+              \left[u_t(x\mid z)\right]
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Có điều kiện</strong><p style="margin:0.35em 0 0;">Cố định \(z=(x_0,x_1)\), tức một cặp nhiễu-dữ liệu, rồi dựng đường đi \(p_t(x\mid z)\) có vận tốc \(u_t(x\mid z)\).</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Biên</strong><p style="margin:0.35em 0 0;">Lấy trung bình có trọng số qua mọi \(z\) để thu được trường vận tốc thật của phân phối \(p_t(x)\).</p></div>
+          </div>
+          <div class="gen-card" style="margin-top:0.65em; background:#f7f7f7; border-left-color:#607d8b;">
+            <strong style="color:#37474f;">Ví dụ tuyến tính</strong>
+            <p style="margin:0.3em 0 0;">
+              Với \(x_t=(1-t)x_0+t x_1\), trường vận tốc có điều kiện là
+              \(u_t(x\mid x_0,x_1)=\frac{d x_t}{dt}=x_1-x_0\).
+            </p>
+          </div>
+          <p class="caption">Ta thường biết công thức có điều kiện dễ hơn nhiều so với trường vận tốc biên trực tiếp.</p>
+        </section>
+
+        <section style="font-size:0.6em;">
+          <h2>Định lý: hai mục tiêu có cùng gradient</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{FM}(\theta)
+              =
+              \mathbb{E}_{t,x\sim p_t}
+              \left[\|v_\theta(x,t)-u_t(x)\|_2^2\right]
+            \]
+            \[
+              \mathcal{L}_{CFM}(\theta)
+              =
+              \mathbb{E}_{t,z\sim q(z),x\sim p_t(\cdot\mid z)}
+              \left[\|v_\theta(x,t)-u_t(x\mid z)\|_2^2\right]
+            \]
+            \[
+              \nabla_\theta\mathcal{L}_{FM}(\theta)
+              =
+              \nabla_\theta\mathcal{L}_{CFM}(\theta)
+            \]
+          </div>
+          <p class="caption">Ý nghĩa thực tế: có thể huấn luyện bằng trường vận tốc có điều kiện, nhưng gradient vẫn đẩy mô hình như khi khớp trường vận tốc biên.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Flow Matching học hướng di chuyển</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/flow-matching-field.svg" alt="Flow Matching học trường vận tốc" />
+          </div>
+          <p class="caption">Mô hình học vận tốc tại từng điểm trung gian thay vì học trực tiếp xác suất ảnh.</p>
+        </section>
+
+        <section style="font-size:0.58em;">
+          <h2>Hàm mất mát Flow Matching</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{FM}
+              =
+              \mathbb{E}_{t,x_t}
+              \left[\|v_\theta(x_t,t)-u_t(x_t)\|_2^2\right]
+            \]
+            \[
+              \mathcal{L}_{CFM}
+              =
+              \mathbb{E}_{t,x_0,x_1}
+              \left[\|v_\theta(x_t,t)-u_t(x_t\mid x_0,x_1)\|_2^2\right]
+            \]
+            \[
+              u_t(x_t\mid x_0,x_1)=x_1-x_0
+              \Rightarrow
+              \mathcal{L}_{CFM}
+              =
+              \mathbb{E}\left[\|v_\theta(x_t,t)-(x_1-x_0)\|_2^2\right]
+            \]
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Vận tốc thật</strong><p style="margin:0.35em 0 0;">Cho biết điểm trung gian nên đi theo hướng nào để về dữ liệu.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Vận tốc dự đoán</strong><p style="margin:0.35em 0 0;">Mạng học trường vectơ để giải phương trình dòng khi lấy mẫu.</p></div>
+          </div>
+          <p class="caption">Flow Matching nhìn mô hình sinh như một dòng liên tục từ nhiễu sang dữ liệu.</p>
+        </section>
+
+        <section style="font-size:0.58em;">
+          <h2>Lấy mẫu bằng giải phương trình vi phân</h2>
+          <div class="gen-grid-2" style="align-items:start; gap:12px;">
+            <div class="eqbox" style="font-size:0.78em; padding:8px 10px;">
+              \[
+                x_0\sim p_0,\quad
+                \frac{d x_t}{dt}=v_\theta(x_t,t),\quad
+                \widehat{x}=x_1
+              \]
+              \[
+                x_{t+\Delta t}
+                \approx
+                x_t+\Delta t\,v_\theta(x_t,t)
+              \]
+              \[
+                k_1=v_\theta(x_t,t)
+              \]
+              \[
+                k_2=
+                v_\theta\left(
+                  x_t+\frac{\Delta t}{2}k_1,\,
+                  t+\frac{\Delta t}{2}
+                \right)
+              \]
+              \[
+                x_{t+\Delta t}\approx x_t+\Delta t\,k_2
+              \]
+            </div>
+            <div class="gen-imgbox" style="padding:5px;">
+              <img src="img/lec-14/euler-midpoint-ode.svg" alt="Minh họa Euler và Midpoint" style="max-height:37vh;" />
+            </div>
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#eceff1; border-left-color:#607d8b;"><strong style="color:#37474f;">1. Khởi tạo</strong><p style="margin:0.35em 0 0;">Lấy một điểm nhiễu \(x_0\) từ phân phối đơn giản.</p></div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">2. Tích phân ODE</strong><p style="margin:0.35em 0 0;">Dùng Euler, Runge-Kutta hoặc bộ giải ODE để đi từ \(t=0\) đến \(t=1\).</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">3. Nhận mẫu</strong><p style="margin:0.35em 0 0;">Điểm cuối \(x_1\) là mẫu trong miền dữ liệu.</p></div>
+          </div>
+          <p class="caption">Khác với DDPM lấy mẫu theo chuỗi Markov ngược, Flow Matching sinh ảnh bằng cách giải một phương trình vi phân thường.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Khuếch tán và Flow Matching khác nhau ở cách nhìn</h2>
+          <div class="gen-grid-2">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Khuếch tán</strong><ul><li>Học khử nhiễu theo từng mức nhiễu.</li><li>Lấy mẫu bằng chuỗi bước ngược.</li><li>Trực giác: sửa ảnh nhiễu dần dần.</li></ul></div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Flow Matching</strong><ul><li>Học trường vận tốc liên tục.</li><li>Lấy mẫu bằng giải đường dòng.</li><li>Trực giác: vận chuyển nhiễu thành dữ liệu.</li></ul></div>
+          </div>
+          <p class="caption">Hai hướng đều tránh trò chơi đối nghịch và đều mô tả đường đi từ nhiễu về ảnh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>CLIP nối ảnh và văn bản</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/clip-contrastive.svg" alt="CLIP học tương phản ảnh và văn bản" />
+          </div>
+          <p class="caption">CLIP học để vectơ ảnh và vectơ văn bản đúng cặp gần nhau trong cùng không gian biểu diễn.</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Học tương phản trong CLIP</h2>
+          <div class="eqbox">
+            \[
+              s_{ij}=\frac{e_i^\top t_j}{\tau}
+            \]
+            \[
+              \mathcal{L}_{I\to T}
+              =
+              -\frac{1}{N}\sum_i
+              \log\frac{\exp(s_{ii})}{\sum_j\exp(s_{ij})}
+            \]
+            \[
+              \mathcal{L}_{T\to I}
+              =
+              -\frac{1}{N}\sum_i
+              \log\frac{\exp(s_{ii})}{\sum_j\exp(s_{ji})},
+              \qquad
+              \mathcal{L}_{CLIP}=\frac{1}{2}
+              \left(\mathcal{L}_{I\to T}+\mathcal{L}_{T\to I}\right)
+            \]
+          </div>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Cặp đúng</strong><p style="margin:0.35em 0 0;">Ảnh và mô tả tương ứng được kéo lại gần nhau.</p></div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Cặp sai</strong><p style="margin:0.35em 0 0;">Ảnh và mô tả không tương ứng bị đẩy xa nhau.</p></div>
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Kết quả</strong><p style="margin:0.35em 0 0;">Văn bản trở thành tín hiệu điều kiện có ý nghĩa thị giác.</p></div>
+          </div>
+          <p class="caption">CLIP tối đa hóa điểm tương đồng của cặp đúng trên đường chéo và giảm điểm của các cặp sai.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Stable Diffusion ghép ba ý tưởng</h2>
+          <div class="gen-grid-3" style="margin-top:0.65em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">1. VAE</strong>
+              <p style="margin:0.35em 0 0;">Đưa ảnh từ không gian điểm ảnh sang mã ẩn gọn hơn.</p>
+            </div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;">
+              <strong style="color:#7b1fa2;">2. Diffusion</strong>
+              <p style="margin:0.35em 0 0;">Học khử nhiễu để sinh mã ẩn ảnh từ nhiễu.</p>
+            </div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">3. Điều kiện văn bản</strong>
+              <p style="margin:0.35em 0 0;">Dùng mô tả để dẫn hướng quá trình khử nhiễu.</p>
+            </div>
+          </div>
+          <div class="gen-imgbox" style="margin-top:0.75em; padding:5px;">
+            <img src="img/lec-14/stable-diffusion-pipeline.svg" alt="Stable Diffusion ghép VAE, diffusion và điều kiện văn bản" style="max-height:40vh;" />
+          </div>
+          <p class="caption">Ý chính: mô hình không sinh ảnh trực tiếp từ chữ; nó khử nhiễu trong không gian ẩn rồi giải mã thành ảnh.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>VAE: biểu diễn ảnh trong không gian ẩn</h2>
+          <div class="gen-grid-2" style="align-items:center;">
+            <div class="gen-imgbox">
+              <img src="img/lec-14/vae-training-sampling.svg" alt="VAE biểu diễn ảnh trong không gian ẩn" style="max-height:44vh;" />
+            </div>
+            <div>
+              <div class="eqbox" style="font-size:0.88em;">
+                \[
+                  z_0 = E(x),\qquad \widehat{x}=D(z_0)
+                \]
+              </div>
+              <div class="gen-card" style="margin-top:0.75em; background:#e3f2fd; border-left-color:#1565c0;">
+                <strong style="color:#1565c0;">Vai trò trong Stable Diffusion</strong>
+                <p style="margin:0.35em 0 0;">Ảnh RGB lớn được nén thành mã ẩn nhỏ hơn nhưng vẫn giữ cấu trúc thị giác chính.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption">Stable Diffusion không khuếch tán trực tiếp trên điểm ảnh; nó làm việc trên mã ẩn của bộ tự mã hóa.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Diffusion: sinh mã hóa ảnh trong không gian ẩn</h2>
+          <div class="eqbox">
+            \[
+              z_t=\sqrt{\bar{\alpha}_t}z_0+\sqrt{1-\bar{\alpha}_t}\epsilon,\qquad
+              \epsilon\sim\mathcal{N}(0,I)
+            \]
+            \[
+              \mathcal{L}_{latent}
+              =
+              \mathbb{E}_{z_0,\epsilon,t}
+              \left[\|\epsilon-\epsilon_\theta(z_t,t)\|_2^2\right]
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#eceff1; border-left-color:#607d8b;"><strong style="color:#37474f;">Bắt đầu</strong><p style="margin:0.35em 0 0;">Lấy \(z_T\) là nhiễu trong không gian ẩn.</p></div>
+            <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Khử nhiễu</strong><p style="margin:0.35em 0 0;">U-Net dự đoán nhiễu trong mã ẩn, không dự đoán trực tiếp điểm ảnh.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Giải mã</strong><p style="margin:0.35em 0 0;">Sau khi có \(\widehat{z}_0\), bộ giải mã tạo ảnh \(\widehat{x}=D(\widehat{z}_0)\).</p></div>
+          </div>
+          <p class="caption">Cùng một nguyên lý DDPM, nhưng biến ngẫu nhiên cần sinh là mã ẩn \(z\), không phải ảnh \(x\).</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Diffusion có điều kiện: thêm mã hóa văn bản</h2>
+          <div class="gen-grid-2" style="grid-template-columns:1.25fr 0.75fr; align-items:start; gap:12px;">
+            <div class="gen-imgbox">
+              <img src="img/lec-14/text-conditioned-latent-training.svg" alt="Huấn luyện khuếch tán ẩn có điều kiện văn bản" style="max-height:45vh;" />
+            </div>
+            <div class="eqbox" style="font-size:0.78em; padding:8px 10px;">
+              \[
+                c_t = MLP(PE(t)),
+                \qquad
+                c_{text}=T_\psi(y)
+              \]
+              \[
+                \mathcal{L}_{text}
+                =
+                \mathbb{E}
+                \left[
+                  \|\epsilon-\epsilon_\theta(z_t,c_t,c_{text})\|_2^2
+                \right]
+              \]
+            </div>
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.65em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Ảnh huấn luyện</strong><p style="margin:0.35em 0 0;">Mã hóa ảnh \(x\) thành \(z_0\), rồi thêm nhiễu để có \(z_t\).</p></div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Điều kiện văn bản</strong><p style="margin:0.35em 0 0;">Mô tả \(y\) được mã hóa thành \(c_{text}\) và đưa vào U-Net.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Mục tiêu học</strong><p style="margin:0.35em 0 0;">Dự đoán đúng nhiễu \(\epsilon\) khi đã biết cả \(t\) và văn bản.</p></div>
+          </div>
+          <p class="caption">So với diffusion thường, U-Net có thêm tín hiệu văn bản bên cạnh mã hóa thời điểm \(t\).</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Vì sao khuếch tán trong không gian ẩn?</h2>
+          <div class="gen-grid-3">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Giảm kích thước</strong><p style="margin:0.35em 0 0;">Mã ẩn nhỏ hơn ảnh, nên mỗi bước U-Net rẻ hơn.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Giữ cấu trúc ảnh</strong><p style="margin:0.35em 0 0;">Bộ tự mã hóa giữ thông tin thị giác chính trong mã ẩn.</p></div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Giải mã cuối</strong><p style="margin:0.35em 0 0;">Sau khi khử nhiễu, bộ giải mã đưa mã ẩn về ảnh RGB.</p></div>
+          </div>
+          <p class="caption">Ý tưởng phần 2 quay lại ở đây: không gian ẩn làm bài toán sinh ảnh rẻ và dễ điều khiển hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Hướng dẫn không dùng bộ phân loại</h2>
+          <div class="gen-imgbox">
+            <img src="img/lec-14/cfg-guidance.svg" alt="Hướng dẫn không dùng bộ phân loại" />
+          </div>
+          <p class="caption">Cùng một mô hình khử nhiễu được gọi hai lần: một lần bỏ điều kiện, một lần có văn bản, rồi trộn hai dự đoán nhiễu.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Công thức hướng dẫn thường dùng</h2>
+          <div class="eqbox">
+            \[
+              \hat{\epsilon}
+              =
+              \epsilon_{uncond}
+              +
+              s\left(\epsilon_{cond}-\epsilon_{uncond}\right)
+            \]
+          </div>
+          <div class="gen-grid-3" style="margin-top:0.75em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">\(s\) thấp</strong><p style="margin:0.35em 0 0;">Ảnh tự nhiên hơn nhưng có thể lệch mô tả.</p></div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">\(s\) vừa</strong><p style="margin:0.35em 0 0;">Cân bằng giữa bám mô tả và chất lượng ảnh.</p></div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">\(s\) cao</strong><p style="margin:0.35em 0 0;">Bám chữ mạnh nhưng dễ tạo ảnh gắt, lặp hoặc kém đa dạng.</p></div>
+          </div>
+          <p class="caption">Hướng dẫn không dùng bộ phân loại là hệ số chỉnh mức bám mô tả, không phải bảo đảm đúng tuyệt đối.</p>
+        </section>
+
+        <section style="font-size:0.64em;">
+          <h2>So sánh các họ mô hình trong bài</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Họ mô hình</th>
+                <th style="padding:8px; border:1px solid #ddd;">Học gì?</th>
+                <th style="padding:8px; border:1px solid #ddd;">Mạnh ở đâu?</th>
+                <th style="padding:8px; border:1px solid #ddd;">Yếu ở đâu?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">VAE</td><td style="padding:8px; border:1px solid #ddd;">không gian ẩn xác suất</td><td style="padding:8px; border:1px solid #ddd;">ổn định, có cấu trúc</td><td style="padding:8px; border:1px solid #ddd;">ảnh dễ mờ</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">GAN</td><td style="padding:8px; border:1px solid #ddd;">qua bộ phân biệt</td><td style="padding:8px; border:1px solid #ddd;">ảnh sắc</td><td style="padding:8px; border:1px solid #ddd;">khó ổn định</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Khuếch tán</td><td style="padding:8px; border:1px solid #ddd;">khử nhiễu ngược</td><td style="padding:8px; border:1px solid #ddd;">chất lượng cao</td><td style="padding:8px; border:1px solid #ddd;">lấy mẫu chậm</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Flow Matching</td><td style="padding:8px; border:1px solid #ddd;">trường vận tốc</td><td style="padding:8px; border:1px solid #ddd;">đường sinh liên tục</td><td style="padding:8px; border:1px solid #ddd;">cần giải đường dòng</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Không có mô hình thắng tuyệt đối; mỗi họ chọn một cách đặt bài toán và một loại hàm mất mát khác nhau.</p>
+        </section>
+
+      </section>
+
+      <!-- ===================== KẾT ===================== -->
+      <section>
+        <section style="font-size:0.74em;">
+          <h2>Quay lại câu hỏi xuyên suốt</h2>
+          <div style="margin-top:0.4em; background:#fff3e0; padding:10px 14px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi:</strong> làm thế nào tạo ảnh mới, không sao chép ảnh huấn luyện, nhưng vẫn nằm trong cùng phân phối dữ liệu?
+          </div>
+          <div class="gen-grid-2" style="margin-top:0.8em;">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">VAE:</strong> học không gian ẩn có luật để lấy mẫu.</div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">GAN:</strong> học tạo ảnh qua tín hiệu thật-giả.</div>
+            <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Khuếch tán:</strong> học đường khử nhiễu từ nhiễu về ảnh.</div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Stable Diffusion:</strong> làm việc trong không gian ẩn và điều khiển bằng văn bản.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Vì sao AE thường chưa đủ để lấy mẫu ảnh mới?</li>
+            <li>Trong VAE, hạng KL kéo phân phối mã ẩn theo hướng nào?</li>
+            <li>Vì sao GAN có thể sinh ảnh sắc nhưng khó huấn luyện ổn định?</li>
+            <li>DDPM học dự đoán ảnh sạch hay dự đoán nhiễu?</li>
+            <li>Stable Diffusion khác DDPM trên ảnh gốc ở điểm nào?</li>
+          </ol>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Bài tập mở rộng</h2>
+          <div class="stub-list">
+            <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>A. VAE:</strong> huấn luyện VAE nhỏ trên MNIST, vẽ nội suy giữa hai mã ẩn và giải thích vùng ảnh bị mờ.</div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>B. GAN:</strong> so sánh ảnh sinh khi bộ phân biệt quá mạnh và khi bộ sinh quá mạnh; mô tả dấu hiệu sụp kiểu mẫu.</div>
+            <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>C. Khuếch tán:</strong> cài thí nghiệm thêm nhiễu thuận ở nhiều mức \(t\), rồi huấn luyện mạng nhỏ dự đoán nhiễu.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Tài liệu tham khảo chính</h2>
+          <ul>
+            <li>Stanford CS231n, <a href="https://cs231n.github.io/generative-models/">Generative Modeling notes</a>.</li>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/slides/2025/lecture_13.pdf">Lecture 13: Generative Models</a>, 2025.</li>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/slides/2025/lecture_14.pdf">Lecture 14: Generative Models</a>, 2025.</li>
+            <li>Kingma và Welling, <a href="https://arxiv.org/abs/1312.6114">Auto-Encoding Variational Bayes</a>, 2013.</li>
+            <li>Goodfellow và cộng sự, <a href="https://arxiv.org/abs/1406.2661">Generative Adversarial Networks</a>, 2014.</li>
+            <li>Ho, Jain và Abbeel, <a href="https://arxiv.org/abs/2006.11239">Denoising Diffusion Probabilistic Models</a>, 2020.</li>
+            <li>Rombach và cộng sự, <a href="https://arxiv.org/abs/2112.10752">High-Resolution Image Synthesis with Latent Diffusion Models</a>, 2022.</li>
+          </ul>
+        </section>
+      </section>
+
+      <div class="footer">
+        Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §14: Tạo sinh ảnh
+      </div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+    });
+  </script>
+</body>
+
+</html>

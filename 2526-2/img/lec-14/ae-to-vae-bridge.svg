@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-label="Từ tự mã hóa sang VAE">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 24px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="620" fill="#fafafa"/>
+  <text class="title" x="600" y="55">Bước chuyển: mã ẩn là điểm hay là phân phối?</text>
+
+  <g transform="translate(85,120)">
+    <rect x="0" y="0" width="460" height="370" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="230" y="45">AE thường</text>
+    <rect x="62" y="105" width="112" height="72" rx="12" fill="#fff" stroke="#90a4ae" stroke-width="2"/>
+    <text class="small" x="118" y="148">ảnh</text>
+    <rect x="252" y="95" width="150" height="92" rx="12" fill="#fff" stroke="#1565c0" stroke-width="3"/>
+    <text class="small" x="327" y="130">Bộ mã hóa</text>
+    <text class="tiny" x="327" y="158">sinh một mã</text>
+    <path d="M180 141 L240 141" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+    <circle cx="230" cy="255" r="11" fill="#1565c0"/>
+    <text class="small" x="230" y="305">một điểm mã ẩn</text>
+    <text class="tiny" x="230" y="333">tốt cho nén và tái tạo</text>
+  </g>
+
+  <g transform="translate(655,120)">
+    <rect x="0" y="0" width="460" height="370" rx="16" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="230" y="45">VAE</text>
+    <rect x="62" y="105" width="112" height="72" rx="12" fill="#fff" stroke="#90a4ae" stroke-width="2"/>
+    <text class="small" x="118" y="148">ảnh</text>
+    <rect x="242" y="92" width="162" height="100" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+    <text class="small" x="323" y="126">Bộ mã hóa</text>
+    <text class="tiny" x="323" y="154">sinh trung bình</text>
+    <text class="tiny" x="323" y="176">và độ lệch</text>
+    <path d="M180 141 L230 141" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+    <ellipse cx="230" cy="255" rx="60" ry="36" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+    <circle cx="230" cy="255" r="7" fill="#1b5e20"/>
+    <circle cx="248" cy="241" r="5" fill="#1b5e20" opacity="0.85"/>
+    <circle cx="210" cy="268" r="5" fill="#1b5e20" opacity="0.85"/>
+    <text class="small" x="230" y="305">một phân phối mã ẩn</text>
+    <text class="tiny" x="230" y="333">có thể khớp tiên nghiệm</text>
+  </g>
+
+  <path d="M562 305 L638 305" stroke="#607d8b" stroke-width="5" fill="none" marker-end="url(#arr)"/>
+  <rect x="340" y="530" width="520" height="54" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text class="small" x="600" y="552">VAE thêm xác suất để bộ giải mã</text>
+  <text class="small" x="600" y="576">trở thành mô hình sinh có thể lấy mẫu.</text>
+</svg>

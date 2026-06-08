@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="CLIP học tương phản ảnh và văn bản">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">CLIP: đưa ảnh và văn bản đúng cặp lại gần nhau</text>
+
+  <g transform="translate(90,130)">
+    <rect x="0" y="0" width="190" height="90" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="small" x="95" y="35">Bộ mã hóa ảnh</text>
+    <text class="tiny" x="95" y="62">I<tspan baseline-shift="sub" font-size="10">i</tspan> → e<tspan baseline-shift="sub" font-size="10">i</tspan></text>
+    <rect x="0" y="220" width="190" height="90" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="small" x="95" y="255">Bộ mã hóa chữ</text>
+    <text class="tiny" x="95" y="282">T<tspan baseline-shift="sub" font-size="10">i</tspan> → t<tspan baseline-shift="sub" font-size="10">i</tspan></text>
+  </g>
+
+  <path d="M290 175 L385 175" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M290 395 L385 395" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <g transform="translate(420,115)">
+    <rect x="0" y="0" width="360" height="360" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="180" y="38">e<tspan baseline-shift="sub" font-size="14">i</tspan> · t<tspan baseline-shift="sub" font-size="14">j</tspan></text>
+    <g transform="translate(75,85)">
+      <rect x="0" y="0" width="210" height="210" fill="#fafafa" stroke="#90a4ae" stroke-width="2"/>
+      <rect x="0" y="0" width="70" height="70" fill="#c8e6c9"/>
+      <rect x="70" y="70" width="70" height="70" fill="#c8e6c9"/>
+      <rect x="140" y="140" width="70" height="70" fill="#c8e6c9"/>
+      <line x1="70" y1="0" x2="70" y2="210" stroke="#90a4ae"/>
+      <line x1="140" y1="0" x2="140" y2="210" stroke="#90a4ae"/>
+      <line x1="0" y1="70" x2="210" y2="70" stroke="#90a4ae"/>
+      <line x1="0" y1="140" x2="210" y2="140" stroke="#90a4ae"/>
+      <text class="small" x="35" y="44">cao</text>
+      <text class="small" x="105" y="114">cao</text>
+      <text class="small" x="175" y="184">cao</text>
+    </g>
+    <text class="tiny" x="180" y="330">đường chéo là cặp đúng</text>
+  </g>
+
+  <g transform="translate(860,160)">
+    <rect x="0" y="0" width="240" height="250" rx="16" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="120" y="45">Không gian chung</text>
+    <circle cx="88" cy="110" r="12" fill="#1565c0"/>
+    <circle cx="105" cy="126" r="12" fill="#ef6c00"/>
+    <circle cx="165" cy="165" r="12" fill="#1565c0" opacity="0.55"/>
+    <circle cx="188" cy="95" r="12" fill="#ef6c00" opacity="0.55"/>
+    <text class="tiny" x="120" y="220">ảnh và chữ đúng gần nhau</text>
+  </g>
+  <path d="M790 295 L848 285" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+</svg>

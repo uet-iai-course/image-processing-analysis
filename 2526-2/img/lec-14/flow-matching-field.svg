@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Flow Matching học trường vận tốc">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Flow Matching: học vận tốc đưa nhiễu về dữ liệu</text>
+
+  <rect x="95" y="105" width="1010" height="430" rx="18" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+  <ellipse cx="265" cy="325" rx="95" ry="70" fill="#cfd8dc" stroke="#607d8b" stroke-width="3" opacity="0.9"/>
+  <text class="label" x="265" y="440">Nhiễu x<tspan baseline-shift="sub" font-size="14">0</tspan></text>
+  <ellipse cx="920" cy="325" rx="120" ry="85" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3" opacity="0.9"/>
+  <text class="label" x="920" y="440">Dữ liệu x<tspan baseline-shift="sub" font-size="14">1</tspan></text>
+
+  <path d="M340 300 C470 210 650 210 810 295" stroke="#1565c0" stroke-width="5" fill="none" marker-end="url(#arr)"/>
+  <path d="M340 350 C480 390 650 410 805 355" stroke="#1565c0" stroke-width="5" fill="none" marker-end="url(#arr)"/>
+  <path d="M395 325 C530 310 660 325 790 325" stroke="#1565c0" stroke-width="5" fill="none" marker-end="url(#arr)"/>
+
+  <g stroke="#ef6c00" stroke-width="3" marker-end="url(#arr)">
+    <path d="M480 265 L535 240"/>
+    <path d="M560 330 L620 326"/>
+    <path d="M650 390 L710 378"/>
+    <path d="M705 255 L765 280"/>
+  </g>
+  <text class="small" x="610" y="285">v<tspan baseline-shift="sub" font-size="12">θ</tspan>(x<tspan baseline-shift="sub" font-size="12">t</tspan>, t) ≈ u<tspan baseline-shift="sub" font-size="12">t</tspan>(x<tspan baseline-shift="sub" font-size="12">t</tspan>)</text>
+
+  <rect x="310" y="555" width="580" height="54" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="576">Thay vì dự đoán nhiễu,</text>
+  <text class="small" x="600" y="600">mô hình học hướng di chuyển tại từng thời điểm.</text>
+</svg>

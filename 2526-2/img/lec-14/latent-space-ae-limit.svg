@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Giới hạn của không gian ẩn trong tự mã hóa">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 31px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .bad{font:700 18px Arial,sans-serif;fill:#c62828;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">AE học mã ẩn để tái tạo, không ép mã ẩn dễ lấy mẫu</text>
+
+  <g transform="translate(80,120)">
+    <rect x="0" y="0" width="500" height="420" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="250" y="42">Mã ẩn của ảnh huấn luyện</text>
+    <line x1="70" y1="350" x2="430" y2="350" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="90" y1="370" x2="90" y2="80" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <text class="tiny" x="440" y="374">trục 1</text>
+    <text class="tiny" x="62" y="82">trục 2</text>
+    <ellipse cx="190" cy="210" rx="75" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="3" opacity="0.88"/>
+    <ellipse cx="330" cy="160" rx="62" ry="38" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3" opacity="0.88"/>
+    <ellipse cx="310" cy="280" rx="82" ry="45" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3" opacity="0.88"/>
+    <circle cx="160" cy="198" r="7" fill="#0d47a1"/>
+    <circle cx="205" cy="225" r="7" fill="#0d47a1"/>
+    <circle cx="340" cy="150" r="7" fill="#1b5e20"/>
+    <circle cx="300" cy="276" r="7" fill="#e65100"/>
+    <circle cx="350" cy="294" r="7" fill="#e65100"/>
+    <text class="small" x="250" y="396">mã ẩn nằm thành các cụm rời</text>
+  </g>
+
+  <g transform="translate(620,120)">
+    <rect x="0" y="0" width="500" height="420" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="250" y="42">Lấy mẫu ngẫu nhiên</text>
+    <line x1="70" y1="350" x2="430" y2="350" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="90" y1="370" x2="90" y2="80" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <text class="tiny" x="440" y="374">trục 1</text>
+    <text class="tiny" x="62" y="82">trục 2</text>
+    <ellipse cx="190" cy="210" rx="75" ry="42" fill="#bbdefb" stroke="#1565c0" stroke-width="3" opacity="0.35"/>
+    <ellipse cx="330" cy="160" rx="62" ry="38" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3" opacity="0.35"/>
+    <ellipse cx="310" cy="280" rx="82" ry="45" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3" opacity="0.35"/>
+    <circle cx="120" cy="120" r="8" fill="#c62828"/>
+    <circle cx="250" cy="108" r="8" fill="#c62828"/>
+    <circle cx="415" cy="230" r="8" fill="#c62828"/>
+    <circle cx="210" cy="310" r="8" fill="#c62828"/>
+    <circle cx="382" cy="340" r="8" fill="#c62828"/>
+    <text class="bad" x="250" y="395">nhiều điểm rơi vào vùng chưa học</text>
+  </g>
+
+  <rect x="250" y="570" width="700" height="52" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+  <text class="small" x="600" y="592">Nếu không biết phân phối mã ẩn,</text>
+  <text class="small" x="600" y="616">ta không biết nên lấy mẫu ở đâu.</text>
+</svg>

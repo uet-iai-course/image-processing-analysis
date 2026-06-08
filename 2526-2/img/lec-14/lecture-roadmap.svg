@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-label="Lộ trình bài học tạo sinh ảnh">
+  <defs>
+    <marker id="rarr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+  </defs>
+  <rect x="30" y="32" width="1140" height="540" rx="18" fill="#fafafa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="600" y="82" text-anchor="middle" font-size="34" font-weight="700" fill="#263238" font-family="Arial">Lộ trình 120 phút</text>
+  <g font-family="Arial">
+    <rect x="60" y="150" width="165" height="190" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text x="142" y="190" text-anchor="middle" font-size="24" font-weight="700" fill="#0d47a1">1</text>
+    <text x="142" y="225" text-anchor="middle" font-size="21" fill="#263238">Bản đồ</text>
+    <text x="142" y="255" text-anchor="middle" font-size="18" fill="#455a64">15 phút</text>
+
+    <rect x="270" y="150" width="165" height="190" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text x="352" y="190" text-anchor="middle" font-size="24" font-weight="700" fill="#1b5e20">2</text>
+    <text x="352" y="225" text-anchor="middle" font-size="21" fill="#263238">AE, VAE</text>
+    <text x="352" y="255" text-anchor="middle" font-size="18" fill="#455a64">25 phút</text>
+
+    <rect x="480" y="150" width="165" height="190" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text x="562" y="190" text-anchor="middle" font-size="24" font-weight="700" fill="#e65100">3</text>
+    <text x="562" y="225" text-anchor="middle" font-size="21" fill="#263238">GAN</text>
+    <text x="562" y="255" text-anchor="middle" font-size="18" fill="#455a64">30 phút</text>
+
+    <rect x="690" y="150" width="165" height="190" rx="14" fill="#ffebee" stroke="#c62828" stroke-width="4"/>
+    <text x="772" y="190" text-anchor="middle" font-size="24" font-weight="700" fill="#b71c1c">4</text>
+    <text x="772" y="225" text-anchor="middle" font-size="21" fill="#263238">Khuếch tán</text>
+    <text x="772" y="255" text-anchor="middle" font-size="18" fill="#455a64">30 phút</text>
+
+    <rect x="900" y="150" width="230" height="190" rx="14" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
+    <text x="1015" y="190" text-anchor="middle" font-size="24" font-weight="700" fill="#4a148c">5</text>
+    <text x="1015" y="225" text-anchor="middle" font-size="21" fill="#263238">Điều kiện</text>
+    <text x="1015" y="255" text-anchor="middle" font-size="18" fill="#455a64">Flow, CLIP, SD</text>
+    <text x="1015" y="285" text-anchor="middle" font-size="18" fill="#455a64">20 phút</text>
+
+    <path d="M225 245 L270 245" stroke="#607d8b" stroke-width="4" marker-end="url(#rarr)"/>
+    <path d="M435 245 L480 245" stroke="#607d8b" stroke-width="4" marker-end="url(#rarr)"/>
+    <path d="M645 245 L690 245" stroke="#607d8b" stroke-width="4" marker-end="url(#rarr)"/>
+    <path d="M855 245 L900 245" stroke="#607d8b" stroke-width="4" marker-end="url(#rarr)"/>
+
+    <rect x="120" y="405" width="960" height="80" rx="12" fill="#ffffff" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="600" y="440" text-anchor="middle" font-size="23" fill="#263238">Mỗi phần đều trả lời cùng một mẫu câu hỏi:</text>
+    <text x="600" y="462" text-anchor="middle" font-size="22" font-weight="700" fill="#b15a2b">kiến trúc nào, hàm mất mát nào,</text>
+    <text x="600" y="492" text-anchor="middle" font-size="22" font-weight="700" fill="#b15a2b">lấy mẫu ra sao, lỗi thường gặp là gì?</text>
+  </g>
+</svg>

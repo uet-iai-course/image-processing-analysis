@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Kiến trúc tự mã hóa tích chập">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 20px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Tự mã hóa tích chập cho ảnh</text>
+
+  <g transform="translate(65,150)">
+    <rect x="0" y="80" width="130" height="170" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="65" y="58">Ảnh</text>
+    <text class="small" x="65" y="286">cao x rộng x 3</text>
+  </g>
+
+  <g transform="translate(235,145)">
+    <rect x="0" y="55" width="135" height="220" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="67" y="34">Tích chập</text>
+    <text class="small" x="67" y="105">cạnh</text>
+    <text class="small" x="67" y="132">vùng màu</text>
+    <text class="small" x="67" y="159">kết cấu</text>
+    <text class="tiny" x="67" y="252">lọc cục bộ</text>
+  </g>
+
+  <g transform="translate(410,170)">
+    <rect x="0" y="55" width="120" height="170" rx="12" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="60" y="34">Giảm mẫu</text>
+    <text class="small" x="60" y="116">ít vị trí</text>
+    <text class="small" x="60" y="144">hơn</text>
+    <text class="small" x="60" y="172">nhiều kênh</text>
+  </g>
+
+  <g transform="translate(570,205)">
+    <rect x="0" y="40" width="90" height="98" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="45" y="18">Mã ẩn</text>
+    <text class="small" x="45" y="84">gọn</text>
+    <text class="tiny" x="45" y="114">bị nén</text>
+  </g>
+
+  <g transform="translate(705,170)">
+    <rect x="0" y="55" width="120" height="170" rx="12" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="60" y="34">Tăng mẫu</text>
+    <text class="small" x="60" y="116">nhiều vị</text>
+    <text class="small" x="60" y="144">trí hơn</text>
+    <text class="small" x="60" y="172">ít kênh</text>
+  </g>
+
+  <g transform="translate(865,145)">
+    <rect x="0" y="55" width="135" height="220" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="67" y="34">Tích chập</text>
+    <text class="small" x="67" y="105">nội suy</text>
+    <text class="small" x="67" y="132">màu</text>
+    <text class="small" x="67" y="159">chi tiết</text>
+    <text class="tiny" x="67" y="252">dựng ảnh</text>
+  </g>
+
+  <g transform="translate(1050,150)">
+    <rect x="0" y="80" width="130" height="170" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="65" y="58">Tái tạo</text>
+    <text class="small" x="65" y="286">cao x rộng x 3</text>
+  </g>
+
+  <path d="M200 315 L225 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M375 315 L400 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M535 315 L560 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M665 315 L695 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M830 315 L855 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M1005 315 L1040 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="220" y="490" width="360" height="68" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text class="small" x="400" y="518">Bộ mã hóa bỏ bớt chi tiết</text>
+  <text class="tiny" x="400" y="542">để giữ cấu trúc cần cho tái tạo</text>
+  <rect x="620" y="490" width="360" height="68" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text class="small" x="800" y="518">Bộ giải mã dựng lại ảnh</text>
+  <text class="tiny" x="800" y="542">từ biểu diễn đã bị nén</text>
+</svg>

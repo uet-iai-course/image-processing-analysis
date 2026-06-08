@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Hàm mất mát cảm quan">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 21px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .math{font:700 20px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Hàm mất mát cảm quan: so sánh trong không gian đặc trưng</text>
+
+  <g transform="translate(70,145)">
+    <rect x="0" y="0" width="180" height="170" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <text class="label" x="90" y="36">Ảnh đích</text>
+    <rect x="45" y="60" width="90" height="68" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M55 116 Q78 80 105 105 T128 95 L128 123 L55 123 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="77" cy="86" r="18" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <text class="math" x="90" y="154">x</text>
+  </g>
+
+  <g transform="translate(70,365)">
+    <rect x="0" y="0" width="180" height="170" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="90" y="36">Ảnh sinh</text>
+    <rect x="45" y="60" width="90" height="68" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M55 116 Q82 86 108 106 T128 99 L128 123 L55 123 Z" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="78" cy="90" r="17" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <text class="math" x="90" y="154">x̂ = G<tspan baseline-shift="sub" font-size="13">θ</tspan>(c)</text>
+  </g>
+
+  <g transform="translate(360,145)">
+    <rect x="0" y="0" width="235" height="390" rx="18" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
+    <text class="label" x="117" y="42">Mạng đặc trưng cố định</text>
+    <text class="small" x="117" y="74">thường dùng VGG</text>
+    <rect x="50" y="122" width="135" height="48" rx="8" fill="#ede7f6" stroke="#7b1fa2" stroke-width="2"/>
+    <text class="tiny" x="117" y="152">tầng thấp: biên</text>
+    <rect x="50" y="205" width="135" height="48" rx="8" fill="#ede7f6" stroke="#7b1fa2" stroke-width="2"/>
+    <text class="tiny" x="117" y="235">tầng giữa: kết cấu</text>
+    <rect x="50" y="288" width="135" height="48" rx="8" fill="#ede7f6" stroke="#7b1fa2" stroke-width="2"/>
+    <text class="tiny" x="117" y="318">tầng cao: nội dung</text>
+  </g>
+
+  <g transform="translate(725,145)">
+    <rect x="0" y="0" width="185" height="135" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="92" y="38">Đặc trưng ảnh đích</text>
+    <text class="math" x="92" y="78">φ<tspan baseline-shift="sub" font-size="13">l</tspan>(x)</text>
+    <text class="tiny" x="92" y="108">không gian cảm nhận</text>
+  </g>
+
+  <g transform="translate(725,400)">
+    <rect x="0" y="0" width="185" height="135" rx="14" fill="#fff8e1" stroke="#f9a825" stroke-width="3"/>
+    <text class="label" x="92" y="38">Đặc trưng ảnh sinh</text>
+    <text class="math" x="92" y="78">φ<tspan baseline-shift="sub" font-size="13">l</tspan>(x̂)</text>
+    <text class="tiny" x="92" y="108">cùng tầng so sánh</text>
+  </g>
+
+  <g transform="translate(980,260)">
+    <rect x="0" y="0" width="160" height="150" rx="16" fill="#ffebee" stroke="#c62828" stroke-width="4"/>
+    <text class="label" x="80" y="40">So sánh</text>
+    <text class="math" x="80" y="82">||φ<tspan baseline-shift="sub" font-size="13">l</tspan>(x)</text>
+    <text class="math" x="80" y="112">− φ<tspan baseline-shift="sub" font-size="13">l</tspan>(x̂)||</text>
+  </g>
+
+  <path d="M255 230 L348 230" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M255 450 L348 450" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M605 230 L712 212" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M605 450 L712 468" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M915 212 L970 315" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M915 468 L970 360" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="260" y="585" width="680" height="44" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="613">Mạng đặc trưng chỉ dùng để đo lỗi; không cập nhật khi huấn luyện bộ sinh.</text>
+</svg>

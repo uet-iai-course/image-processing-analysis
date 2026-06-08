@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Hai thành phần của ELBO">
+  <defs>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 23px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">ELBO cân bằng tái tạo và chuẩn hóa không gian ẩn</text>
+
+  <rect x="120" y="120" width="430" height="330" rx="18" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+  <text class="label" x="335" y="165">Thành phần tái tạo</text>
+  <rect x="190" y="215" width="120" height="90" rx="12" fill="#fff" stroke="#90a4ae" stroke-width="2"/>
+  <text class="small" x="250" y="267">ảnh thật</text>
+  <rect x="360" y="215" width="120" height="90" rx="12" fill="#fff" stroke="#1565c0" stroke-width="2"/>
+  <text class="small" x="420" y="267">ảnh ra</text>
+  <path d="M315 260 L355 260" stroke="#607d8b" stroke-width="4" fill="none"/>
+  <text class="small" x="335" y="356">kéo bộ giải mã tái tạo đúng dữ liệu</text>
+  <text class="tiny" x="335" y="388">sai ảnh lớn thì bị phạt mạnh</text>
+
+  <rect x="650" y="120" width="430" height="330" rx="18" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+  <text class="label" x="865" y="165">Thành phần KL</text>
+  <ellipse cx="805" cy="258" rx="72" ry="42" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+  <ellipse cx="930" cy="258" rx="82" ry="52" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3" opacity="0.78"/>
+  <text class="small" x="805" y="335">hậu nghiệm</text>
+  <text class="small" x="930" y="335">tiên nghiệm</text>
+  <text class="small" x="865" y="376">ép phân phối mã ẩn gần chuẩn</text>
+  <text class="tiny" x="865" y="408">để lấy mẫu được lúc sinh ảnh</text>
+
+  <rect x="270" y="520" width="660" height="58" rx="14" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="543">Hàm mất mát VAE = lỗi tái tạo</text>
+  <text class="small" x="600" y="567">+ mức lệch khỏi tiên nghiệm</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="So sánh học mật độ và học lấy mẫu">
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect x="24" y="32" width="1152" height="480" rx="18" fill="#fafafa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="600" y="84" text-anchor="middle" font-size="34" font-weight="700" fill="#263238" font-family="Arial">Hai câu hỏi khác nhau khi sinh ảnh</text>
+
+  <g transform="translate(80,135)" font-family="Arial">
+    <rect x="0" y="0" width="470" height="300" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text x="235" y="42" text-anchor="middle" font-size="28" font-weight="700" fill="#0d47a1">Học mật độ</text>
+    <text x="235" y="78" text-anchor="middle" font-size="21" fill="#263238">Ảnh này có khả năng cao không?</text>
+    <line x1="60" y1="235" x2="410" y2="235" stroke="#455a64" stroke-width="3"/>
+    <line x1="60" y1="235" x2="60" y2="110" stroke="#455a64" stroke-width="3"/>
+    <path d="M62 225 C105 222 115 135 155 145 C205 158 212 88 260 112 C318 142 335 210 408 212" fill="none" stroke="#1565c0" stroke-width="5"/>
+    <circle cx="260" cy="112" r="8" fill="#ef6c00"/>
+    <text x="260" y="100" text-anchor="middle" font-size="18" fill="#e65100">x</text>
+    <text x="235" y="275" text-anchor="middle" font-size="20" fill="#455a64">cần tính hoặc ước lượng p_model(x)</text>
+  </g>
+
+  <g transform="translate(650,135)" font-family="Arial">
+    <rect x="0" y="0" width="470" height="300" rx="16" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text x="235" y="42" text-anchor="middle" font-size="28" font-weight="700" fill="#e65100">Học lấy mẫu</text>
+    <text x="235" y="78" text-anchor="middle" font-size="21" fill="#263238">Làm sao tạo ảnh mới trong miền dữ liệu?</text>
+
+    <circle cx="100" cy="165" r="48" fill="#eceff1" stroke="#607d8b" stroke-width="3"/>
+    <text x="100" y="172" text-anchor="middle" font-size="24" fill="#455a64">z</text>
+    <path d="M160 165 L260 165" stroke="#555" stroke-width="4" fill="none" marker-end="url(#arrow2)"/>
+    <rect x="275" y="105" width="120" height="120" rx="14" fill="#fff" stroke="#ef6c00" stroke-width="4"/>
+    <circle cx="322" cy="150" r="22" fill="#ffb74d"/>
+    <path d="M286 209 C308 176 328 192 345 166 C360 145 378 172 386 208 Z" fill="#66bb6a"/>
+    <text x="335" y="250" text-anchor="middle" font-size="20" fill="#455a64">không nhất thiết có p(x) đóng</text>
+  </g>
+
+  <rect x="280" y="456" width="640" height="54" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="600" y="477" text-anchor="middle" font-size="20" fill="#263238" font-family="Arial">Khác biệt này quyết định kiến trúc và hàm mất mát</text>
+  <text x="600" y="501" text-anchor="middle" font-size="20" fill="#263238" font-family="Arial">và cách đánh giá chất lượng ảnh</text>
+</svg>

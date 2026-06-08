@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="DDIM lấy mẫu ít bước hơn DDPM">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">DDIM: giữ mạng đã học, đổi đường lấy mẫu</text>
+
+  <g transform="translate(80,140)">
+    <rect x="0" y="0" width="1040" height="150" rx="18" fill="#ffebee" stroke="#c62828" stroke-width="3"/>
+    <text class="label" x="80" y="45">DDPM</text>
+    <text class="tiny" x="80" y="75">nhiều bước</text>
+    <circle cx="240" cy="80" r="18" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <circle cx="360" cy="80" r="18" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <circle cx="480" cy="80" r="18" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="600" cy="80" r="18" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="720" cy="80" r="18" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="840" cy="80" r="18" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <path d="M265 80 L335 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M385 80 L455 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M505 80 L575 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M625 80 L695 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M745 80 L815 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  </g>
+
+  <g transform="translate(80,370)">
+    <rect x="0" y="0" width="1040" height="150" rx="18" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="80" y="45">DDIM</text>
+    <text class="tiny" x="80" y="75">ít bước</text>
+    <circle cx="240" cy="80" r="18" fill="#cfd8dc" stroke="#607d8b" stroke-width="3"/>
+    <circle cx="470" cy="80" r="18" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="700" cy="80" r="18" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="930" cy="80" r="18" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <path d="M265 80 L445 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M495 80 L675 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M725 80 L905 80" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  </g>
+
+  <text class="small" x="600" y="580">Ít bước hơn giúp suy luận nhanh hơn,</text>
+  <text class="small" x="600" y="604">nhưng có thể đổi chất lượng và độ đa dạng.</text>
+</svg>

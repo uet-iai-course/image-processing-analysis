@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Vai trò của KL trong không gian ẩn">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .warn{font:700 18px Arial,sans-serif;fill:#c62828;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">KL làm mã ẩn liên tục hơn và dễ lấy mẫu hơn</text>
+
+  <g transform="translate(80,118)">
+    <rect x="0" y="0" width="500" height="430" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="250" y="42">Không có lực KL</text>
+    <line x1="70" y1="350" x2="430" y2="350" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="90" y1="370" x2="90" y2="80" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <ellipse cx="175" cy="180" rx="55" ry="30" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <ellipse cx="350" cy="155" rx="48" ry="30" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3"/>
+    <ellipse cx="305" cy="295" rx="65" ry="35" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <circle cx="250" cy="225" r="8" fill="#c62828"/>
+    <circle cx="410" cy="292" r="8" fill="#c62828"/>
+    <text class="warn" x="250" y="402">có nhiều vùng rỗng giữa các cụm</text>
+  </g>
+
+  <g transform="translate(620,118)">
+    <rect x="0" y="0" width="500" height="430" rx="16" fill="#fff" stroke="#cfd8dc" stroke-width="2"/>
+    <text class="label" x="250" y="42">Có lực KL về tiên nghiệm chuẩn</text>
+    <line x1="70" y1="350" x2="430" y2="350" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="90" y1="370" x2="90" y2="80" stroke="#90a4ae" stroke-width="2" marker-end="url(#arr)"/>
+    <ellipse cx="250" cy="220" rx="145" ry="105" fill="#f7f7f7" stroke="#90a4ae" stroke-width="3" stroke-dasharray="8 8"/>
+    <ellipse cx="210" cy="215" rx="70" ry="45" fill="#bbdefb" stroke="#1565c0" stroke-width="3" opacity="0.8"/>
+    <ellipse cx="290" cy="188" rx="62" ry="42" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3" opacity="0.8"/>
+    <ellipse cx="285" cy="270" rx="76" ry="48" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3" opacity="0.8"/>
+    <circle cx="250" cy="220" r="7" fill="#455a64"/>
+    <text class="small" x="250" y="402">các cụm gần vùng có mật độ cao</text>
+  </g>
+
+  <rect x="280" y="575" width="640" height="46" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="594">KL không làm ảnh đẹp trực tiếp;</text>
+  <text class="small" x="600" y="616">nó làm mã ẩn có luật để lấy mẫu.</text>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Trường vận tốc trong Flow Matching">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 21px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:17px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .math{font:700 20px Arial,sans-serif;fill:#263238;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="58">Trường vận tốc: mỗi điểm biết nên đi theo hướng nào</text>
+
+  <g transform="translate(80,175)">
+    <rect x="0" y="0" width="220" height="250" rx="16" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="110" y="38">Nhiễu ban đầu</text>
+    <text class="math" x="110" y="72">x<tspan baseline-shift="sub" font-size="13">0</tspan> ∼ p<tspan baseline-shift="sub" font-size="13">0</tspan></text>
+    <circle cx="70" cy="130" r="10" fill="#607d8b"/>
+    <circle cx="130" cy="100" r="10" fill="#607d8b"/>
+    <circle cx="155" cy="170" r="10" fill="#607d8b"/>
+    <circle cx="95" cy="195" r="10" fill="#607d8b"/>
+  </g>
+
+  <g transform="translate(460,145)">
+    <rect x="0" y="0" width="280" height="310" rx="18" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="4"/>
+    <text class="label" x="140" y="40">Trường vận tốc</text>
+    <text class="math" x="140" y="76">v<tspan baseline-shift="sub" font-size="13">θ</tspan>(x<tspan baseline-shift="sub" font-size="13">t</tspan>,t)</text>
+    <path d="M70 235 C100 180 150 135 215 100" stroke="#7b1fa2" stroke-width="5" fill="none" marker-end="url(#arr)"/>
+    <path d="M85 170 C125 150 155 130 190 105" stroke="#7b1fa2" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <path d="M95 260 C140 235 175 205 220 165" stroke="#7b1fa2" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+    <text class="small" x="140" y="285">giải phương trình dòng</text>
+  </g>
+
+  <g transform="translate(900,175)">
+    <rect x="0" y="0" width="220" height="250" rx="16" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="110" y="38">Dữ liệu đích</text>
+    <text class="math" x="110" y="72">x<tspan baseline-shift="sub" font-size="13">1</tspan> ∼ p<tspan baseline-shift="sub" font-size="13">data</tspan></text>
+    <rect x="62" y="112" width="95" height="70" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <path d="M72 168 Q96 130 128 152 T150 145 L150 175 L72 175 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="93" cy="135" r="18" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+  </g>
+
+  <path d="M310 300 L448 300" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M752 300 L888 300" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="310" y="540" width="580" height="54" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="math" x="600" y="574">d x<tspan baseline-shift="sub" font-size="13">t</tspan> / d t = v<tspan baseline-shift="sub" font-size="13">θ</tspan>(x<tspan baseline-shift="sub" font-size="13">t</tspan>,t)</text>
+</svg>

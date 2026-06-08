@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Kiến trúc VAE">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 22px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#fafafa"/>
+  <text class="title" x="600" y="56">VAE: bộ mã hóa sinh phân phối, bộ giải mã sinh ảnh</text>
+
+  <g transform="translate(65,145)">
+    <rect x="0" y="85" width="130" height="150" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="65" y="60">Ảnh vào</text>
+    <circle cx="54" cy="135" r="18" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <path d="M38 187 C70 145 115 160 108 198 L33 198 C33 193 35 190 38 187 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <text class="tiny" x="65" y="276">dữ liệu huấn luyện</text>
+  </g>
+
+  <g transform="translate(245,130)">
+    <rect x="0" y="60" width="210" height="220" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="105" y="35">Bộ mã hóa f<tspan baseline-shift="sub" font-size="14">φ</tspan></text>
+    <text class="small" x="105" y="115">CNN / MLP</text>
+    <text class="small" x="105" y="146">nhìn ảnh</text>
+    <text class="tiny" x="105" y="205">không sinh mã cố định</text>
+    <text class="tiny" x="105" y="230">mà sinh tham số</text>
+  </g>
+
+  <g transform="translate(520,92)">
+    <rect x="0" y="55" width="170" height="98" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="label" x="85" y="34">Trung bình</text>
+    <text x="85" y="100" text-anchor="middle" font-size="24" font-weight="700" fill="#1b5e20" font-family="Arial">μ<tspan baseline-shift="sub" font-size="15">φ</tspan>(x)</text>
+    <text class="tiny" x="85" y="128">vị trí cụm</text>
+  </g>
+  <g transform="translate(520,260)">
+    <rect x="0" y="55" width="170" height="98" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <text class="label" x="85" y="34">Độ lệch</text>
+    <text x="85" y="100" text-anchor="middle" font-size="24" font-weight="700" fill="#e65100" font-family="Arial">σ<tspan baseline-shift="sub" font-size="15">φ</tspan>(x)</text>
+    <text class="tiny" x="85" y="128">độ rộng cụm</text>
+  </g>
+
+  <g transform="translate(760,170)">
+    <ellipse cx="70" cy="95" rx="68" ry="43" fill="#c8e6c9" stroke="#2e7d32" stroke-width="4"/>
+    <circle cx="70" cy="95" r="8" fill="#1b5e20"/>
+    <circle cx="95" cy="82" r="6" fill="#1b5e20" opacity="0.75"/>
+    <circle cx="48" cy="110" r="6" fill="#1b5e20" opacity="0.75"/>
+    <text class="label" x="70" y="20">Lấy mẫu</text>
+    <text x="70" y="159" text-anchor="middle" font-size="16" font-weight="700" fill="#1b5e20" font-family="Arial">z = μ<tspan baseline-shift="sub" font-size="10">φ</tspan>(x) + σ<tspan baseline-shift="sub" font-size="10">φ</tspan>(x) · ε</text>
+    <text class="tiny" x="70" y="184">mã ẩn</text>
+  </g>
+
+  <g transform="translate(920,130)">
+    <rect x="0" y="60" width="210" height="220" rx="16" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="105" y="35">Bộ giải mã g<tspan baseline-shift="sub" font-size="14">θ</tspan></text>
+    <text class="small" x="105" y="115">dự đoán ảnh</text>
+    <text class="small" x="105" y="146">từ mã ẩn</text>
+    <text class="tiny" x="105" y="205">mô hình hóa</text>
+    <text class="tiny" x="105" y="230">xác suất ảnh</text>
+  </g>
+
+  <g transform="translate(995,445)">
+    <rect x="0" y="0" width="135" height="105" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+    <text class="label" x="68" y="42">Ảnh ra</text>
+    <text class="tiny" x="68" y="74">tái tạo</text>
+  </g>
+
+  <path d="M205 305 L235 305" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M465 250 L508 172" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M465 250 L508 340" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M700 202 L748 248" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M700 372 L748 306" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M845 265 L910 250" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M1025 420 L1025 440" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="290" y="560" width="620" height="54" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="582">Khác AE thường: mã ẩn là biến ngẫu nhiên,</text>
+  <text class="small" x="600" y="606">không phải một vectơ tất định.</text>
+</svg>

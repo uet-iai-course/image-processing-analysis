@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-label="Phân loại mô hình sinh">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+  </defs>
+  <rect x="24" y="28" width="1152" height="580" rx="18" fill="#fafafa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="600" y="80" text-anchor="middle" font-size="34" font-weight="700" fill="#263238" font-family="Arial">Các họ mô hình sinh ảnh</text>
+
+  <rect x="475" y="112" width="250" height="66" rx="14" fill="#f7efe6" stroke="#b15a2b" stroke-width="4"/>
+  <text x="600" y="154" text-anchor="middle" font-size="28" font-weight="700" fill="#8a3f1a" font-family="Arial">Mô hình sinh</text>
+
+  <path d="M600 178 L330 225" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M600 178 L870 225" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="130" y="225" width="400" height="86" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+  <text x="330" y="258" text-anchor="middle" font-size="24" font-weight="700" fill="#0d47a1" font-family="Arial">Mô hình tính được mật độ</text>
+  <text x="330" y="284" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">có hàm hoặc cận dưới</text>
+  <text x="330" y="305" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">cho p(x)</text>
+
+  <rect x="670" y="225" width="400" height="86" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+  <text x="870" y="258" text-anchor="middle" font-size="24" font-weight="700" fill="#e65100" font-family="Arial">Mô hình lấy mẫu trực tiếp</text>
+  <text x="870" y="284" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">không cần biểu diễn</text>
+  <text x="870" y="305" text-anchor="middle" font-size="17" fill="#455a64" font-family="Arial">p(x) dạng đóng</text>
+
+  <path d="M330 311 L190 355" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M330 311 L330 355" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M330 311 L470 355" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M870 311 L760 355" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M870 311 L980 355" stroke="#607d8b" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+
+  <g font-family="Arial">
+    <rect x="72" y="360" width="230" height="138" rx="12" fill="#ffffff" stroke="#1565c0" stroke-width="3"/>
+    <text x="187" y="392" text-anchor="middle" font-size="23" font-weight="700" fill="#0d47a1">Tự hồi quy</text>
+    <text x="187" y="422" text-anchor="middle" font-size="18" fill="#455a64">PixelCNN, PixelRNN</text>
+    <text x="187" y="450" text-anchor="middle" font-size="16" fill="#455a64">tính p(x) bằng</text>
+    <text x="187" y="471" text-anchor="middle" font-size="16" fill="#455a64">quy tắc chuỗi</text>
+    <text x="187" y="490" text-anchor="middle" font-size="17" fill="#c62828">lấy mẫu chậm</text>
+
+    <rect x="318" y="360" width="230" height="138" rx="12" fill="#ffffff" stroke="#2e7d32" stroke-width="3"/>
+    <text x="433" y="392" text-anchor="middle" font-size="23" font-weight="700" fill="#1b5e20">VAE</text>
+    <text x="433" y="422" text-anchor="middle" font-size="18" fill="#455a64">biến ẩn z</text>
+    <text x="433" y="452" text-anchor="middle" font-size="18" fill="#455a64">tối ưu ELBO</text>
+    <text x="433" y="480" text-anchor="middle" font-size="18" fill="#c62828">mẫu có thể mờ</text>
+
+    <rect x="564" y="360" width="230" height="138" rx="12" fill="#ffffff" stroke="#7b1fa2" stroke-width="3"/>
+    <text x="679" y="392" text-anchor="middle" font-size="22" font-weight="700" fill="#4a148c">Dòng chuẩn hóa</text>
+    <text x="679" y="422" text-anchor="middle" font-size="17" fill="#455a64">biến đổi khả nghịch</text>
+    <text x="679" y="452" text-anchor="middle" font-size="17" fill="#455a64">tính xác suất</text>
+    <text x="679" y="480" text-anchor="middle" font-size="17" fill="#455a64">gắn với Flow Matching</text>
+
+    <rect x="810" y="360" width="230" height="138" rx="12" fill="#ffffff" stroke="#ef6c00" stroke-width="3"/>
+    <text x="925" y="392" text-anchor="middle" font-size="23" font-weight="700" fill="#e65100">GAN</text>
+    <text x="925" y="422" text-anchor="middle" font-size="17" fill="#455a64">bộ sinh đấu</text>
+    <text x="925" y="444" text-anchor="middle" font-size="17" fill="#455a64">bộ phân biệt</text>
+    <text x="925" y="466" text-anchor="middle" font-size="17" fill="#455a64">hàm mất mát đối nghịch</text>
+    <text x="925" y="488" text-anchor="middle" font-size="17" fill="#c62828">huấn luyện khó ổn định</text>
+
+    <rect x="564" y="515" width="476" height="72" rx="12" fill="#ffffff" stroke="#c62828" stroke-width="3"/>
+    <text x="802" y="542" text-anchor="middle" font-size="22" font-weight="700" fill="#b71c1c">Khuếch tán và khớp dòng</text>
+    <text x="802" y="568" text-anchor="middle" font-size="17" fill="#455a64">học đường ngược từ nhiễu đến ảnh</text>
+    <text x="802" y="590" text-anchor="middle" font-size="17" fill="#455a64">DDPM, DDIM, Flow Matching</text>
+  </g>
+</svg>

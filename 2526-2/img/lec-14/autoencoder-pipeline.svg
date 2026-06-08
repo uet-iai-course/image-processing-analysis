@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-label="Luồng dữ liệu của mô hình tự mã hóa">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#607d8b"/>
+    </marker>
+    <style>
+      .title{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .label{font:700 24px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .small{font:18px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .tiny{font:16px Arial,sans-serif;fill:#607d8b;text-anchor:middle}
+      .card{fill:#fff;stroke:#cfd8dc;stroke-width:2}
+    </style>
+  </defs>
+  <rect width="1200" height="620" fill="#fafafa"/>
+  <text class="title" x="600" y="54">Tự mã hóa: nén ảnh rồi khôi phục ảnh</text>
+
+  <g transform="translate(70,118)">
+    <rect class="card" x="0" y="0" width="180" height="340" rx="16"/>
+    <text class="label" x="90" y="38">Ảnh vào</text>
+    <rect x="38" y="78" width="104" height="104" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M48 158 C66 112 102 103 124 132 C137 120 154 132 147 160 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="82" cy="118" r="17" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <rect x="55" y="204" width="70" height="18" rx="8" fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+    <text class="small" x="90" y="268">ảnh gốc</text>
+    <text class="tiny" x="90" y="296">nhiều điểm ảnh</text>
+  </g>
+
+  <g transform="translate(320,118)">
+    <rect x="0" y="38" width="220" height="264" rx="16" fill="#e3f2fd" stroke="#1565c0" stroke-width="4"/>
+    <text class="label" x="110" y="0">Bộ mã hóa</text>
+    <text class="small" x="110" y="90">trích đặc trưng</text>
+    <path d="M48 130 L172 130 L142 190 L78 190 Z" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <text x="110" y="168" text-anchor="middle" font-size="28" font-weight="700" fill="#0d47a1" font-family="Arial">f<tspan baseline-shift="sub" font-size="17">φ</tspan></text>
+    <text class="small" x="110" y="230">giảm chiều</text>
+    <text class="tiny" x="110" y="260">giữ phần cần tái tạo</text>
+  </g>
+
+  <g transform="translate(590,118)">
+    <rect x="0" y="86" width="130" height="168" rx="16" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+    <text class="label" x="65" y="0">Mã ẩn</text>
+    <text class="small" x="65" y="145">biểu diễn</text>
+    <text class="small" x="65" y="171">gọn</text>
+    <text class="tiny" x="65" y="207">nút thắt</text>
+  </g>
+
+  <g transform="translate(780,118)">
+    <rect x="0" y="38" width="220" height="264" rx="16" fill="#fff3e0" stroke="#ef6c00" stroke-width="4"/>
+    <text class="label" x="110" y="0">Bộ giải mã</text>
+    <text class="small" x="110" y="90">dựng ảnh</text>
+    <path d="M78 130 L142 130 L172 190 L48 190 Z" fill="#ffe0b2" stroke="#ef6c00" stroke-width="3"/>
+    <text x="110" y="168" text-anchor="middle" font-size="28" font-weight="700" fill="#e65100" font-family="Arial">g<tspan baseline-shift="sub" font-size="17">θ</tspan></text>
+    <text class="small" x="110" y="230">tăng chiều</text>
+    <text class="tiny" x="110" y="260">phục hồi kích thước ảnh</text>
+  </g>
+
+  <g transform="translate(1050,118)">
+    <rect class="card" x="0" y="0" width="130" height="340" rx="16"/>
+    <text class="label" x="65" y="38">Ảnh ra</text>
+    <rect x="13" y="78" width="104" height="104" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M23 158 C41 112 77 103 99 132 C112 120 129 132 122 160 Z" fill="#90caf9" stroke="#1565c0" stroke-width="3"/>
+    <circle cx="57" cy="118" r="17" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <rect x="30" y="204" width="70" height="18" rx="8" fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+    <text class="small" x="65" y="268">tái tạo</text>
+    <text class="tiny" x="65" y="296">gần ảnh vào</text>
+  </g>
+
+  <path d="M260 288 L308 288" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M548 288 L578 288" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M728 288 L768 288" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+  <path d="M1010 288 L1038 288" stroke="#607d8b" stroke-width="4" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="360" y="505" width="480" height="58" rx="12" fill="#f7f7f7" stroke="#cfd8dc" stroke-width="2"/>
+  <text class="small" x="600" y="528">Mục tiêu huấn luyện:</text>
+  <text class="small" x="600" y="552">ảnh ra càng giống ảnh vào càng tốt</text>
+</svg>
