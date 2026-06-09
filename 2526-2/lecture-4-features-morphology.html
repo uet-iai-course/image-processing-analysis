@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 4: Đặc trưng ảnh và biến đổi hình thái</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 4: Đặc trưng ảnh và biến đổi hình thái</h3>
+          <p>Cạnh · Đường · Vân ảnh · Hough transform · Erosion · Dilation · Opening · Closing</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Cạnh</strong><p>Gradient, Sobel, Laplace, LoG, Canny.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Đường</strong><p>Hough transform và voting trong không gian tham số.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Vân ảnh</strong><p>Edge density, LBP, GLCM, Haralick.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Hình thái</strong><p>Structuring element, erosion, dilation, opening, closing.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Làm sao chuyển ảnh điểm ảnh thành thông tin hình dạng: biên, đường, vùng, texture và cấu trúc đối tượng?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 7 Feature extraction; Week 8 Morphological operations.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Tính trực giác gradient và dùng nó để phát hiện cạnh.</li>
+            <li>Giải thích Hough transform như một cơ chế voting cho mô hình đường.</li>
+            <li>Nêu được các descriptor texture cơ bản và tình huống dùng.</li>
+            <li>Thiết kế chuỗi morphology đơn giản để lọc vùng, nối đứt gãy hoặc trích biên.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Phát hiện cạnh</h1><p>Cạnh là thay đổi cục bộ đáng kể của cường độ ảnh.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Gradient</strong><p>Độ lớn và hướng thay đổi cường độ.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Kernels</strong><p>Pixel difference, Roberts, Prewitt, Sobel.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Second derivative</strong><p>Laplace, zero-crossing, LoG.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Canny</strong><p>Smooth → gradient → NMS → double threshold.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Trực giác</span><strong>Edge là gì?</strong><p>Minh họa profile 1D qua một biên và đạo hàm bậc nhất/bậc hai.</p></div>
+            <div class="stub-slide"><span class="stub-label">Công thức</span><strong>Gradient 2D rời rạc</strong><p>\(G_x, G_y\), magnitude, direction; dùng ví dụ kernel nhỏ.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Roberts, Prewitt, Sobel</strong><p>Điểm khác nhau về hướng, smoothing và độ nhạy nhiễu.</p></div>
+            <div class="stub-slide"><span class="stub-label">Pipeline</span><strong>Canny edge detection</strong><p>Bung thành 4 slide nếu triển khai chi tiết.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Phát hiện đường</h1><p>Nhiều điểm cạnh cùng “bỏ phiếu” cho một đường.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Line fitting khó</strong><p>Clutter, missing edge, nhiều mô hình cùng lúc.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Voting</strong><p>Mỗi điểm cạnh vote cho tham số đường phù hợp.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Polar form</strong><p>\((\rho,\theta)\) tránh vấn đề slope vô hạn.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Vấn đề</span><strong>Fitting line với dữ liệu nhiễu</strong><p>Hình nhiều điểm cạnh, hỏi có bao nhiêu đường.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ý tưởng</span><strong>Không gian ảnh → không gian tham số</strong><p>Một điểm ảnh thành đường cong trong Hough space.</p></div>
+            <div class="stub-slide"><span class="stub-label">Thuật toán</span><strong>Accumulator array</strong><p>Edge points vote; peak ứng với đường mạnh.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cảnh báo</span><strong>Nhiễu và ngưỡng peak</strong><p>Không phải peak nào cũng là đường có nghĩa.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Vân ảnh</h1><p>Texture mô tả cấu trúc lặp và thống kê cục bộ.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Khái niệm</strong><p>Granularity, directionality, regularity, randomness.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Edge-based</strong><p>Edge density, histogram hướng cạnh.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Statistical descriptors</strong><p>LBP, GLCM, Haralick features.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Trực giác</span><strong>Texture khác object shape thế nào?</strong><p>Sand/pebbles/bricks/stucco làm ví dụ trực quan.</p></div>
+            <div class="stub-slide"><span class="stub-label">Measure</span><strong>Edge density</strong><p>Từ edge detector đến số lượng/hướng cạnh trong cửa sổ.</p></div>
+            <div class="stub-slide"><span class="stub-label">LBP</span><strong>Mã nhị phân mẫu cục bộ</strong><p>Minh họa 3x3, ngưỡng theo pixel trung tâm, histogram LBP.</p></div>
+            <div class="stub-slide"><span class="stub-label">GLCM</span><strong>Đồng xuất hiện mức xám</strong><p>Offset, angle, contrast/correlation; dùng như descriptor phân loại/segmentation.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Biến đổi hình thái</h1><p>Phân tích hình dạng bằng tập điểm và structuring element.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Set view</strong><p>Ảnh nhị phân như tập điểm foreground.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Erosion/dilation</strong><p>Co/mở rộng đối tượng theo structuring element.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Opening/closing</strong><p>Lọc hạt nhỏ, nối đứt gãy, lấp lỗ nhỏ.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Algorithms</strong><p>Boundary, hole filling, connected components.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">SE</span><strong>Structuring element như đầu dò</strong><p>Minh họa SE trượt trên ảnh nhị phân và kiểm tra hit/miss.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cặp đôi</span><strong>Erosion vs dilation</strong><p>Co, nở, local min/max; duality.</p></div>
+            <div class="stub-slide"><span class="stub-label">Tổ hợp</span><strong>Opening vs closing</strong><p>Opening loại protrusion/hạt nhỏ; closing nối gap/lấp lỗ nhỏ.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ứng dụng</span><strong>License plate/QR region detection</strong><p>Threshold → opening → dilation → connected components.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Đặc trưng</strong><p>Biến ảnh thô thành cạnh, đường, texture, vùng.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Voting</strong><p>Hough chống nhiễu bằng tích lũy bằng chứng.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Morphology</strong><p>Rất mạnh khi ảnh đã được nhị phân hóa hợp lý.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Gradient magnitude và gradient direction dùng để làm gì?</li>
+            <li>Vì sao Canny cần non-maximum suppression?</li>
+            <li>Hough transform biến bài toán tìm đường thành bài toán gì?</li>
+            <li>Opening và closing khác nhau ở tác dụng hình học nào?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §4: Đặc trưng ảnh và biến đổi hình thái</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

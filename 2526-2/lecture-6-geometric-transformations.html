@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 6: Biến đổi hình học</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 6: Biến đổi hình học</h3>
+          <p>Coordinate mapping · Inverse warping · Interpolation · Affine · Projective · Polynomial warp · Registration</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Bản chất</strong><p>Đổi vị trí pixel, giữ giá trị màu theo phép lấy mẫu.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Mapping</strong><p>Forward mapping, backward mapping, inverse warping.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Interpolation</strong><p>Nearest, bilinear, bicubic.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Mô hình biến đổi</strong><p>Scaling, translation, rotation, affine, projective, polynomial.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Khi kéo, xoay hoặc nắn ảnh, pixel đầu ra lấy giá trị từ đâu và vì sao ảnh không bị thủng lỗ?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 11 Geometric transformation.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Phân biệt biến đổi cường độ và biến đổi tọa độ.</li>
+            <li>Giải thích vì sao inverse mapping thường tốt hơn forward mapping.</li>
+            <li>Chọn nội suy phù hợp theo yêu cầu tốc độ/chất lượng.</li>
+            <li>Đọc được ma trận affine/projective và liên hệ với registration/rectification.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Bản chất biến đổi hình học</h1><p>Không đổi màu trước; đổi vị trí và lấy mẫu lại.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Không gian tọa độ</strong><p>Input coordinates và output coordinates.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Hai bước</strong><p>Spatial transformation + intensity interpolation.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Ứng dụng</strong><p>Hiệu ứng, calibration, rectification, registration, morphing.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Hook</span><strong>Xoay ảnh 21 độ</strong><p>Hỏi: pixel ở tọa độ mới có giá trị nào?</p></div>
+            <div class="stub-slide"><span class="stub-label">Khái niệm</span><strong>Color unchanged, position changed</strong><p>So sánh với point operation và filtering.</p></div>
+            <div class="stub-slide"><span class="stub-label">Pipeline</span><strong>Transform + interpolate</strong><p>Sơ đồ hai thao tác cơ bản của geometric transform.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ứng dụng</span><strong>Calibration, registration, rectification</strong><p>Đặt ví dụ ảnh tài liệu, ảnh y tế, ảnh vệ tinh.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Forward và backward mapping</h1><p>Đi từ input sang output hoặc hỏi ngược output lấy từ input nào.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Forward</strong><p>Duyệt input, tính vị trí mới, dễ tạo hole/overlap.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Backward</strong><p>Duyệt output, dùng inverse transform để sample input.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Inverse warping</strong><p>Cách triển khai thực tế phổ biến.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Forward</span><strong>Pixel input bắn tới đâu?</strong><p>Minh họa lỗ trống khi nhiều output không nhận pixel.</p></div>
+            <div class="stub-slide"><span class="stub-label">Backward</span><strong>Pixel output hỏi ngược</strong><p>Mỗi pixel output có một tọa độ input để lấy mẫu.</p></div>
+            <div class="stub-slide"><span class="stub-label">Công thức</span><strong>\((x,y)=T^{-1}(x',y')\)</strong><p>Nhấn mạnh cần invert transform.</p></div>
+            <div class="stub-slide"><span class="stub-label">Demo</span><strong>Grid mapping</strong><p>Dùng lưới tọa độ để thấy biến dạng rõ hơn ảnh tự nhiên.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Nội suy cường độ</h1><p>Tọa độ nguồn thường không rơi đúng vào grid pixel.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Nearest</strong><p>Nhanh, giữ giá trị gốc, dễ răng cưa.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Bilinear</strong><p>Dùng 4 láng giềng, cân bằng chất lượng/tốc độ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Bicubic</strong><p>Mượt hơn, chi phí cao hơn, có thể overshoot.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Vấn đề</span><strong>Tọa độ input là số thực</strong><p>Ví dụ output pixel cần sample tại \((12.3, 8.7)\).</p></div>
+            <div class="stub-slide"><span class="stub-label">Nearest</span><strong>Chọn pixel gần nhất</strong><p>Ưu/nhược: nhanh, blocky.</p></div>
+            <div class="stub-slide"><span class="stub-label">Bilinear</span><strong>Nội suy theo 4 điểm</strong><p>Dùng sơ đồ ô vuông, trọng số theo khoảng cách.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Nearest vs bilinear vs bicubic</strong><p>Cùng ảnh xoay -21 độ, crop cạnh chữ/đường.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Các mô hình biến đổi</h1><p>Ma trận biến đổi mô tả những gì được bảo toàn.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Similarity</strong><p>Scale, rotation, translation.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Affine</strong><p>Bảo toàn song song; cho phép shear.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Projective</strong><p>Homography, bảo toàn thẳng hàng.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Polynomial</strong><p>Warp phi tuyến từ control points.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Ma trận</span><strong>Homogeneous coordinates</strong><p>Biểu diễn translation/rotation/scaling bằng ma trận 3x3.</p></div>
+            <div class="stub-slide"><span class="stub-label">Affine</span><strong>Parallelism preserved</strong><p>Hình chữ nhật thành hình bình hành; góc/độ dài có thể đổi.</p></div>
+            <div class="stub-slide"><span class="stub-label">Projective</span><strong>Perspective correction</strong><p>Nắn ảnh tài liệu hoặc mặt phẳng nhìn nghiêng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Control points</span><strong>Polynomial warp và morphing</strong><p>Đi từ các cặp điểm tương ứng đến hàm biến dạng đầy đủ.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Geometric transform</strong><p>Vấn đề chính là tọa độ, không phải cường độ.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Inverse mapping</strong><p>Giúp mỗi output pixel được lấy mẫu đầy đủ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Interpolation</strong><p>Là nguồn đánh đổi giữa tốc độ, độ sắc và artifact.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Vì sao forward mapping có thể tạo lỗ trong ảnh đầu ra?</li>
+            <li>Bilinear interpolation dùng những pixel nào?</li>
+            <li>Affine và projective transformation bảo toàn tính chất gì?</li>
+            <li>Image registration cần geometric transformation để làm gì?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §6: Biến đổi hình học</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

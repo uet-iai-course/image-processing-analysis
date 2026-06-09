@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 7: Khôi phục ảnh và nén ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 7: Khôi phục ảnh và nén ảnh</h3>
+          <p>Noise models · Restoration · Adaptive filters · Inverse/Wiener · Redundancy · Lossless/lossy · JPEG</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Suy giảm ảnh</strong><p>Degradation function, noise, acquisition/transmission.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Khôi phục</strong><p>Mean/order-statistic/adaptive filters, notch filter.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Deconvolution</strong><p>Inverse filtering và Wiener filtering.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Nén ảnh</strong><p>Redundancy, lossless/lossy, JPEG pipeline.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Khi ảnh đã bị hỏng hoặc quá lớn để lưu/truyền, ta nên phục hồi thông tin nào và bỏ bớt thông tin nào?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 12 Noise and Restoration; Week 13 Compression.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Mô tả mô hình suy giảm ảnh \(g = h * f + n\).</li>
+            <li>Chọn filter khôi phục theo loại nhiễu và giả định thống kê.</li>
+            <li>Giải thích vì sao inverse filtering không đủ khi có nhiễu.</li>
+            <li>Đọc pipeline JPEG và liên hệ nén với dư thừa thị giác/thống kê.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Mô hình nhiễu và suy giảm</h1><p>Khôi phục ảnh bắt đầu bằng giả định về cách ảnh bị hỏng.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Degradation model</strong><p>Ảnh gốc, degradation function, additive noise.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Nguồn nhiễu</strong><p>Sensor, ánh sáng, nhiệt độ, truyền dẫn.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Noise PDFs</strong><p>Gaussian, Rayleigh, gamma, exponential, uniform, salt-and-pepper.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Model</span><strong>Image degradation/restoration process</strong><p>Sơ đồ \(f \rightarrow h \rightarrow +n \rightarrow g\), khôi phục tìm \(\hat{f}\).</p></div>
+            <div class="stub-slide"><span class="stub-label">Nguồn</span><strong>Nhiễu đến từ đâu?</strong><p>Acquisition và transmission; ví dụ sensor poor illumination/high temperature.</p></div>
+            <div class="stub-slide"><span class="stub-label">PDF</span><strong>Noise models</strong><p>Không cần chứng minh; dùng histogram ảnh nhiễu để nhận diện.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ước lượng</span><strong>Noise parameters từ vùng nền</strong><p>Mean/variance trên patch nền gần hằng.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Khôi phục khi chỉ có nhiễu</h1><p>Lọc trong miền không gian dựa trên thống kê cục bộ.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Mean filters</strong><p>Arithmetic, geometric, harmonic, contraharmonic.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Order-statistic</strong><p>Median, max/min, midpoint, alpha-trimmed.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Adaptive</strong><p>Local noise reduction, adaptive median.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Periodic noise</strong><p>Notch/bandreject trong miền tần số.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Mean family</span><strong>Mean filters theo loại nhiễu</strong><p>Harmonic cho salt, contraharmonic chọn dấu \(Q\) cho salt/pepper.</p></div>
+            <div class="stub-slide"><span class="stub-label">Median family</span><strong>Order-statistic filters</strong><p>Median cho impulse noise; max/min cho pepper/salt.</p></div>
+            <div class="stub-slide"><span class="stub-label">Adaptive</span><strong>Filter thay đổi theo phương sai cục bộ</strong><p>Vùng phẳng → average; vùng edge → giữ gần ảnh gốc.</p></div>
+            <div class="stub-slide"><span class="stub-label">Periodic</span><strong>Notch filtering</strong><p>Loại nhiễu tuần hoàn bằng cách chặn các peak trong phổ.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Khôi phục blur: inverse và Wiener</h1><p>Đảo suy giảm phải kiểm soát nhiễu.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Estimate \(H\)</strong><p>Observation, experimentation, modeling, PSF.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Inverse filter</strong><p>Đơn giản nhưng dễ khuếch đại nhiễu khi \(H\) nhỏ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Wiener</strong><p>Tối thiểu MSE, dùng degradation và noise statistics.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">PSF</span><strong>Degradation function đến từ đâu?</strong><p>Quan sát patch, thực nghiệm với thiết bị, hoặc mô hình turbulence/motion.</p></div>
+            <div class="stub-slide"><span class="stub-label">Inverse</span><strong>Chia cho \(H(u,v)\)</strong><p>Giải thích vì sao tần số có \(H\) nhỏ làm nhiễu thống trị.</p></div>
+            <div class="stub-slide"><span class="stub-label">Wiener</span><strong>Khôi phục dưới ràng buộc thống kê</strong><p>Minimize expected squared error, cân bằng signal/noise.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Inverse vs Wiener</strong><p>Cùng ảnh Gaussian noise với nhiều variance để nhìn failure case.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Nén ảnh</h1><p>Nén thành công vì dữ liệu ảnh chứa nhiều dư thừa.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Redundancy</strong><p>Spatial, coding, psychovisual, frequency.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Lossless</strong><p>Huffman, RLE, LZW, GIF/BMP.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Lossy</strong><p>Bỏ thông tin ít quan trọng với hệ thị giác.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">JPEG</strong><p>Color conversion, chroma subsampling, DCT, quantization, entropy coding.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Động lực</span><strong>Ảnh/video thô lớn đến mức nào?</strong><p>Tính nhanh storage cho ảnh 1000x1000 RGB và video 90 phút.</p></div>
+            <div class="stub-slide"><span class="stub-label">Dư thừa</span><strong>Data != information</strong><p>Pixel lân cận tương quan; mắt ít nhạy với chroma/high frequency.</p></div>
+            <div class="stub-slide"><span class="stub-label">Lossless</span><strong>RLE/Huffman/LZW</strong><p>Chỉ giữ một hoặc hai ví dụ ngắn, không biến thành bài mã hóa dài.</p></div>
+            <div class="stub-slide"><span class="stub-label">JPEG</span><strong>Pipeline 8x8 block</strong><p>RGB→YUV, chroma subsampling, DCT, quantization, zig-zag, entropy coding.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Khôi phục</strong><p>Cần mô hình suy giảm và nhiễu, không chỉ “làm đẹp ảnh”.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Wiener</strong><p>Đảo blur có kiểm soát noise tốt hơn inverse filter thuần.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Nén</strong><p>Là bài toán giữ thông tin quan trọng và loại dư thừa.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Gaussian noise và salt-and-pepper noise nên dùng filter khác nhau thế nào?</li>
+            <li>Vì sao inverse filter bị nhiễu phá mạnh?</li>
+            <li>Psychovisual redundancy là gì?</li>
+            <li>JPEG mất thông tin ở bước nào nhiều nhất?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §7: Khôi phục ảnh và nén ảnh</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

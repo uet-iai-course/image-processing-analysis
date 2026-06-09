@@ -199,6 +199,115 @@
     color: #666;
 }
 
+/* ============================================
+   Part 1 outline decks
+   ============================================ */
+.reveal .outline-grid-2,
+.reveal .outline-grid-3,
+.reveal .outline-grid-4 {
+    display: grid;
+    gap: 12px;
+}
+
+.reveal .outline-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.reveal .outline-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.reveal .outline-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.reveal .outline-card {
+    border-radius: 8px;
+    padding: 10px 13px;
+    background: #fafafa;
+    border-left: 5px solid #90A4AE;
+}
+
+.reveal .outline-card p,
+.reveal .stub-slide p {
+    margin: 0.35em 0 0;
+}
+
+.reveal .outline-blue {
+    background: #e3f2fd;
+    border-left-color: #1565c0;
+}
+
+.reveal .outline-green {
+    background: #e8f5e9;
+    border-left-color: #2e7d32;
+}
+
+.reveal .outline-orange {
+    background: #fff3e0;
+    border-left-color: #ef6c00;
+}
+
+.reveal .outline-red {
+    background: #ffebee;
+    border-left-color: #c62828;
+}
+
+.reveal .outline-purple {
+    background: #f3e5f5;
+    border-left-color: #7b1fa2;
+}
+
+.reveal .outline-card strong.outline-title {
+    color: #263238;
+}
+
+.reveal .stub-slide {
+    border: 1px dashed #b0bec5;
+    border-radius: 8px;
+    padding: 10px 13px;
+    background: #fbfbfb;
+}
+
+.reveal .stub-label {
+    display: inline-block;
+    color: #546e7a;
+    font-size: 0.68em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2em;
+}
+
+.reveal .objective-box {
+    background: #fff3e0;
+    border-left: 5px solid #ff9800;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.reveal .source-note {
+    margin-top: 0.55em;
+    color: #666;
+    font-size: 0.75em;
+    font-style: italic;
+}
+
+@media (max-width: 900px) {
+    .reveal .outline-grid-3,
+    .reveal .outline-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .reveal .outline-grid-2,
+    .reveal .outline-grid-3,
+    .reveal .outline-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .reveal .fst-italic {
     font-style: italic;
 }

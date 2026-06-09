@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 8: Đặc trưng ảnh cục bộ</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 8: Đặc trưng ảnh cục bộ</h3>
+          <p>Keypoints · Descriptors · HOG · SIFT · SURF · ORB · Feature matching · Bag of visual words</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Vì sao cần descriptor?</strong><p>Template matching không bền với scale, rotation, viewpoint.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">HOG</strong><p>Histogram hướng gradient cho phát hiện đối tượng cổ điển.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">SIFT/SURF</strong><p>Keypoint scale-space và descriptor tương đối bền vững.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Matching pipeline</strong><p>Detect → describe → match → verify.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Làm sao mô tả một vùng ảnh sao cho vẫn nhận ra nó khi ảnh bị xoay, phóng to, đổi sáng hoặc nhìn từ góc khác?</p>
+          </div>
+          <p class="source-note">Deck bổ sung cho Phần 1, nối template matching, edge/texture và các bài học máy ở Phần 2.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Phân biệt detector, descriptor và matcher.</li>
+            <li>Giải thích HOG như histogram hướng gradient có chuẩn hóa block.</li>
+            <li>Mô tả pipeline SIFT: scale-space, keypoint localization, orientation, descriptor.</li>
+            <li>Nhận biết tradeoff giữa SIFT/SURF/ORB và cách kiểm tra match bằng RANSAC/homography.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Từ template đến đặc trưng cục bộ</h1><p>Không phải lúc nào cùng một đối tượng cũng xuất hiện y hệt.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Giới hạn template</strong><p>Scale, rotation, perspective, illumination, occlusion.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Detector/descriptor</strong><p>Tìm điểm đáng chú ý và mô tả vùng quanh điểm.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Tính bất biến</strong><p>Invariance/equivariance theo biến đổi ảnh.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Hook</span><strong>Logo/ảnh bìa sách dưới góc nhìn khác</strong><p>Template matching thất bại nhưng con người vẫn nhận ra.</p></div>
+            <div class="stub-slide"><span class="stub-label">Khái niệm</span><strong>Keypoint, patch, descriptor vector</strong><p>Ảnh → điểm đặc trưng → vector mô tả → so khớp.</p></div>
+            <div class="stub-slide"><span class="stub-label">Tiêu chí</span><strong>Repeatability và distinctiveness</strong><p>Điểm tốt phải xuất hiện lại và đủ khác các điểm khác.</p></div>
+            <div class="stub-slide"><span class="stub-label">Pipeline</span><strong>Detect → describe → match → verify</strong><p>Sơ đồ tổng quát dùng xuyên suốt bài.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />HOG</h1><p>Hình dạng cục bộ được mã hóa bằng hướng gradient.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Gradient</strong><p>Tái dùng \(G_x, G_y\) từ bài cạnh.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Cells</strong><p>Tích lũy histogram hướng trong vùng nhỏ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Blocks</strong><p>Chuẩn hóa để giảm ảnh hưởng chiếu sáng.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Ứng dụng</strong><p>HOG + SVM cho pedestrian detection cổ điển.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Ý tưởng</span><strong>Đếm hướng cạnh thay vì điểm ảnh</strong><p>Vùng người/xe/vật thể có phân bố hướng gradient đặc trưng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Pipeline</span><strong>HOG step-by-step</strong><p>Gradient → cell histogram → block normalization → feature vector.</p></div>
+            <div class="stub-slide"><span class="stub-label">Normalization</span><strong>Vì sao chuẩn hóa block?</strong><p>Chiếu sáng thay đổi nhưng hình dạng cạnh vẫn tương tự.</p></div>
+            <div class="stub-slide"><span class="stub-label">Giới hạn</span><strong>HOG không phải detector keypoint</strong><p>Thường dùng trên window cố định hoặc pyramid trượt.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />SIFT</h1><p>Tìm điểm bền vững theo scale và mô tả bằng histogram hướng gradient.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Scale-space</strong><p>Gaussian pyramid và Difference of Gaussian.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Localization</strong><p>Lọc keypoint yếu hoặc nằm trên edge.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Orientation</strong><p>Gán hướng chính để chống xoay.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Descriptor</strong><p>4x4 cells, 8 hướng, vector 128 chiều.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Scale</span><strong>Điểm nổi bật ở nhiều kích thước</strong><p>Đối tượng gần/xa cần detector không phụ thuộc scale.</p></div>
+            <div class="stub-slide"><span class="stub-label">DoG</span><strong>Approximate LoG bằng Difference of Gaussian</strong><p>Liên hệ lại LoG ở bài phát hiện cạnh.</p></div>
+            <div class="stub-slide"><span class="stub-label">Orientation</span><strong>Xoay patch về hướng chuẩn</strong><p>Hướng chính từ histogram gradient quanh keypoint.</p></div>
+            <div class="stub-slide"><span class="stub-label">Descriptor</span><strong>Vector 128 chiều</strong><p>Chia patch thành 4x4 cells, mỗi cell histogram 8 hướng.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />SURF, ORB và matching</h1><p>Descriptor tốt phải đi cùng matcher và kiểm chứng hình học.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">SURF</strong><p>Tăng tốc bằng integral image và Haar-like responses.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">ORB</strong><p>FAST keypoints + BRIEF descriptor có hướng, nhị phân và nhanh.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Matching</strong><p>L2/cosine cho float descriptor; Hamming cho binary descriptor.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Verification</strong><p>Ratio test, cross-check, RANSAC, homography.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">SURF</span><strong>Ý tưởng tăng tốc SIFT</strong><p>Chỉ cần mức khái niệm: box filters, integral images, robust features.</p></div>
+            <div class="stub-slide"><span class="stub-label">ORB</span><strong>Descriptor nhị phân cho thời gian thực</strong><p>FAST + BRIEF, Hamming distance, phù hợp embedded/mobile.</p></div>
+            <div class="stub-slide"><span class="stub-label">Match</span><strong>Nearest neighbor không đủ</strong><p>Ratio test loại match mơ hồ; cross-check tăng độ tin cậy.</p></div>
+            <div class="stub-slide"><span class="stub-label">Geometry</span><strong>RANSAC + homography</strong><p>Match đúng phải phù hợp một biến đổi hình học chung.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">5.</span><br />Ứng dụng và cầu nối sang Phần 2</h1><p>Đặc trưng thủ công là nền của nhiều pipeline thị giác trước deep learning.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 5</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Object recognition</strong><p>Bag of visual words, nearest neighbor, SVM.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Stitching/registration</strong><p>Feature match → homography → warp/blend.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Cầu nối ML/DL</strong><p>Từ feature engineering sang representation learning.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">BoVW</span><strong>Ảnh như túi visual words</strong><p>Descriptor → clustering → histogram visual words → classifier.</p></div>
+            <div class="stub-slide"><span class="stub-label">Stitching</span><strong>Panorama cổ điển</strong><p>SIFT/ORB matches → RANSAC homography → geometric warp.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Hand-crafted vs learned features</strong><p>Phần 2: CNN học feature trực tiếp từ dữ liệu thay vì thiết kế thủ công.</p></div>
+            <div class="stub-slide"><span class="stub-label">Review</span><strong>Checklist pipeline cổ điển</strong><p>Preprocess → features → matching/classifier → geometric/statistical verification.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Descriptor</strong><p>Mã hóa vùng ảnh để so sánh bền hơn pixel thô.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">SIFT/HOG</strong><p>Đều dựa vào gradient nhưng phục vụ mục tiêu khác nhau.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Phần 2</strong><p>Deep learning học đặc trưng thay vì viết descriptor thủ công.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Detector và descriptor khác nhau ở đâu?</li>
+            <li>HOG dùng chuẩn hóa block để xử lý vấn đề gì?</li>
+            <li>SIFT chống scale và rotation bằng những bước nào?</li>
+            <li>Vì sao cần RANSAC sau khi match descriptor?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §8: Đặc trưng ảnh cục bộ</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

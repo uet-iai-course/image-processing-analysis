@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 1: Giới thiệu và thao tác mức điểm ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 1: Giới thiệu và thao tác mức điểm ảnh</h3>
+          <p>Ảnh số · Biểu diễn · Lượng tử hóa · Gamma · Ngưỡng · Phép toán ảnh</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Bức tranh môn học</strong><p>Xử lý ảnh khác gì phân tích ảnh và thị giác máy.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Ảnh số</strong><p>Lấy mẫu, lượng tử hóa, tọa độ, mức xám.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Thao tác điểm ảnh</strong><p>LUT, gamma, ngưỡng, kéo giãn tương phản, âm bản.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Phép toán ảnh</strong><p>Cộng, trừ, nhân, chia, mask, tập hợp và logic.</p></div>
+          </div>
+          <p class="caption">Deck này đặt nền: ảnh là dữ liệu số, và thao tác mức điểm ảnh là lớp biến đổi đơn giản nhất.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Khi chỉ được thay đổi từng điểm ảnh độc lập, ta có thể cải thiện hoặc tách thông tin ảnh đến mức nào?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 1 Intro; Week 2 Digital image fundamentals và Point operations.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Phân biệt xử lý ảnh mức thấp, mức trung và phân tích ảnh.</li>
+            <li>Giải thích ảnh số dưới dạng ma trận giá trị hữu hạn.</li>
+            <li>Đọc được hàm ánh xạ mức xám và dự đoán ảnh đầu ra.</li>
+            <li>Chọn phép toán điểm ảnh phù hợp cho bài toán tăng tương phản, threshold, mask hoặc so sánh ảnh.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Bức tranh xử lý ảnh</h1><p>Từ ảnh đầu vào đến ảnh, vùng, đặc trưng hoặc quyết định.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Định vị môn học</strong><p>Xử lý ảnh, phân tích ảnh, thị giác máy.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Nhận diện đầu vào/đầu ra</strong><p>Ảnh → ảnh; ảnh → vùng/đặc trưng; ảnh → nhãn.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Tạo động lực</strong><p>Giảm nhiễu, tăng tương phản, OCR, y tế, nén ảnh.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Hook</span><strong>Một ảnh xấu có thể “cứu” bằng xử lý ảnh không?</strong><p>Dùng ví dụ ảnh thiếu sáng, nhiễu, lệch hình hoặc hóa đơn cần OCR.</p></div>
+            <div class="stub-slide"><span class="stub-label">Khái niệm</span><strong>Ba mức xử lý</strong><p>Mức thấp, mức trung, mức cao; nhấn mạnh Phần 1 tập trung vào kỹ thuật cổ điển.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Xử lý ảnh != thị giác máy</strong><p>Nén, khôi phục, tăng tương phản so với nhận dạng, phát hiện, phân vùng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ứng dụng</span><strong>Bản đồ ứng dụng</strong><p>Y tế, tài liệu, ảnh vệ tinh, công nghiệp, chỉnh sửa ảnh, truyền thông.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Ảnh số và biểu diễn</h1><p>Lấy mẫu tọa độ và lượng tử hóa biên độ.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Ảnh là hàm rời rạc</strong><p>\(f(x,y)\) với \(x,y\) và giá trị điểm ảnh đều hữu hạn.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Đọc ma trận ảnh</strong><p>Kích thước \(M \times N\), gốc tọa độ, mức xám, kênh màu.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Hiểu lỗi số hóa</strong><p>Độ phân giải không gian, mức lượng tử, false contouring.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Trực giác</span><strong>Ảnh liên tục → ảnh số</strong><p>Minh họa lấy mẫu theo tọa độ và lượng tử hóa giá trị sáng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Biểu diễn</span><strong>Ma trận điểm ảnh</strong><p>Gốc tọa độ, hàng/cột, kênh, miền giá trị \([0,255]\).</p></div>
+            <div class="stub-slide"><span class="stub-label">Hệ thị giác</span><strong>Vì sao cảm nhận quan trọng?</strong><p>Mach band, simultaneous contrast, brightness adaptation như động lực cho enhancement/compression.</p></div>
+            <div class="stub-slide"><span class="stub-label">Demo</span><strong>Giảm mức lượng tử</strong><p>Cho sinh viên dự đoán khi \(L\) giảm từ 256 xuống 16, 8, 4.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Thao tác mức điểm ảnh</h1><p>Mỗi điểm ảnh đi qua cùng một hàm ánh xạ.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">LUT</strong><p>Xem biến đổi mức xám như bảng tra.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Gamma</strong><p>Làm sáng/tối có kiểm soát theo vùng giá trị.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Ngưỡng</strong><p>Biến ảnh xám thành mask nhị phân.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Piecewise linear</strong><p>Kéo giãn tương phản và âm bản.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Công thức</span><strong>\(s=T(r)\)</strong><p>Giải thích input intensity \(r\), output \(s\), điều kiện giữ thứ tự mức sáng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Gamma</span><strong>\(s = c r^\gamma\)</strong><p>So sánh \(\gamma < 1\) và \(\gamma > 1\) trên ảnh tối/ảnh sáng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ngưỡng</span><strong>Thresholding</strong><p>Chuyển từ tăng cường ảnh sang tách đối tượng; nêu giới hạn khi nền không đều.</p></div>
+            <div class="stub-slide"><span class="stub-label">Tương phản</span><strong>Contrast stretching và negative</strong><p>Dùng đồ thị ánh xạ làm trung tâm, không viết nhiều chữ.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Phép toán ảnh và mask</h1><p>Kết hợp nhiều ảnh hoặc nhiều vùng để tạo ảnh mới.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Số học ảnh</strong><p>Cộng, trừ, trung bình, chia để phát hiện thay đổi hoặc hiệu chỉnh.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Mask</strong><p>Nhân ảnh với vùng quan tâm để cô lập đối tượng.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Logic/tập hợp</strong><p>AND, OR, NOT trên ảnh nhị phân và vùng foreground.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Ví dụ</span><strong>Image subtraction</strong><p>So sánh hai ảnh để tìm thay đổi; liên hệ background subtraction.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ví dụ</span><strong>Image averaging</strong><p>Trung bình nhiều ảnh để giảm nhiễu ngẫu nhiên.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ứng dụng</span><strong>Shading correction</strong><p>Dùng phép chia với shading function để hiệu chỉnh chiếu sáng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Thực hành</span><strong>ROI masking</strong><p>Input ảnh + mask nhị phân → vùng quan tâm.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Ảnh số</strong><p>Là ma trận điểm ảnh hữu hạn.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Point operation</strong><p>Mạnh khi bài toán phụ thuộc vào giá trị điểm ảnh riêng lẻ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Giới hạn</strong><p>Chưa dùng quan hệ lân cận; lọc không gian sẽ giải quyết ở bài 2.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Vì sao giảm số mức lượng tử có thể tạo false contouring?</li>
+            <li>Khi nào dùng \(\gamma < 1\), khi nào dùng \(\gamma > 1\)?</li>
+            <li>Thresholding thất bại trong những trường hợp nào?</li>
+            <li>Image subtraction và image averaging giải quyết hai vấn đề khác nhau như thế nào?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §1: Giới thiệu và thao tác mức điểm ảnh</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

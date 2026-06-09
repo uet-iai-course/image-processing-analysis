@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 3: Thiết kế bộ lọc và so khớp ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 3: Thiết kế bộ lọc và so khớp ảnh</h3>
+          <p>Tính chất convolution · Separable kernels · Edge-preserving smoothing · Template matching · SSD · NCC</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Thiết kế kernel</strong><p>Từ tính chất toán, lấy mẫu hàm, hoặc đáp ứng tần số.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Tính toán hiệu quả</strong><p>Separable filter và lợi ích chi phí.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Giữ cạnh</strong><p>Kuwahara, Nagao-Matsuyama, bilateral filter.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">So khớp</strong><p>Correlation, zero-mean, SSD, NCC và biến đổi cường độ.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Làm sao thiết kế phép lọc đúng mục tiêu, và làm sao biết một mảnh ảnh có xuất hiện ở vị trí khác?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 5 Spatial filtering (cont); Week 6 Template matching.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Phân loại cách thiết kế bộ lọc theo mục tiêu xử lý ảnh.</li>
+            <li>Giải thích lợi ích của kernel tách được.</li>
+            <li>Phân biệt smoothing thông thường và edge-preserving smoothing.</li>
+            <li>Chọn score so khớp phù hợp khi ảnh thay đổi độ sáng hoặc tương phản.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Thiết kế bộ lọc</h1><p>Kernel không chỉ là ma trận số; nó mã hóa giả định về ảnh.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Theo tính chất toán</strong><p>Trung bình làm trơn, đạo hàm làm sắc/cạnh.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Theo hàm không gian</strong><p>Lấy mẫu Gaussian để tạo weighted average.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Theo đáp ứng</strong><p>Chuẩn bị cho filter trong miền tần số.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Bridge</span><strong>Từ dùng filter sang thiết kế filter</strong><p>Nhìn lại bài 2: box/Gaussian/median/unsharp đều là lựa chọn có giả định.</p></div>
+            <div class="stub-slide"><span class="stub-label">Kernel âm</span><strong>Khi nào kernel có giá trị âm?</strong><p>Dẫn vào highpass, sharpening, edge detection.</p></div>
+            <div class="stub-slide"><span class="stub-label">Tính chất</span><strong>Linearity, shift-invariance</strong><p>Giữ ngắn; mục tiêu là hiểu vì sao convolution thành framework chung.</p></div>
+            <div class="stub-slide"><span class="stub-label">Hiệu quả</span><strong>Separable filters</strong><p>2D convolution → hai lần 1D convolution; minh họa Gaussian.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Làm trơn giữ cạnh</h1><p>Giảm nhiễu nhưng không xóa biên quan trọng.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Vấn đề</strong><p>Gaussian blur làm mất cạnh và chi tiết hình dạng.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Domain/range</strong><p>Trọng số theo khoảng cách không gian và khác biệt cường độ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Bilateral</strong><p>Kết hợp hai loại trọng số để giữ cạnh.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Motivation</span><strong>Blur làm mất ranh giới</strong><p>Ảnh có texture/nhiễu nhưng cạnh vật thể cần giữ.</p></div>
+            <div class="stub-slide"><span class="stub-label">Kuwahara</span><strong>Chọn vùng có phương sai nhỏ</strong><p>Giải thích bằng 4 vùng lân cận, không cần đi sâu biến thể.</p></div>
+            <div class="stub-slide"><span class="stub-label">Bilateral</span><strong>Gần trong không gian + gần về cường độ</strong><p>Sơ đồ trọng số domain và range.</p></div>
+            <div class="stub-slide"><span class="stub-label">Đánh đổi</span><strong>Giữ cạnh không miễn phí</strong><p>Chi phí tính toán, tham số, artifact trong vùng texture.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Template matching</h1><p>Tìm vị trí trong ảnh giống với một mẫu nhỏ.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Correlation</strong><p>Trượt template và tính điểm tương tự.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Zero-mean</strong><p>Loại bias độ sáng trung bình.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">SSD</strong><p>So sánh sai khác bình phương.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">NCC</strong><p>Chuẩn hóa để chống thay đổi cường độ tuyến tính.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Bài toán</span><strong>Cắt một mảnh ảnh rồi tìm lại</strong><p>Hình template, ảnh lớn, response map.</p></div>
+            <div class="stub-slide"><span class="stub-label">Lỗi thường gặp</span><strong>Raw correlation bị lừa bởi ảnh sáng</strong><p>Dùng ví dụ constant image và ảnh sáng gấp đôi.</p></div>
+            <div class="stub-slide"><span class="stub-label">Score</span><strong>SSD và correlation liên hệ thế nào?</strong><p>Đặt cạnh nhau công thức và trực giác.</p></div>
+            <div class="stub-slide"><span class="stub-label">NCC</span><strong>Patch như vector đơn vị</strong><p>Score trong \([-1,1]\), dot product của patch đã chuẩn hóa.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Từ matching đến bài tập giữa kỳ</h1><p>Đếm/tìm đối tượng trong ảnh thật cần xử lý nhiều biến thiên.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Correspondence</strong><p>Liên hệ so khớp patch với stereo/registration.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Biến thiên</strong><p>Chiếu sáng, auto-gain, góc nhìn, biến dạng hình học.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Thiết kế bài tập</strong><p>Đếm đối tượng, tìm đối tượng, đánh giá kết quả.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Case</span><strong>Counting objects</strong><p>Pipeline gợi ý: tiền xử lý → template/feature → threshold response → post-process.</p></div>
+            <div class="stub-slide"><span class="stub-label">Robustness</span><strong>Template matching sợ gì?</strong><p>Scale, rotation, perspective, appearance change, occlusion.</p></div>
+            <div class="stub-slide"><span class="stub-label">Rubric</span><strong>Giải thích phương pháp</strong><p>Sinh viên cần mô tả giả định, pipeline, metric, failure cases.</p></div>
+            <div class="stub-slide"><span class="stub-label">Bridge</span><strong>Vì sao cần đặc trưng?</strong><p>Dẫn sang bài 4/8: cạnh, texture, keypoint, descriptor.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Filter design</strong><p>Chọn kernel là chọn giả định xử lý.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Edge-preserving</strong><p>Giảm nhiễu nhưng giữ discontinuity quan trọng.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Matching</strong><p>Score chuẩn hóa quan trọng khi ảnh thay đổi độ sáng.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Kernel tách được giúp giảm chi phí tính toán như thế nào?</li>
+            <li>Bilateral filter khác Gaussian filter ở điểm nào?</li>
+            <li>Vì sao raw correlation có thể chọn sai template trên ảnh sáng đều?</li>
+            <li>NCC xử lý thay đổi cường độ tốt hơn SSD trong trường hợp nào?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §3: Thiết kế bộ lọc và so khớp ảnh</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

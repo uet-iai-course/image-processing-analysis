@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 2: Histogram và lọc ảnh</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 2: Histogram và lọc ảnh</h3>
+          <p>Biểu đồ mức xám · HE · CLAHE · Matching · Kernel · Convolution · Smoothing · Sharpening</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Histogram</strong><p>Đọc hình dạng histogram và liên hệ với độ sáng/tương phản.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Biến đổi histogram</strong><p>Equalization, local HE, CLAHE, matching.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Lân cận và kernel</strong><p>Khoảng cách, padding, correlation, convolution.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Lọc ảnh</strong><p>Làm trơn, khử nhiễu, median, unsharp masking.</p></div>
+          </div>
+          <p class="caption">Bài này chuyển từ thao tác từng điểm ảnh sang khai thác phân bố toàn ảnh và quan hệ lân cận.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Khi nào chỉ cần nhìn phân bố mức xám, và khi nào bắt buộc phải nhìn vùng lân cận quanh từng điểm ảnh?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 3 Histograms; Week 4 Spatial filtering.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Tính và diễn giải histogram chuẩn hóa của ảnh xám hoặc ảnh màu.</li>
+            <li>Giải thích vì sao histogram equalization tăng dynamic range nhưng không luôn tạo ảnh đẹp.</li>
+            <li>Mô tả cơ chế correlation/convolution bằng kernel.</li>
+            <li>Chọn box, Gaussian, median hoặc unsharp masking theo loại vấn đề ảnh.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Histogram của ảnh</h1><p>Histogram là tóm tắt phân bố giá trị điểm ảnh.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Định nghĩa</strong><p>\(h(k)\), histogram chuẩn hóa, số mức xám \(L\).</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Diễn giải</strong><p>Ảnh tối, sáng, low contrast, high contrast qua histogram.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Giới hạn</strong><p>Histogram không chứa bố cục không gian.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Động lực</span><strong>Nhìn histogram đoán ảnh</strong><p>Đặt câu hỏi: histogram nào ứng với ảnh thiếu sáng, cháy sáng, tương phản thấp?</p></div>
+            <div class="stub-slide"><span class="stub-label">Công thức</span><strong>\(h(k)=n_k\), \(p(k)=n_k/N\)</strong><p>Giữ công thức gọn, dùng biểu đồ làm trung tâm.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ảnh màu</span><strong>Histogram theo kênh</strong><p>RGB channel-wise histogram; nêu rủi ro bỏ qua quan hệ màu.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cảnh báo</span><strong>Cùng histogram, khác ảnh</strong><p>Minh họa vì sao histogram không thay thế được thông tin không gian.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />Biến đổi histogram</h1><p>Tái phân bố mức xám để tăng tương phản hoặc khớp phong cách.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">HE</strong><p>Ánh xạ bằng cumulative histogram.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Local HE</strong><p>Tăng chi tiết cục bộ, nhưng dễ tạo block/noise.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">CLAHE</strong><p>Giới hạn contrast để tránh khuếch đại nhiễu.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Matching</strong><p>Khớp histogram theo ảnh mẫu.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Ý tưởng</span><strong>Histogram equalization</strong><p>Đầu vào histogram hẹp; đầu ra trải rộng hơn trên miền mức xám.</p></div>
+            <div class="stub-slide"><span class="stub-label">Thuật toán</span><strong>Ba bước HE</strong><p>Tính histogram/CDF → LUT → biến đổi ảnh.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cục bộ</span><strong>Local HE và CLAHE</strong><p>So sánh global, local, tile + clip limit + nội suy song tuyến.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ứng dụng</span><strong>Histogram matching/retrieval</strong><p>Khớp histogram và tìm ảnh bằng vector histogram.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Lân cận, kernel và convolution</h1><p>Lọc không gian thay điểm ảnh bằng hàm của vùng lân cận.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Lân cận</strong><p>4-neighbor, 8-neighbor, khoảng cách Euclidean, city-block, chessboard.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Kernel</strong><p>Mask/window/filter quyết định phép biến đổi cục bộ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Biên ảnh</strong><p>Valid/same/full, zero/replicate/reflect/wrap padding.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Trực giác</span><strong>Kernel trượt qua ảnh</strong><p>Minh họa sum-of-products tại một pixel.</p></div>
+            <div class="stub-slide"><span class="stub-label">So sánh</span><strong>Correlation vs convolution</strong><p>Convolution xoay kernel 180 độ; dùng ví dụ 1D/2D nhỏ.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cảnh báo</span><strong>Boundary issues</strong><p>Padding thay đổi ảnh đầu ra, nhất là quanh biên.</p></div>
+            <div class="stub-slide"><span class="stub-label">Tính chất</span><strong>Linear filtering</strong><p>Đặt nền cho separable filters và frequency-domain filtering ở các bài sau.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Lọc làm trơn và làm sắc</h1><p>Giảm nhiễu, giảm chi tiết không cần thiết, hoặc tăng cạnh.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Box</strong><p>Trung bình đều, đơn giản nhưng dễ nhòe.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Gaussian</strong><p>Trọng số theo khoảng cách, ít tạo artifact hơn box.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Median</strong><p>Lọc phi tuyến tốt cho salt-and-pepper noise.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Unsharp</strong><p>Lấy mask chi tiết rồi cộng lại vào ảnh gốc.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Box/Gaussian</span><strong>Hai cách làm trơn tuyến tính</strong><p>So sánh kernel, mức nhòe, tình huống dùng.</p></div>
+            <div class="stub-slide"><span class="stub-label">Median</span><strong>Lọc theo thứ tự thống kê</strong><p>Minh họa cửa sổ nhỏ có spike noise và giá trị median.</p></div>
+            <div class="stub-slide"><span class="stub-label">Sharpening</span><strong>Unsharp masking</strong><p>Ảnh gốc → blur → mask → kết quả; giải thích \(k\).</p></div>
+            <div class="stub-slide"><span class="stub-label">Thực hành</span><strong>OpenCV filter2D/blur/GaussianBlur/medianBlur</strong><p>Slide code ngắn, không quá 8-10 dòng.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Histogram</strong><p>Tốt để hiểu phân bố mức xám, không giữ cấu trúc không gian.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Convolution</strong><p>Là khung chung cho nhiều phép lọc cục bộ.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Chọn filter</strong><p>Loại nhiễu và mục tiêu quyết định kernel.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Vì sao HE không thể tạo histogram phẳng hoàn hảo cho ảnh số?</li>
+            <li>Khi nào CLAHE tốt hơn global HE?</li>
+            <li>Correlation khác convolution ở điểm nào?</li>
+            <li>Vì sao median filter hợp với impulse noise hơn Gaussian filter?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §2: Histogram và lọc ảnh</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>

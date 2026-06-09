@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 5: Biến đổi Fourier và ảnh màu</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 5: Biến đổi Fourier và ảnh màu</h3>
+          <p>Miền tần số · DFT/FFT · Lowpass/Highpass · Màu sắc · RGB/XYZ/HSV/YUV</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">Tần số ảnh</strong><p>Low frequency, high frequency, magnitude, phase.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">DFT/FFT</strong><p>Biến ảnh từ không gian sang miền tần số.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Frequency filtering</strong><p>Ideal, Butterworth, Gaussian lowpass/highpass.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Ảnh màu</strong><p>Cảm nhận màu, không gian màu, chuyển đổi màu.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Câu hỏi xuyên suốt</h2>
+          <div class="objective-box">
+            <strong style="color:#e65100;">Câu hỏi:</strong>
+            <p style="font-style:italic;">Nếu ảnh là tổng hợp của các dao động và màu là cảm nhận của hệ thị giác, ta nên xử lý ảnh ở hệ tọa độ nào?</p>
+          </div>
+          <p class="source-note">Nguồn nền: Week 9 Filtering in Frequency Domain; Week 10 Color Image Processing.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <ol>
+            <li>Giải thích low/high frequency bằng cấu trúc ảnh thực.</li>
+            <li>Đọc Fourier magnitude và nêu vai trò của phase.</li>
+            <li>Chọn bộ lọc miền tần số và dự đoán artifact như ringing.</li>
+            <li>Phân biệt các không gian màu phổ biến theo mục đích sử dụng.</li>
+          </ol>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">1.</span><br />Trực giác miền tần số</h1><p>Ảnh có thể xem như tổng hợp của nhiều thành phần dao động.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 1</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">1D trước</strong><p>Sine waves, frequency spectra, cộng nhiều sóng.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">2D sau</strong><p>Ảnh mượt là low frequency; cạnh/texture là high frequency.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Magnitude/phase</strong><p>Magnitude cho năng lượng; phase giữ cấu trúc không gian.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Hook</span><strong>Từ sóng sin đến ảnh</strong><p>Cho thấy một tín hiệu phức có thể được tổng hợp từ nhiều tần số.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ảnh</span><strong>Low vs high frequency</strong><p>Vùng nền mượt, biên, texture, nhiễu; dùng crop ảnh thật.</p></div>
+            <div class="stub-slide"><span class="stub-label">Fourier image</span><strong>Spectrum magnitude</strong><p>Trung tâm là tần số thấp; xa tâm là tần số cao.</p></div>
+            <div class="stub-slide"><span class="stub-label">Câu hỏi</span><strong>Magnitude hay phase quan trọng hơn?</strong><p>Dùng ví dụ tráo magnitude/phase nếu có hình.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">2.</span><br />DFT và lọc miền tần số</h1><p>Lọc ảnh bằng cách giữ hoặc loại thành phần tần số.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 2</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">DFT 2D</strong><p>Ảnh \(f(x,y)\) ↔ phổ \(F(u,v)\).</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">FFT</strong><p>Tính nhanh để dùng thực tế.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Lowpass</strong><p>Làm trơn, giảm chi tiết tần số cao.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">Highpass</strong><p>Tăng cạnh, nhấn chi tiết.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Công thức</span><strong>2D DFT và inverse</strong><p>Giữ công thức một slide, giải thích ý nghĩa \(u,v\), không sa vào chứng minh.</p></div>
+            <div class="stub-slide"><span class="stub-label">Pipeline</span><strong>Filtering in frequency domain</strong><p>Ảnh → DFT → nhân transfer function → inverse DFT.</p></div>
+            <div class="stub-slide"><span class="stub-label">Lowpass</span><strong>Ideal, Butterworth, Gaussian</strong><p>So sánh độ sắc cutoff và ringing effect.</p></div>
+            <div class="stub-slide"><span class="stub-label">Highpass</span><strong>Nhấn cạnh trong miền tần số</strong><p>Liên hệ với highboost/Laplace ở miền không gian.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">3.</span><br />Màu sắc và cảm nhận</h1><p>Màu là kết quả của ánh sáng, vật liệu và hệ thị giác.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 3</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Hệ thị giác</strong><p>Ba loại cone cells, độ nhạy phổ, color blindness.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Tạo màu</strong><p>Additive vs subtractive color.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Thuộc tính</strong><p>Hue, saturation, brightness, lightness, chroma.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">Hook</span><strong>Màu không nằm riêng trong vật thể</strong><p>Dẫn bằng “color exists only in light” và ví dụ perception.</p></div>
+            <div class="stub-slide"><span class="stub-label">Sinh lý</span><strong>L/M/S cones</strong><p>Ba tham số kích thích tạo cảm giác màu.</p></div>
+            <div class="stub-slide"><span class="stub-label">Cơ chế</span><strong>Additive vs subtractive</strong><p>Màn hình RGB và in ấn/filters CMY.</p></div>
+            <div class="stub-slide"><span class="stub-label">Ngôn ngữ màu</span><strong>Hue, saturation, brightness</strong><p>Giải thích bằng mẫu màu trực quan.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section><h1><span class="text-light">4.</span><br />Không gian màu và xử lý ảnh màu</h1><p>Chọn hệ tọa độ màu theo bài toán.</p></section>
+
+        <section style="font-size:0.76em;">
+          <h2>Mục tiêu phần 4</h2>
+          <div class="outline-grid-4">
+            <div class="outline-card outline-blue"><strong class="outline-title">RGB/RGBA</strong><p>Không gian thiết bị và alpha compositing.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">XYZ/CIE</strong><p>Chromaticity, gamut, white point.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">HSV/HCL</strong><p>Tách hue/saturation/value để thao tác trực giác.</p></div>
+            <div class="outline-card outline-red"><strong class="outline-title">YUV</strong><p>Tách luminance và chroma cho video/compression.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Khung slide cần triển khai</h2>
+          <div class="outline-grid-2">
+            <div class="stub-slide"><span class="stub-label">RGB</span><strong>Vector màu \((r,g,b)\)</strong><p>Cube/unit plane, gamut, negative red như động lực XYZ.</p></div>
+            <div class="stub-slide"><span class="stub-label">CIE</span><strong>Chromaticity diagram</strong><p>Spectral locus, purple line, white point, color mixing.</p></div>
+            <div class="stub-slide"><span class="stub-label">HSV</span><strong>Thao tác màu trực giác</strong><p>Segment theo hue hoặc điều chỉnh saturation/value.</p></div>
+            <div class="stub-slide"><span class="stub-label">YUV</span><strong>Vì sao tách Y và UV?</strong><p>Liên hệ tới compression: mắt nhạy brightness hơn chroma.</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section style="font-size:0.78em;">
+          <h2>Tổng kết</h2>
+          <div class="outline-grid-3">
+            <div class="outline-card outline-blue"><strong class="outline-title">Miền tần số</strong><p>Cho cách nhìn khác về blur, edge, noise, ringing.</p></div>
+            <div class="outline-card outline-green"><strong class="outline-title">Màu sắc</strong><p>Phụ thuộc cảm nhận, không chỉ là ba số RGB.</p></div>
+            <div class="outline-card outline-orange"><strong class="outline-title">Chọn không gian</strong><p>RGB để hiển thị, HSV để thao tác, YUV để nén/truyền.</p></div>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Vì sao ideal lowpass filter dễ gây ringing?</li>
+            <li>Phase giữ thông tin gì của ảnh?</li>
+            <li>Additive và subtractive color khác nhau ở đâu?</li>
+            <li>Khi nào nên chuyển RGB sang HSV hoặc YUV?</li>
+          </ol>
+        </section>
+      </section>
+
+      <div class="footer">Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §5: Biến đổi Fourier và ảnh màu</div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({ controlsLayout: "edges", slideNumber: true, hashOneBasedIndex: true, hash: true, plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX] });
+  </script>
+</body>
+
+</html>
