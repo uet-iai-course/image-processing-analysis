@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="430" viewBox="0 0 1280 430">
+  <defs>
+    <style>
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+
+  <rect x="60" y="105" width="245" height="220" class="blue"/>
+  <text x="182" y="152" text-anchor="middle" class="label" fill="#1565c0">Nhiều token thị giác</text>
+  <text x="182" y="186" text-anchor="middle" class="small">ảnh hoặc video</text>
+  <text x="182" y="218" text-anchor="middle" class="small">\(Z \in R^{N \times d}\)</text>
+  <text x="182" y="250" text-anchor="middle" class="tiny">N lớn, chi phí cao</text>
+
+  <path d="M305 215 H405" class="arrow"/>
+
+  <rect x="410" y="85" width="310" height="260" class="purple"/>
+  <text x="565" y="132" text-anchor="middle" class="label" fill="#5e35b1">Bộ rút gọn</text>
+  <rect x="465" y="170" width="200" height="44" rx="10" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+  <text x="565" y="198" text-anchor="middle" class="small">mã ẩn học được \(A\)</text>
+  <rect x="465" y="230" width="200" height="44" rx="10" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+  <text x="565" y="258" text-anchor="middle" class="small">chú ý chéo tới \(Z\)</text>
+  <text x="565" y="310" text-anchor="middle" class="tiny">lặp vài tầng để gom thông tin</text>
+
+  <path d="M720 215 H820" class="arrow"/>
+
+  <rect x="825" y="105" width="245" height="220" class="green"/>
+  <text x="948" y="152" text-anchor="middle" class="label" fill="#2e7d32">Ít token thị giác</text>
+  <text x="948" y="186" text-anchor="middle" class="small">\(R \in R^{M \times d}\)</text>
+  <text x="948" y="218" text-anchor="middle" class="small">\(M \ll N\)</text>
+  <text x="948" y="250" text-anchor="middle" class="tiny">đủ ngắn để LLM đọc</text>
+
+  <path d="M1070 215 H1145" class="arrow"/>
+  <rect x="1150" y="145" width="90" height="140" class="orange"/>
+  <text x="1195" y="205" text-anchor="middle" class="label" fill="#ef6c00">LLM</text>
+  <text x="1195" y="236" text-anchor="middle" class="small">đọc</text>
+
+  <text x="640" y="398" text-anchor="middle" class="small">Bộ rút gọn giữ độ dài chuỗi thị giác gần cố định, nên VLM xử lý được nhiều ảnh hoặc khung hình hơn.</text>
+</svg>

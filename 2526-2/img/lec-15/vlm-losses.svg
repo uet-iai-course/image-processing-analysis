@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+    </style>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Ba nhóm loss thường gặp trong VLM</text>
+  <rect x="75" y="125" width="340" height="300" class="blue"/>
+  <text x="245" y="178" text-anchor="middle" class="label" fill="#1565c0">Tương phản</text>
+  <text x="245" y="220" text-anchor="middle" class="small">kéo cặp ảnh-chữ đúng lại gần</text>
+  <text x="245" y="252" text-anchor="middle" class="small">đẩy cặp sai ra xa</text>
+  <text x="245" y="310" text-anchor="middle" class="small">dùng cho CLIP, retrieval,</text>
+  <text x="245" y="340" text-anchor="middle" class="small">zero-shot recognition</text>
+
+  <rect x="470" y="125" width="340" height="300" class="green"/>
+  <text x="640" y="178" text-anchor="middle" class="label" fill="#2e7d32">Sinh ngôn ngữ</text>
+  <text x="640" y="220" text-anchor="middle" class="small">dự đoán token tiếp theo</text>
+  <text x="640" y="252" text-anchor="middle" class="small">bằng entropy chéo</text>
+  <text x="640" y="310" text-anchor="middle" class="small">dùng cho captioning, VQA,</text>
+  <text x="640" y="340" text-anchor="middle" class="small">chat đa phương thức</text>
+
+  <rect x="865" y="125" width="340" height="300" class="purple"/>
+  <text x="1035" y="178" text-anchor="middle" class="label" fill="#5e35b1">Định vị</text>
+  <text x="1035" y="220" text-anchor="middle" class="small">hộp, điểm, mặt nạ</text>
+  <text x="1035" y="252" text-anchor="middle" class="small">theo câu truy vấn</text>
+  <text x="1035" y="310" text-anchor="middle" class="small">dùng cho grounding,</text>
+  <text x="1035" y="340" text-anchor="middle" class="small">open-vocabulary detection</text>
+  <rect x="270" y="462" width="740" height="48" class="orange"/>
+  <text x="640" y="493" text-anchor="middle" class="small">Một VLM thực tế thường phối hợp nhiều loss qua nhiều giai đoạn huấn luyện.</text>
+</svg>

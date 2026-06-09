@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 95 1280 440">
+  <defs>
+    <style>
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#78909c;stroke-width:3;fill:none;stroke-dasharray:8 7}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect x="60" y="170" width="160" height="115" class="blue"/>
+  <text x="140" y="214" text-anchor="middle" class="label" fill="#1565c0">Ảnh</text>
+  <text x="140" y="246" text-anchor="middle" class="small">đầu vào</text>
+  <path d="M220 228 H315" class="arrow"/>
+
+  <rect x="320" y="135" width="220" height="185" class="box"/>
+  <text x="430" y="185" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="430" y="218" text-anchor="middle" class="small">thường dựa trên CLIP</text>
+  <text x="430" y="250" text-anchor="middle" class="tiny">thường được đóng băng</text>
+  <path d="M540 228 H635" class="arrow"/>
+
+  <rect x="640" y="135" width="210" height="185" class="purple"/>
+  <text x="745" y="184" text-anchor="middle" class="label" fill="#5e35b1">Bộ chiếu</text>
+  <text x="745" y="218" text-anchor="middle" class="small">tuyến tính hoặc MLP</text>
+  <text x="745" y="250" text-anchor="middle" class="tiny">đổi chiều đặc trưng</text>
+  <path d="M850 228 H945" class="arrow"/>
+
+  <rect x="950" y="135" width="250" height="185" class="green"/>
+  <text x="1075" y="184" text-anchor="middle" class="label" fill="#2e7d32">LLM</text>
+  <text x="1075" y="218" text-anchor="middle" class="small">nhận token ảnh</text>
+  <text x="1075" y="250" text-anchor="middle" class="small">và lệnh người dùng</text>
+
+  <rect x="320" y="390" width="250" height="72" class="orange"/>
+  <text x="445" y="433" text-anchor="middle" class="small">Giai đoạn 1: căn chỉnh ảnh-mô tả</text>
+  <path d="M445 390 C445 350 620 344 705 320" class="dash"/>
+
+  <rect x="710" y="390" width="330" height="72" class="orange"/>
+  <text x="875" y="433" text-anchor="middle" class="small">Giai đoạn 2: tinh chỉnh ảnh-lệnh-trả lời</text>
+  <path d="M875 390 C905 350 980 342 1040 320" class="dash"/>
+
+  <text x="640" y="515" text-anchor="middle" class="small">Điểm mấu chốt: LLaVA giữ mô hình lớn có sẵn và học cách biến đặc trưng ảnh thành token mà LLM hiểu được.</text>
+</svg>

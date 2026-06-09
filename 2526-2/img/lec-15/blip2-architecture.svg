@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 95 1280 440">
+  <defs>
+    <style>
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .red{fill:#ffebee;stroke:#c62828}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#78909c;stroke-width:3;fill:none;stroke-dasharray:8 7}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <rect x="55" y="185" width="150" height="110" class="blue"/>
+  <text x="130" y="228" text-anchor="middle" class="label" fill="#1565c0">Ảnh</text>
+  <text x="130" y="260" text-anchor="middle" class="small">đầu vào</text>
+  <path d="M205 240 H295" class="arrow"/>
+
+  <rect x="300" y="145" width="220" height="190" class="box"/>
+  <text x="410" y="195" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="410" y="228" text-anchor="middle" class="small">đóng băng</text>
+  <text x="410" y="260" text-anchor="middle" class="tiny">tạo nhiều token ảnh</text>
+  <path d="M520 240 H615" class="arrow"/>
+
+  <rect x="620" y="120" width="255" height="240" class="purple"/>
+  <text x="748" y="168" text-anchor="middle" class="label" fill="#5e35b1">Q-Former</text>
+  <text x="748" y="202" text-anchor="middle" class="small">truy vấn học được</text>
+  <g transform="translate(672,226)">
+    <rect x="0" y="0" width="150" height="22" rx="7" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="0" y="34" width="150" height="22" rx="7" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="0" y="68" width="150" height="22" rx="7" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+  </g>
+  <text x="748" y="338" text-anchor="middle" class="tiny">ít token hơn, giàu ngữ nghĩa hơn</text>
+  <path d="M875 240 H970" class="arrow"/>
+
+  <rect x="975" y="145" width="240" height="190" class="green"/>
+  <text x="1095" y="195" text-anchor="middle" class="label" fill="#2e7d32">LLM</text>
+  <text x="1095" y="228" text-anchor="middle" class="small">đóng băng hoặc</text>
+  <text x="1095" y="258" text-anchor="middle" class="small">tinh chỉnh nhẹ</text>
+
+  <rect x="500" y="415" width="230" height="62" class="orange"/>
+  <text x="615" y="452" text-anchor="middle" class="small">học truy vấn ảnh-văn bản</text>
+  <path d="M615 415 C650 380 690 368 725 360" class="dash"/>
+
+  <rect x="760" y="415" width="270" height="62" class="red"/>
+  <text x="895" y="452" text-anchor="middle" class="small">học sinh văn bản có điều kiện</text>
+  <path d="M895 415 C910 380 1000 360 1065 335" class="dash"/>
+
+  <text x="640" y="520" text-anchor="middle" class="small">Q-Former là cổ chai có học: nó hỏi bộ mã hóa ảnh để lấy đúng thông tin cần đưa sang mô hình ngôn ngữ.</text>
+</svg>

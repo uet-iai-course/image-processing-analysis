@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .red{fill:#ffebee;stroke:#c62828}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Tài liệu và biểu đồ: VLM phải đọc cả bố cục, chữ và ký hiệu</text>
+  <rect x="80" y="130" width="280" height="330" class="blue"/>
+  <text x="220" y="170" text-anchor="middle" class="label" fill="#1565c0">Trang tài liệu</text>
+  <rect x="120" y="200" width="200" height="28" fill="#fff" stroke="#90a4ae"/>
+  <rect x="120" y="245" width="200" height="90" fill="#fff" stroke="#90a4ae"/>
+  <path d="M140 315 L185 280 L225 298 L300 245" fill="none" stroke="#ef6c00" stroke-width="5"/>
+  <rect x="120" y="360" width="200" height="44" fill="#fff" stroke="#90a4ae"/>
+  <path d="M360 295 H480" class="arrow"/>
+  <rect x="485" y="135" width="260" height="320" class="box"/>
+  <text x="615" y="190" text-anchor="middle" class="label">Các năng lực cần phối hợp</text>
+  <rect x="530" y="225" width="170" height="42" class="orange"/>
+  <text x="615" y="253" text-anchor="middle" class="small">OCR</text>
+  <rect x="530" y="285" width="170" height="42" class="green"/>
+  <text x="615" y="313" text-anchor="middle" class="small">bố cục</text>
+  <rect x="530" y="345" width="170" height="42" class="red"/>
+  <text x="615" y="373" text-anchor="middle" class="small">suy luận số liệu</text>
+  <path d="M745 295 H865" class="arrow"/>
+  <rect x="870" y="180" width="330" height="230" class="green"/>
+  <text x="1035" y="235" text-anchor="middle" class="label" fill="#2e7d32">Câu trả lời</text>
+  <text x="1035" y="275" text-anchor="middle" class="small">"doanh thu quý 3 tăng"</text>
+  <text x="1035" y="305" text-anchor="middle" class="small">"cột bên phải là..."</text>
+  <text x="1035" y="335" text-anchor="middle" class="small">"bảng có 4 hàng"</text>
+  <text x="640" y="505" text-anchor="middle" class="small">Ảnh tài liệu không chỉ là cảnh vật; nó là cấu trúc hai chiều chứa chữ và quan hệ hình học.</text>
+</svg>

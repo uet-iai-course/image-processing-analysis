@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bài 15: Mô hình ngôn ngữ thị giác</title>
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+  <style>
+    .reveal .vlm-card {
+      border-radius: 8px;
+      padding: 9px 12px;
+      border-left: 5px solid #90a4ae;
+      background: #fafafa;
+    }
+
+    .reveal .vlm-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .reveal .vlm-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .vlm-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .reveal .vlm-imgbox {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 7px;
+      text-align: center;
+    }
+
+    .reveal .vlm-imgbox img {
+      max-width: 100%;
+      max-height: 62vh;
+      object-fit: contain;
+    }
+
+    .reveal .eqbox {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .reveal .mini {
+      font-size: 0.78em;
+      color: #555;
+    }
+
+    .reveal .tight-list {
+      display: grid;
+      gap: 0.4em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===================== MỞ ĐẦU ===================== -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Bài 15: Mô hình ngôn ngữ thị giác</h3>
+          <p>VLM · CLIP · truy xuất · sinh mô tả · hỏi đáp ảnh · grounding · mô hình đa phương thức</p>
+          <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Nội dung bài học</h2>
+          <div class="vlm-grid-4" style="margin-top:0.5em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bài toán</strong>
+              <p style="margin:0.35em 0 0;">Từ nhãn cố định sang giao tiếp bằng ngôn ngữ tự nhiên.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">CLIP</strong>
+              <p style="margin:0.35em 0 0;">Học không gian chung cho ảnh và văn bản bằng loss tương phản.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">VLM hiện đại</strong>
+              <p style="margin:0.35em 0 0;">Bộ mã hóa ảnh, bộ chuyển đổi, LLM và tinh chỉnh theo lệnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Đánh giá</strong>
+              <p style="margin:0.35em 0 0;">Sai lệch, ảo giác, đếm, quan hệ không gian, OCR và thiên lệch.</p>
+            </div>
+          </div>
+          <p class="caption">Bài học nối các bài phân loại, phát hiện, phân vùng và tạo sinh với hướng mô hình nền đa phương thức.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Câu hỏi xuyên suốt buổi học</h2>
+          <div class="vlm-imgbox" style="padding:5px;">
+            <img src="img/lec-15/vlm-task-shift.svg" alt="Bước chuyển từ mô hình thị giác truyền thống sang VLM" style="max-height:50vh;" />
+          </div>
+          <div style="margin-top:0.35em; background:#fff3e0; padding:8px 12px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
+            <span style="font-style:italic;">Làm thế nào một mô hình vừa hiểu ảnh, vừa dùng ngôn ngữ để truy vấn, giải thích và định vị nội dung trong ảnh?</span>
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Mục tiêu buổi học</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Phân biệt cách đặt bài toán</strong>
+              <p style="margin:0.35em 0 0;">VLM khác mô hình phân loại, phát hiện và phân vùng ảnh truyền thống ở không gian đầu ra và cách dùng điều kiện ngôn ngữ.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Giải thích được CLIP</strong>
+              <p style="margin:0.35em 0 0;">Ảnh và văn bản được ánh xạ vào cùng không gian embedding; cặp đúng gần nhau, cặp sai xa nhau.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đọc được kiến trúc VLM</strong>
+              <p style="margin:0.35em 0 0;">Bộ mã hóa ảnh, bộ chuyển đổi, LLM, token ảnh và tinh chỉnh theo lệnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Nhận diện giới hạn</strong>
+              <p style="margin:0.35em 0 0;">Ảo giác, quan hệ không gian, đếm, OCR, thiên lệch dữ liệu và cách đánh giá.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 1 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Bài toán VLM</h1>
+          <p>Không gian đầu ra · Điều kiện ngôn ngữ · Tác vụ thị giác-ngôn ngữ · Dữ liệu ghép cặp</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>VLM đổi đơn vị dự đoán</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Trước đây: dự đoán trong tập cố định</strong>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  x \rightarrow y, \quad y \in \{1,\ldots,K\}
+                \]
+              </div>
+              <ul>
+                <li>Phân loại: một nhãn.</li>
+                <li>Phát hiện: hộp và nhãn.</li>
+                <li>Phân vùng: nhãn từng điểm ảnh.</li>
+              </ul>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">VLM: dự đoán có điều kiện ngôn ngữ</strong>
+              <div class="eqbox" style="margin-top:0.6em;">
+                \[
+                  (x, q) \rightarrow a
+                \]
+              </div>
+              <ul>
+                <li>\(q\): câu hỏi, mô tả, lệnh hoặc truy vấn.</li>
+                <li>\(a\): câu trả lời, xếp hạng, hộp, mặt nạ.</li>
+                <li>Không gian đầu ra mở hơn.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Bước chuyển quan trọng: mô hình không chỉ gán nhãn ảnh; nó phải hiểu ý định được viết bằng ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>VLM không xóa bỏ các mô hình trước</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Phân loại</strong>
+              <p>VLM mở rộng tập lớp bằng mô tả văn bản, nhưng vẫn cần biểu diễn ảnh tốt.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Phát hiện và phân vùng</strong>
+              <p>VLM hiểu câu truy vấn; detector và segmenter giúp định vị chính xác.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tạo sinh</strong>
+              <p>Văn bản điều khiển mô hình sinh; biểu diễn ảnh-văn bản là cầu nối.</p>
+            </div>
+          </div>
+          <p class="caption">VLM là lớp giao tiếp và suy luận trên nền các biểu diễn thị giác đã học từ các bài trước.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bản đồ tác vụ cần phân biệt</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/task-map.svg" alt="Bản đồ tác vụ thị giác-ngôn ngữ" />
+          </div>
+          <p class="caption">Cùng là VLM, nhưng mỗi tác vụ yêu cầu đầu ra và loss khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Retrieval khác captioning ở đâu?</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Truy xuất</strong>
+              <ul>
+                <li>Không sinh văn bản mới.</li>
+                <li>Mã hóa ảnh và câu thành véc-tơ.</li>
+                <li>Xếp hạng bằng độ gần.</li>
+                <li>Đánh giá bằng Recall@K.</li>
+              </ul>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Sinh mô tả / hỏi đáp</strong>
+              <ul>
+                <li>Phải sinh chuỗi token.</li>
+                <li>Cần mô hình ngôn ngữ.</li>
+                <li>Đầu ra có thể đúng, thiếu hoặc bịa.</li>
+                <li>Đánh giá khó hơn retrieval.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Một hệ embedding tốt chưa đủ để tạo câu trả lời tốt; sinh ngôn ngữ là một bài toán khác.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Dữ liệu ghép cặp là nguồn giám sát chính</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Cặp ảnh-văn bản tự nhiên</strong>
+              <p>Ảnh trên web thường đi kèm chú thích, tiêu đề, văn bản thay thế hoặc đoạn mô tả.</p>
+              <p class="mini">Tín hiệu nhiều nhưng nhiễu: câu có thể không mô tả trực tiếp ảnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Nhãn chi tiết có chi phí cao</strong>
+              <p>Hộp, mặt nạ, câu hỏi-đáp và vùng bám theo câu cần gán nhãn thủ công hoặc bán tự động.</p>
+              <p class="mini">Định vị tốt thường cần dữ liệu định vị tốt.</p>
+            </div>
+          </div>
+          <p class="caption">Lý do CLIP quan trọng: nó tận dụng được khối lượng lớn cặp ảnh-văn bản thô.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đã biết</strong>
+              <p>VLM dùng ngôn ngữ làm điều kiện cho bài toán thị giác.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Nút thắt</strong>
+              <p>Ảnh và văn bản vốn nằm trong hai không gian rất khác nhau.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đi tiếp</strong>
+              <p>CLIP học một không gian chung để đo sự phù hợp ảnh-văn bản.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 2 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />CLIP và học tương phản</h1>
+          <p>Hai bộ mã hóa · Không gian embedding chung · Loss tương phản · Zero-shot · Truy xuất</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>CLIP học bằng câu hỏi ghép cặp</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/clip-two-tower.svg" alt="Kiến trúc hai tháp của CLIP" />
+          </div>
+          <p class="caption">Cặp ảnh-văn bản đúng được kéo gần nhau; các cặp sai trong cùng lô được đẩy ra xa.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Hai bộ mã hóa không sinh câu</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bộ mã hóa ảnh</strong>
+              <p>Nhận ảnh, sinh véc-tơ \(v_i\). Có thể dùng CNN hoặc ViT.</p>
+              <div class="eqbox">\[
+                v_i = \frac{f_\theta(x_i)}{\|f_\theta(x_i)\|}
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bộ mã hóa văn bản</strong>
+              <p>Nhận chuỗi token, sinh véc-tơ \(u_i\). Thường dùng Transformer.</p>
+              <div class="eqbox">\[
+                u_i = \frac{g_\phi(t_i)}{\|g_\phi(t_i)\|}
+              \]</div>
+            </div>
+          </div>
+          <p class="caption">CLIP là mô hình căn chỉnh biểu diễn, không phải mô hình hội thoại.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Độ tương đồng là tích vô hướng sau chuẩn hóa</h2>
+          <div class="eqbox" style="font-size:1.05em;">
+            \[
+              s_{ij} = \frac{v_i^\top u_j}{\tau}
+            \]
+          </div>
+          <div class="vlm-grid-3" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Chuẩn hóa</strong>
+              <p>Đưa véc-tơ lên mặt cầu; tích vô hướng trở thành độ tương tự cosin.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Nhiệt độ \(\tau\)</strong>
+              <p>Điều chỉnh độ sắc của phân phối softmax.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Ma trận \(s\)</strong>
+              <p>Một lô \(N\) cặp tạo ra \(N \times N\) điểm phù hợp.</p>
+            </div>
+          </div>
+          <p class="caption">Mục tiêu không phải dự đoán từng từ, mà là xếp cặp đúng cao hơn mọi cặp sai trong lô.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Ma trận trong một lô huấn luyện</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/clip-batch-loss.svg" alt="Ma trận loss tương phản trong CLIP" />
+          </div>
+          <p class="caption">Đường chéo là cặp đúng; ngoài đường chéo là các cặp âm lấy miễn phí từ cùng lô.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Loss ảnh chọn văn bản</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{I \rightarrow T}
+              =
+              \frac{1}{N}\sum_{i=1}^{N}
+              -\log
+              \frac{\exp(s_{ii})}
+              {\sum_{j=1}^{N}\exp(s_{ij})}
+            \]
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Hàng thứ \(i\)</strong>
+              <p>Giữ ảnh \(i\), so với tất cả văn bản trong lô.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Sai số</strong>
+              <p>Nếu văn bản đúng không có xác suất cao nhất, loss tăng.</p>
+            </div>
+          </div>
+          <p class="caption">Mỗi ảnh học cách nhận ra chú thích của chính nó giữa nhiều chú thích sai.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Loss văn bản chọn ảnh</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{T \rightarrow I}
+              =
+              \frac{1}{N}\sum_{j=1}^{N}
+              -\log
+              \frac{\exp(s_{jj})}
+              {\sum_{i=1}^{N}\exp(s_{ij})}
+            \]
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Cột thứ \(j\)</strong>
+              <p>Giữ văn bản \(j\), so với tất cả ảnh trong lô.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đối xứng</strong>
+              <p>Ảnh tìm văn bản và văn bản tìm ảnh đều phải đúng.</p>
+            </div>
+          </div>
+          <p class="caption">CLIP dùng hai chiều truy xuất để không thiên về một phía biểu diễn.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Loss CLIP hoàn chỉnh</h2>
+          <div class="eqbox" style="font-size:1.08em;">
+            \[
+              \mathcal{L}_{CLIP}
+              =
+              \frac{1}{2}
+              \left(
+                \mathcal{L}_{I \rightarrow T}
+                +
+                \mathcal{L}_{T \rightarrow I}
+              \right)
+            \]
+          </div>
+          <div class="vlm-card" style="margin-top:0.8em; background:#e8f5e9; border-left-color:#2e7d32;">
+            <strong style="color:#2e7d32;">Trực giác tối ưu</strong>
+            <p style="margin:0.35em 0 0;">Với mỗi ảnh và mỗi câu, mô hình học một thước đo phù hợp chung thay vì một bộ phân loại riêng cho từng tập dữ liệu.</p>
+          </div>
+          <p class="caption">Đây là lý do CLIP có thể chuyển sang nhiều tác vụ không có nhãn huấn luyện trực tiếp.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Zero-shot classification bằng văn bản hóa nhãn</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/zero-shot-clip.svg" alt="Zero-shot classification bằng CLIP" />
+          </div>
+          <p class="caption">Tên lớp không đi vào tầng phân loại cố định; nó đi qua bộ mã hóa văn bản.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Prompt ảnh hưởng trực tiếp đến lớp</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tên lớp trần</strong>
+              <div class="eqbox">\[
+                \text{"chó"}
+              \]</div>
+              <p>Ngắn, ít ngữ cảnh, dễ lệch với dạng câu đã thấy khi huấn luyện.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Câu mẫu</strong>
+              <div class="eqbox">\[
+                \text{"một ảnh của chó"}
+              \]</div>
+              <p>Gần với phân phối văn bản tự nhiên hơn, thường ổn định hơn.</p>
+            </div>
+          </div>
+          <p class="caption">Trong CLIP, prompt không chỉ là câu chữ hiển thị; nó là đầu vào quyết định véc-tơ lớp.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Truy xuất ảnh-văn bản</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/retrieval.svg" alt="Truy xuất ảnh-văn bản bằng embedding" />
+          </div>
+          <p class="caption">Cùng một không gian embedding hỗ trợ cả tìm ảnh bằng câu và tìm câu bằng ảnh.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Đánh giá retrieval bằng Recall@K</h2>
+          <div class="eqbox">
+            \[
+              \text{Recall@K}
+              =
+              \frac{\#\{\text{truy vấn có đáp án đúng trong top K}\}}
+              {\#\{\text{truy vấn}\}}
+            \]
+          </div>
+          <div class="vlm-grid-3" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">K nhỏ</strong>
+              <p>Đo độ chính xác ở vị trí đầu.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">K lớn</strong>
+              <p>Đo khả năng không bỏ sót đáp án.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Giới hạn</strong>
+              <p>Không kiểm tra sinh câu hay suy luận.</p>
+            </div>
+          </div>
+          <p class="caption">Retrieval đánh giá khả năng xếp hạng, không đánh giá năng lực hội thoại.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>CLIP mạnh ở đâu?</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Mở rộng tập lớp</strong>
+              <p>Chỉ cần viết mô tả lớp mới, không cần thay tầng phân loại.</p>
+            </div>
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Truy xuất tự nhiên</strong>
+              <p>Người dùng tìm bằng câu mô tả thay vì mã lớp.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Biểu diễn nền</strong>
+              <p>Embedding ảnh có thể dùng cho nhiều bài toán phía sau.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Điều khiển sinh ảnh</strong>
+              <p>Ý tưởng căn chỉnh ảnh-văn bản là nền cho sinh ảnh theo mô tả.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>CLIP yếu ở đâu?</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Không sinh lời giải thích</strong>
+              <p>CLIP cho điểm phù hợp, không tạo chuỗi trả lời chi tiết.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Yếu với quan hệ cấu trúc</strong>
+              <p>Các quan hệ như “bên trái”, “đằng sau”, “đang cầm” có thể bị nhầm.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Không tự định vị chi tiết</strong>
+              <p>Embedding toàn ảnh không trực tiếp cho hộp hay mặt nạ chính xác.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Phụ thuộc dữ liệu web</strong>
+              <p>Thiên lệch và nhiễu trong mô tả web đi vào biểu diễn.</p>
+            </div>
+          </div>
+          <p class="caption">CLIP là nền rất mạnh, nhưng chưa phải VLM hội thoại hoàn chỉnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đã có</strong>
+              <p>Không gian chung để đo ảnh và văn bản có khớp nhau không.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Còn thiếu</strong>
+              <p>Sinh câu trả lời, theo dõi hội thoại và giải thích theo lệnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đi tiếp</strong>
+              <p>Cần ghép biểu diễn ảnh với mô hình ngôn ngữ sinh.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 3 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />Từ embedding đến sinh câu trả lời</h1>
+          <p>Captioning · VQA · Token ảnh · Chú ý chéo · Loss sinh ngôn ngữ</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Captioning và VQA cần mô hình sinh</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/captioning-vqa.svg" alt="Luồng captioning và VQA" />
+          </div>
+          <p class="caption">Câu trả lời được sinh từng token; ảnh và câu hỏi là điều kiện cho quá trình sinh.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Captioning là mô hình hóa xác suất chuỗi</h2>
+          <div class="eqbox">
+            \[
+              p_\theta(w_{1:T}\mid x)
+              =
+              \prod_{t=1}^{T}
+              p_\theta(w_t \mid w_{&lt;t}, x)
+            \]
+          </div>
+          <div class="vlm-card" style="margin-top:0.7em; background:#e3f2fd; border-left-color:#1565c0;">
+            <strong style="color:#1565c0;">Ý nghĩa</strong>
+            <p style="margin:0.35em 0 0;">Mỗi từ được dự đoán dựa trên ảnh và các từ đã sinh trước đó. Mô hình cần vừa nhìn đúng, vừa nói đúng ngữ pháp.</p>
+          </div>
+          <p class="caption">Captioning khác phân loại vì đầu ra có độ dài biến thiên và phụ thuộc thứ tự token.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Loss captioning là entropy chéo theo token</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{cap}
+              =
+              -\sum_{t=1}^{T}
+              \log p_\theta(w_t^\star \mid w_{&lt;t}^\star, x)
+            \]
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Trong huấn luyện</strong>
+              <p>Dùng từ đúng trước đó làm ngữ cảnh, rồi bắt mô hình dự đoán từ đúng tiếp theo.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Trong suy luận</strong>
+              <p>Mô hình dùng chính từ đã sinh; lỗi sớm có thể lan sang các token sau.</p>
+            </div>
+          </div>
+          <p class="caption">Loss token đo độ khớp với một câu chuẩn, nhưng một ảnh có thể có nhiều mô tả đúng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>VQA thêm câu hỏi vào điều kiện</h2>
+          <div class="eqbox">
+            \[
+              p_\theta(a_{1:T}\mid x, q)
+              =
+              \prod_{t=1}^{T}
+              p_\theta(a_t \mid a_{&lt;t}, x, q)
+            \]
+          </div>
+          <div class="vlm-grid-3" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Ảnh</strong>
+              <p>Cung cấp bằng chứng thị giác.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Câu hỏi</strong>
+              <p>Xác định vùng và loại thông tin cần trả lời.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Câu trả lời</strong>
+              <p>Có thể là ngắn, dài, giải thích hoặc suy luận nhiều bước.</p>
+            </div>
+          </div>
+          <p class="caption">VQA khó hơn captioning vì mô hình phải chọn thông tin liên quan đến câu hỏi, không mô tả toàn cảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Chú ý chéo nối token chữ với vùng ảnh</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Token chữ làm truy vấn</strong>
+              <div class="eqbox">\[
+                Q = H W_Q
+              \]</div>
+              <p>Trạng thái ngôn ngữ hỏi: cần nhìn phần nào của ảnh?</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Token ảnh làm khóa và giá trị</strong>
+              <div class="eqbox">\[
+                K = Z W_K,\quad V = Z W_V
+              \]</div>
+              <p>Đặc trưng ảnh cung cấp bằng chứng để cập nhật token chữ.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.6em;">
+            \[
+              \text{Attn}(Q,K,V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d}}\right)V
+            \]
+          </div>
+          <p class="caption">Chú ý chéo là cơ chế cho phép câu hỏi tập trung vào các vùng ảnh khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Ba cách ghép ảnh và chữ</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Ghép sớm</strong>
+              <p>Token ảnh và token chữ đi chung từ đầu trong một Transformer.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ghép bằng chú ý chéo</strong>
+              <p>Mô hình chữ truy cập token ảnh qua các tầng chú ý riêng.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Ghép bằng tiền tố ảnh</strong>
+              <p>Token ảnh được đưa vào LLM như một đoạn ngữ cảnh đặc biệt.</p>
+            </div>
+          </div>
+          <p class="caption">Các kiến trúc khác nhau chủ yếu ở cách token ảnh được đưa vào dòng xử lý ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Vì sao dùng LLM?</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Năng lực ngôn ngữ có sẵn</strong>
+              <p>LLM đã học cú pháp, tri thức phổ thông, định dạng trả lời và hội thoại.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Tận dụng huấn luyện lớn</strong>
+              <p>Huấn luyện một mô hình ảnh-ngôn ngữ từ đầu rất tốn dữ liệu và tính toán.</p>
+            </div>
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đầu ra linh hoạt</strong>
+              <p>Cùng một mô hình có thể trả lời ngắn, giải thích dài, lập bảng hoặc viết mã giả.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Rủi ro</strong>
+              <p>LLM có thể nói trôi chảy ngay cả khi bằng chứng ảnh không đủ.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 4 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />Kiến trúc VLM hiện đại</h1>
+          <p>Bộ mã hóa ảnh · Token ảnh · Bộ chiếu · Bộ rút gọn · LLM · Tinh chỉnh theo lệnh</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Khung kiến trúc phổ biến</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/vlm-modern-architecture.svg" alt="Kiến trúc VLM hiện đại" />
+          </div>
+          <p class="caption">Nhiều VLM hiện đại không huấn luyện mọi thứ từ đầu; chúng nối các mô hình đã huấn luyện trước.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bộ mã hóa ảnh quyết định mô hình nhìn gì</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">CNN</strong>
+              <p>Giữ thiên kiến cục bộ và dịch chuyển; phù hợp đặc trưng không gian.</p>
+              <p class="mini">Mạnh ở chi tiết cục bộ, nhưng ít linh hoạt hơn với token hóa chuỗi.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">ViT</strong>
+              <p>Chia ảnh thành mảnh, xử lý bằng tự chú ý; dễ chuyển thành token ảnh.</p>
+              <p class="mini">Phổ biến trong VLM vì khớp tự nhiên với LLM dạng token.</p>
+            </div>
+          </div>
+          <p class="caption">Nếu bộ mã hóa ảnh không giữ đủ thông tin, LLM phía sau không thể khôi phục chi tiết đã mất.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Token ảnh là dạng đọc được của ảnh</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/visual-tokens-projector.svg" alt="Token ảnh và bộ chiếu" />
+          </div>
+          <p class="caption">Ảnh phải được đổi thành chuỗi token có cùng chiều biểu diễn với LLM.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Bộ chiếu căn chỉnh hai không gian</h2>
+          <div class="eqbox">
+            \[
+              z^{llm}_k = W_2 \, \sigma(W_1 z^{vis}_k + b_1) + b_2
+            \]
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#ede7f6; border-left-color:#5e35b1;">
+              <strong style="color:#5e35b1;">Đổi chiều</strong>
+              <p>Đặc trưng ảnh có chiều \(d_v\), LLM cần chiều \(d_{llm}\).</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Căn ngữ nghĩa</strong>
+              <p>Token ảnh phải nằm trong vùng biểu diễn mà LLM có thể dùng để sinh chữ.</p>
+            </div>
+          </div>
+          <p class="caption">Một MLP nhỏ có thể là cầu nối quan trọng giữa thị giác và ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Resampler giảm số token ảnh</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Vấn đề</strong>
+              <p>Ảnh độ phân giải cao sinh rất nhiều token. LLM xử lý chuỗi dài tốn bộ nhớ và thời gian.</p>
+              <div class="eqbox">\[
+                \text{chi phí tự chú ý} \approx O(n^2)
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Giải pháp</strong>
+              <p>Dùng một tập truy vấn học được để rút gọn token ảnh thành số lượng cố định.</p>
+              <div class="eqbox">\[
+                M \ll N
+              \]</div>
+            </div>
+          </div>
+          <p class="caption">Giảm token là đổi chi tiết thị giác lấy khả năng xử lý chuỗi dài hơn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Frozen hay fine-tune?</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Chiến lược</th>
+                <th style="padding:8px; border:1px solid #ddd;">Huấn luyện gì?</th>
+                <th style="padding:8px; border:1px solid #ddd;">Lợi ích</th>
+                <th style="padding:8px; border:1px solid #ddd;">Đánh đổi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Đóng băng nhiều</td><td style="padding:8px; border:1px solid #ddd;">chủ yếu bộ chiếu</td><td style="padding:8px; border:1px solid #ddd;">rẻ, ổn định</td><td style="padding:8px; border:1px solid #ddd;">khả năng thích nghi hạn chế</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh một phần</td><td style="padding:8px; border:1px solid #ddd;">bộ chuyển đổi, tầng cuối</td><td style="padding:8px; border:1px solid #ddd;">cân bằng chi phí và chất lượng</td><td style="padding:8px; border:1px solid #ddd;">cần kiểm soát quên kiến thức</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Tinh chỉnh toàn bộ</td><td style="padding:8px; border:1px solid #ddd;">bộ mã hóa ảnh và LLM</td><td style="padding:8px; border:1px solid #ddd;">mạnh khi có dữ liệu lớn</td><td style="padding:8px; border:1px solid #ddd;">rất tốn tài nguyên</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Nhiều hệ VLM thực tế chọn đóng băng mô hình lớn và học cầu nối trước.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Hai giai đoạn huấn luyện thường gặp</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Giai đoạn 1: căn chỉnh</strong>
+              <p>Ghép đặc trưng ảnh với không gian LLM bằng dữ liệu ảnh-mô tả.</p>
+              <p class="mini">Mục tiêu: LLM đọc được token ảnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Giai đoạn 2: theo lệnh</strong>
+              <p>Dùng dữ liệu ảnh-lệnh-trả lời để dạy cách đáp ứng yêu cầu người dùng.</p>
+              <p class="mini">Mục tiêu: trả lời đúng dạng, đúng ý định.</p>
+            </div>
+          </div>
+          <p class="caption">Căn chỉnh giúp mô hình nhìn; tinh chỉnh theo lệnh giúp mô hình đối thoại theo ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Giai đoạn 1: căn chỉnh ảnh với LLM</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Dữ liệu</strong>
+              <p>Cặp ảnh-mô tả: \((x, c)\). Mô tả thường là chú thích ngắn, chưa phải hội thoại.</p>
+              <p class="mini">Ví dụ: ảnh một cảnh đường phố và câu “một xe buýt đang dừng cạnh lề đường”.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Tham số thường học</strong>
+              <p>Đóng băng bộ mã hóa ảnh và LLM; huấn luyện bộ chiếu hoặc bộ rút gọn.</p>
+              <p class="mini">Mục tiêu là đưa token ảnh vào đúng “ngôn ngữ nội bộ” của LLM.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.65em;">
+            \[
+              z = P_\psi(f_v(x)), \qquad
+              \mathcal{L}_{align}
+              =
+              -\sum_{t=1}^{T}
+              \log p_\theta(c_t^\star \mid c_{&lt;t}^\star, z)
+            \]
+          </div>
+          <p class="caption">Giai đoạn căn chỉnh không dạy mô hình hội thoại; nó dạy LLM đọc được biểu diễn ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Giai đoạn 1 có thể dùng loss tương phản</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Khi học embedding chung</strong>
+              <p>Dùng loss kiểu CLIP để kéo ảnh và mô tả đúng lại gần nhau.</p>
+              <div class="eqbox">\[
+                \mathcal{L}_{con}
+                =
+                \frac{1}{2}
+                (\mathcal{L}_{I \rightarrow T}+\mathcal{L}_{T \rightarrow I})
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Khi nối sang LLM sinh</strong>
+              <p>Dùng loss sinh chú thích để LLM dự đoán mô tả dựa trên token ảnh.</p>
+              <div class="eqbox">\[
+                \mathcal{L}_{gen}
+                =
+                -\sum_t \log p(c_t^\star \mid c_{&lt;t}^\star, z)
+              \]</div>
+            </div>
+          </div>
+          <p class="caption">Hai cách đặt loss khác nhau: một cách học thước đo phù hợp, một cách học đưa ảnh vào dòng sinh ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Giai đoạn 2: tinh chỉnh theo lệnh</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Dữ liệu</strong>
+              <p>Bộ ba \((x, q, a)\): ảnh, lệnh hoặc câu hỏi, và câu trả lời chuẩn.</p>
+              <p class="mini">Dữ liệu có thể gồm mô tả, hỏi đáp, suy luận biểu đồ, OCR hoặc grounding dạng văn bản.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Tham số thường học</strong>
+              <p>Huấn luyện bộ chiếu và một phần LLM; có thể dùng LoRA để giảm chi phí.</p>
+              <p class="mini">Mục tiêu là trả lời đúng yêu cầu, không chỉ mô tả ảnh chung chung.</p>
+            </div>
+          </div>
+          <div class="eqbox" style="margin-top:0.65em;">
+            \[
+              \mathcal{L}_{inst}
+              =
+              -\sum_{t=1}^{T}
+              \log p_\theta(a_t^\star \mid a_{&lt;t}^\star, x, q)
+            \]
+          </div>
+          <p class="caption">Giai đoạn tinh chỉnh theo lệnh biến mô hình đã biết nhìn thành mô hình biết làm theo yêu cầu thị giác-ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>So sánh hai giai đoạn huấn luyện</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Tiêu chí</th>
+                <th style="padding:8px; border:1px solid #ddd;">Giai đoạn 1: căn chỉnh</th>
+                <th style="padding:8px; border:1px solid #ddd;">Giai đoạn 2: tinh chỉnh theo lệnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Đầu vào</td><td style="padding:8px; border:1px solid #ddd;">ảnh và mô tả</td><td style="padding:8px; border:1px solid #ddd;">ảnh, lệnh, câu trả lời</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Năng lực học</td><td style="padding:8px; border:1px solid #ddd;">LLM đọc được token ảnh</td><td style="padding:8px; border:1px solid #ddd;">LLM trả lời đúng ý định</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Loss chính</td><td style="padding:8px; border:1px solid #ddd;">tương phản hoặc sinh mô tả</td><td style="padding:8px; border:1px solid #ddd;">entropy chéo trên đáp án</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Lỗi nếu thiếu</td><td style="padding:8px; border:1px solid #ddd;">mô hình không hiểu token ảnh</td><td style="padding:8px; border:1px solid #ddd;">mô hình nhìn được nhưng trả lời sai dạng</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Căn chỉnh là điều kiện cần để nhìn; tinh chỉnh theo lệnh là điều kiện để tương tác được với người dùng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tinh chỉnh theo lệnh</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/instruction-tuning.svg" alt="Tinh chỉnh theo lệnh cho VLM" />
+          </div>
+          <p class="caption">Dữ liệu huấn luyện có dạng ảnh, lệnh và câu trả lời chuẩn.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Loss tinh chỉnh theo lệnh</h2>
+          <div class="eqbox">
+            \[
+              \mathcal{L}_{inst}
+              =
+              -\sum_{t=1}^{T}
+              \log p_\theta(y_t^\star \mid y_{&lt;t}^\star, x, q)
+            \]
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.7em;">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Chỉ tính trên câu trả lời</strong>
+              <p>Thông thường không phạt mô hình vì token ảnh hoặc token lệnh; loss tập trung vào đáp án.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Rủi ro học vẹt định dạng</strong>
+              <p>Nếu dữ liệu trả lời kém, mô hình học cách nói hay nhưng không bám ảnh.</p>
+            </div>
+          </div>
+          <p class="caption">Tinh chỉnh theo lệnh là huấn luyện sinh ngôn ngữ có điều kiện trên ảnh và lệnh.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>LLaVA = CLIP + bộ chiếu + LLM</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/llava-architecture.svg" alt="Kiến trúc LLaVA" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-3" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Bộ nhìn</strong>
+              <p>Dùng bộ mã hóa ảnh đã huấn luyện trước, thường dựa trên CLIP.</p>
+            </div>
+            <div class="vlm-card" style="background:#ede7f6; border-left-color:#5e35b1;">
+              <strong style="color:#5e35b1;">Cầu nối</strong>
+              <p>Một bộ chiếu ánh xạ đặc trưng ảnh sang chiều của LLM.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">LLM</strong>
+              <p>Sinh câu trả lời theo lệnh, dựa trên token ảnh và token chữ.</p>
+            </div>
+          </div>
+          <p class="caption">Điểm mạnh của hướng này là tận dụng mô hình có sẵn thay vì xây VLM từ đầu.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>BLIP-2 = bộ mã hóa ảnh + Q-Former + LLM</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/blip2-architecture.svg" alt="Kiến trúc BLIP-2" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Vấn đề</strong>
+              <p>Bộ mã hóa ảnh tạo nhiều đặc trưng; LLM không nên nhận toàn bộ token ảnh thô.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ý tưởng</strong>
+              <p>Một mô-đun truy vấn học được rút trích thông tin thị giác cần thiết rồi đưa sang LLM.</p>
+            </div>
+          </div>
+          <p class="caption">Truy vấn trung gian vừa giảm số token, vừa học cách hỏi thông tin ảnh cho mô hình ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Q-Former: truy vấn học được hỏi bộ mã hóa ảnh</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/q-former-detail.svg" alt="Cơ chế Q-Former" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#ede7f6; border-left-color:#5e35b1;">
+              <strong style="color:#5e35b1;">Công thức chú ý chéo</strong>
+              <div class="eqbox">\[
+                H_q=\text{Attn}(QW_Q, ZW_K, ZW_V)
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Ý nghĩa</strong>
+              <p>\(Q\) là truy vấn học được, \(Z\) là token ảnh. Mô hình học nên lấy thông tin nào từ ảnh.</p>
+            </div>
+          </div>
+          <p class="caption">Q-Former là bộ lọc có học giữa bộ mã hóa ảnh đóng băng và mô hình ngôn ngữ.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Flamingo = bộ mã hóa ảnh/video + bộ rút gọn + LLM có chú ý chéo</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/flamingo-architecture.svg" alt="Kiến trúc Flamingo" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bài toán</strong>
+              <p>Ảnh, video và văn bản có thể xuất hiện xen kẽ trong cùng một ngữ cảnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Cách ghép</strong>
+              <p>LLM được thêm các tầng chú ý chéo để truy cập biểu diễn thị giác khi cần.</p>
+            </div>
+          </div>
+          <p class="caption">Flamingo cho thấy một VLM có thể học few-shot từ ví dụ ảnh-văn bản trong prompt.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Bộ rút gọn: nén nhiều token thị giác thành ít token</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/resampler-detail.svg" alt="Bộ rút gọn token thị giác" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#ede7f6; border-left-color:#5e35b1;">
+              <strong style="color:#5e35b1;">Công thức rút gọn</strong>
+              <div class="eqbox">\[
+                R=\text{Attn}(AW_Q, ZW_K, ZW_V), \quad M \ll N
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đánh đổi</strong>
+              <p>Giảm độ dài chuỗi để LLM xử lý được, nhưng có thể mất chi tiết nhỏ nếu rút gọn quá mạnh.</p>
+            </div>
+          </div>
+          <p class="caption">Bộ rút gọn là lý do Flamingo có thể đưa nhiều ảnh hoặc khung hình vào cùng một ngữ cảnh.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>LLM có chú ý chéo: token chữ đọc token thị giác</h2>
+          <div class="vlm-imgbox" style="padding:4px;">
+            <img src="img/lec-15/gated-cross-attention.svg" alt="LLM có chú ý chéo tới token thị giác" style="max-height:43vh;" />
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.45em;">
+            <div class="vlm-card" style="background:#ede7f6; border-left-color:#5e35b1;">
+              <strong style="color:#5e35b1;">Cập nhật trạng thái</strong>
+              <div class="eqbox">\[
+                H'=H+\tanh(g)\,\text{CrossAttn}(H,R,R)
+              \]</div>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Vai trò của cổng</strong>
+              <p>Cổng \(g\) học mức độ đưa thông tin ảnh vào từng tầng, tránh phá vỡ năng lực ngôn ngữ sẵn có.</p>
+            </div>
+          </div>
+          <p class="caption">Chú ý chéo có cổng cho phép LLM nhìn ảnh khi cần, thay vì trộn ảnh vào mọi bước một cách cứng nhắc.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh ba hướng thiết kế</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Hướng</th>
+                <th style="padding:8px; border:1px solid #ddd;">Cách đưa ảnh vào</th>
+                <th style="padding:8px; border:1px solid #ddd;">Phù hợp</th>
+                <th style="padding:8px; border:1px solid #ddd;">Điểm cần chú ý</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">CLIP</td><td style="padding:8px; border:1px solid #ddd;">embedding chung</td><td style="padding:8px; border:1px solid #ddd;">truy xuất, zero-shot</td><td style="padding:8px; border:1px solid #ddd;">không sinh câu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">BLIP-2</td><td style="padding:8px; border:1px solid #ddd;">truy vấn trung gian</td><td style="padding:8px; border:1px solid #ddd;">captioning, VQA</td><td style="padding:8px; border:1px solid #ddd;">cầu nối quyết định chất lượng</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">LLaVA</td><td style="padding:8px; border:1px solid #ddd;">bộ chiếu sang LLM</td><td style="padding:8px; border:1px solid #ddd;">hội thoại ảnh</td><td style="padding:8px; border:1px solid #ddd;">dễ nói trôi chảy nhưng sai ảnh</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Các mô hình khác nhau ở cách cân bằng giữa biểu diễn thị giác, năng lực ngôn ngữ và chi phí huấn luyện.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 5 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">5.</span><br />Grounding, tài liệu và biểu đồ</h1>
+          <p>Định vị theo ngôn ngữ · Open-vocabulary · SAM · OCR · Bố cục · Suy luận thị giác</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Grounding buộc câu trả lời bám vào vùng ảnh</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/grounding-sam.svg" alt="Grounding kết hợp truy vấn ngôn ngữ và phân vùng" />
+          </div>
+          <p class="caption">Grounding nối hiểu ngôn ngữ với định vị không gian, nên liên hệ trực tiếp với detection và segmentation.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Open-vocabulary detection</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Detector truyền thống</strong>
+              <p>Huấn luyện với tập lớp cố định. Lớp mới thường cần dữ liệu mới và huấn luyện lại.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Detector mở từ vựng</strong>
+              <p>Dùng văn bản làm truy vấn lớp. Mô hình tìm vùng phù hợp với mô tả.</p>
+            </div>
+          </div>
+          <p class="caption">Điểm mới là tên lớp trở thành embedding ngôn ngữ, không chỉ là chỉ số trong softmax.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Loss định vị vẫn cần hình học</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Phân loại vùng</strong>
+              <div class="eqbox">\[
+                \mathcal{L}_{cls}
+              \]</div>
+              <p>Vùng này có khớp truy vấn không?</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Hồi quy hộp</strong>
+              <div class="eqbox">\[
+                \mathcal{L}_{box}
+              \]</div>
+              <p>Hộp lệch bao xa so với hộp chuẩn?</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Mặt nạ</strong>
+              <div class="eqbox">\[
+                \mathcal{L}_{mask}
+              \]</div>
+              <p>Điểm ảnh nào thuộc vùng được nói tới?</p>
+            </div>
+          </div>
+          <p class="caption">Ngôn ngữ mở rộng điều kiện, nhưng định vị vẫn phải học bằng các loss hình học và điểm ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>SAM là mô hình phân vùng theo nhắc lệnh</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đầu vào nhắc lệnh</strong>
+              <p>Điểm, hộp, mặt nạ thô hoặc tín hiệu định vị từ mô hình khác.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đầu ra</strong>
+              <p>Một hoặc nhiều mặt nạ ứng viên, kèm điểm chất lượng.</p>
+            </div>
+          </div>
+          <p class="caption">SAM giỏi tách vùng theo nhắc lệnh không gian; VLM giúp biến câu chữ thành nhắc lệnh không gian.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tài liệu và biểu đồ là trường hợp khó</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/document-chart.svg" alt="VLM cho tài liệu và biểu đồ" />
+          </div>
+          <p class="caption">Mô hình phải đọc chữ, hiểu bố cục hai chiều và suy luận trên số liệu.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Vì sao OCR không đủ?</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Chữ</strong>
+              <p>OCR trả ra chuỗi, nhưng có thể mất vị trí và cấu trúc.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Bố cục</strong>
+              <p>Bảng, cột, chú giải, trục và mũi tên quyết định ý nghĩa.</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Suy luận</strong>
+              <p>Câu hỏi thường yêu cầu so sánh, cộng trừ hoặc đọc xu hướng.</p>
+            </div>
+          </div>
+          <p class="caption">Hiểu tài liệu là bài toán thị giác-ngôn ngữ có cấu trúc, không chỉ nhận dạng ký tự.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Các lỗi điển hình trong biểu đồ</h2>
+          <div class="tight-list">
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>Đọc sai trục:</strong> nhầm đơn vị, nhầm thang đo hoặc bỏ qua gốc trục.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>Gán sai chú giải:</strong> màu hoặc ký hiệu bị nối với nhóm dữ liệu sai.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>Suy luận quá mức:</strong> kết luận nguyên nhân khi biểu đồ chỉ cho thấy tương quan.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>Tính toán sai:</strong> đếm cột, so sánh độ cao hoặc lấy chênh lệch không chính xác.</div>
+          </div>
+          <p class="caption">Câu trả lời đúng về biểu đồ phải bám vào cả chữ, hình học và phép tính.</p>
+        </section>
+      </section>
+
+      <!-- ===================== PHẦN 6 ===================== -->
+      <section>
+        <section>
+          <h1><span class="text-light">6.</span><br />Loss, đánh giá và giới hạn</h1>
+          <p>Tương phản · Sinh ngôn ngữ · Định vị · Hallucination · Spatial reasoning · Counting · Bias</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Ba nhóm loss thường gặp</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/vlm-losses.svg" alt="Ba nhóm loss thường gặp trong VLM" />
+          </div>
+          <p class="caption">Không có một loss duy nhất cho mọi VLM; loss phụ thuộc tác vụ và kiểu đầu ra.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh loss theo câu hỏi học được</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Loss</th>
+                <th style="padding:8px; border:1px solid #ddd;">Câu hỏi học được</th>
+                <th style="padding:8px; border:1px solid #ddd;">Đầu ra</th>
+                <th style="padding:8px; border:1px solid #ddd;">Hạn chế</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Tương phản</td><td style="padding:8px; border:1px solid #ddd;">ảnh và câu có khớp không?</td><td style="padding:8px; border:1px solid #ddd;">điểm gần</td><td style="padding:8px; border:1px solid #ddd;">không sinh giải thích</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Entropy chéo token</td><td style="padding:8px; border:1px solid #ddd;">token tiếp theo là gì?</td><td style="padding:8px; border:1px solid #ddd;">câu trả lời</td><td style="padding:8px; border:1px solid #ddd;">có thể bịa trôi chảy</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Định vị</td><td style="padding:8px; border:1px solid #ddd;">vùng nào được nói tới?</td><td style="padding:8px; border:1px solid #ddd;">hộp, điểm, mặt nạ</td><td style="padding:8px; border:1px solid #ddd;">cần nhãn không gian</td></tr>
+            </tbody>
+          </table>
+          <p class="caption">Chọn loss là chọn năng lực mà mô hình được khuyến khích học.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đánh giá VLM phải tách nhiều năng lực</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Đúng ngữ nghĩa</strong>
+              <p>Mô hình có nhận ra vật, hành động, thuộc tính và quan hệ không?</p>
+            </div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;">
+              <strong style="color:#2e7d32;">Đúng định vị</strong>
+              <p>Câu trả lời có bám vào đúng vùng ảnh hoặc đúng đối tượng không?</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đúng suy luận</strong>
+              <p>Có đếm, so sánh, đọc biểu đồ và suy luận không gian đúng không?</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Đúng mức tự tin</strong>
+              <p>Mô hình có biết từ chối khi ảnh không đủ bằng chứng không?</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Hallucination là lỗi trung tâm của VLM sinh</h2>
+          <div class="vlm-imgbox">
+            <img src="img/lec-15/hallucination-eval.svg" alt="Ảo giác và đánh giá VLM" />
+          </div>
+          <p class="caption">Câu trả lời trôi chảy không đảm bảo rằng nội dung tồn tại trong ảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Vì sao hallucination xảy ra?</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Ưu tiên ngôn ngữ quá mạnh</strong>
+              <p>LLM dựa vào mẫu câu thường gặp thay vì bằng chứng thị giác yếu.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Token ảnh thiếu chi tiết</strong>
+              <p>Ảnh bị nén quá mạnh, chữ nhỏ hoặc vật nhỏ không còn biểu diễn rõ.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Dữ liệu huấn luyện nhiễu</strong>
+              <p>Câu mô tả web có thể nói về ngữ cảnh, không mô tả chính xác ảnh.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Loss token không kiểm tra sự thật</strong>
+              <p>Entropy chéo thưởng cho câu giống dữ liệu, không trực tiếp kiểm chứng với ảnh.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Quan hệ không gian khó hơn nhận diện vật</h2>
+          <div class="vlm-grid-3">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Nhận diện</strong>
+              <p>“Có xe đạp không?” thường dựa vào đặc trưng vật thể.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Quan hệ</strong>
+              <p>“Xe đạp ở bên trái người nào?” cần bố cục không gian.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Lỗi</strong>
+              <p>Mô hình có thể đúng vật nhưng sai quan hệ giữa các vật.</p>
+            </div>
+          </div>
+          <p class="caption">Một embedding toàn ảnh dễ giữ khái niệm “có gì”, nhưng khó giữ chính xác “ở đâu so với cái gì”.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Đếm là bài toán thị giác có cấu trúc</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Đếm cần tách cá thể</strong>
+              <p>Mô hình phải phân biệt các đối tượng riêng, xử lý che khuất và trùng lặp.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Sinh ngôn ngữ không đủ</strong>
+              <p>LLM có thể chọn số có vẻ hợp lý theo ngữ cảnh, không phải số đo từ ảnh.</p>
+            </div>
+          </div>
+          <p class="caption">Đếm tốt thường cần cơ chế định vị hoặc chú ý đến từng cá thể, không chỉ mô tả toàn cảnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>OCR và chữ nhỏ là điểm yếu thực tế</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;">
+              <strong style="color:#1565c0;">Nguyên nhân thị giác</strong>
+              <p>Chữ nhỏ bị mất khi ảnh được chia mảnh hoặc giảm độ phân giải.</p>
+            </div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;">
+              <strong style="color:#ef6c00;">Nguyên nhân ngôn ngữ</strong>
+              <p>Mô hình có thể đoán từ quen thuộc thay vì đọc chính xác từng ký tự.</p>
+            </div>
+          </div>
+          <p class="caption">Với tài liệu, cần kiểm tra riêng năng lực đọc chữ, giữ bố cục và suy luận trên bảng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Thiên lệch dữ liệu đi vào cả ảnh và chữ</h2>
+          <div class="vlm-grid-2">
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Thiên lệch thị giác</strong>
+              <p>Một số bối cảnh, nhóm người, vật thể hoặc văn hóa xuất hiện nhiều hơn trong dữ liệu.</p>
+            </div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;">
+              <strong style="color:#c62828;">Thiên lệch ngôn ngữ</strong>
+              <p>Chú thích web phản ánh cách người dùng viết, đặt tên, mô tả và định kiến.</p>
+            </div>
+          </div>
+          <p class="caption">VLM học từ tương quan ảnh-văn bản, nên có thể khuếch đại tương quan sai hoặc không công bằng.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Quy trình kiểm thử một VLM trong ứng dụng</h2>
+          <div class="tight-list">
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>1. Tách tác vụ:</strong> retrieval, VQA, grounding, OCR hay biểu đồ.</div>
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>2. Chọn bộ kiểm thử nhỏ nhưng khó:</strong> vật nhỏ, chữ nhỏ, quan hệ không gian, số lượng.</div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>3. Chấm theo bằng chứng ảnh:</strong> không chấm chỉ vì câu trả lời nghe hợp lý.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>4. Kiểm tra từ chối:</strong> ảnh không đủ thông tin thì mô hình phải nói không chắc.</div>
+          </div>
+          <p class="caption">Đánh giá VLM phải giống kiểm tra hệ thống thị giác, không chỉ kiểm tra văn phong.</p>
+        </section>
+      </section>
+
+      <!-- ===================== KẾT ===================== -->
+      <section>
+        <section style="font-size:0.74em;">
+          <h2>Quay lại câu hỏi xuyên suốt</h2>
+          <div style="margin-top:0.4em; background:#fff3e0; padding:10px 14px; border-radius:8px; border-left:5px solid #ff9800;">
+            <strong style="color:#e65100;">Câu hỏi:</strong> làm thế nào một mô hình vừa hiểu ảnh, vừa dùng ngôn ngữ để truy vấn, giải thích và định vị nội dung trong ảnh?
+          </div>
+          <div class="vlm-grid-2" style="margin-top:0.8em;">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">CLIP:</strong> học không gian chung để đo độ phù hợp ảnh-văn bản.</div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">VLM sinh:</strong> đưa token ảnh vào LLM để sinh câu trả lời.</div>
+            <div class="vlm-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Grounding:</strong> nối câu chữ với hộp, điểm hoặc mặt nạ trên ảnh.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Đánh giá:</strong> kiểm tra bám ảnh, không chỉ kiểm tra câu nói có trôi chảy không.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>So sánh nhanh các mô hình trong bài</h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f7f7f7;">
+                <th style="padding:8px; border:1px solid #ddd;">Mô hình / hướng</th>
+                <th style="padding:8px; border:1px solid #ddd;">Học gì?</th>
+                <th style="padding:8px; border:1px solid #ddd;">Mạnh ở đâu?</th>
+                <th style="padding:8px; border:1px solid #ddd;">Yếu ở đâu?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:8px; border:1px solid #ddd;">CLIP</td><td style="padding:8px; border:1px solid #ddd;">embedding ảnh-văn bản</td><td style="padding:8px; border:1px solid #ddd;">truy xuất, zero-shot</td><td style="padding:8px; border:1px solid #ddd;">không sinh câu</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Captioning / VQA</td><td style="padding:8px; border:1px solid #ddd;">xác suất chuỗi có điều kiện</td><td style="padding:8px; border:1px solid #ddd;">trả lời linh hoạt</td><td style="padding:8px; border:1px solid #ddd;">dễ ảo giác</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">VLM + LLM</td><td style="padding:8px; border:1px solid #ddd;">token ảnh cho LLM</td><td style="padding:8px; border:1px solid #ddd;">hội thoại ảnh</td><td style="padding:8px; border:1px solid #ddd;">phụ thuộc cầu nối và dữ liệu lệnh</td></tr>
+              <tr><td style="padding:8px; border:1px solid #ddd;">Grounding</td><td style="padding:8px; border:1px solid #ddd;">ngôn ngữ ↔ vùng ảnh</td><td style="padding:8px; border:1px solid #ddd;">định vị theo mô tả</td><td style="padding:8px; border:1px solid #ddd;">cần nhãn không gian</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>VLM khác mô hình phân loại ảnh ở không gian đầu ra như thế nào?</li>
+            <li>Trong CLIP, vì sao một lô \(N\) cặp tạo ra \(N^2\) điểm so khớp?</li>
+            <li>Zero-shot classification bằng CLIP phụ thuộc vào prompt ra sao?</li>
+            <li>Bộ chiếu trong VLM hiện đại giải quyết vấn đề gì?</li>
+            <li>Vì sao loss token không đủ để bảo đảm câu trả lời bám đúng ảnh?</li>
+            <li>Grounding liên hệ thế nào với detection và segmentation?</li>
+          </ol>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Bài tập mở rộng</h2>
+          <div class="tight-list">
+            <div class="vlm-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>A. CLIP retrieval:</strong> chọn 20 ảnh, viết 10 truy vấn tiếng Việt, đo thủ công top-3 có đúng không và phân tích lỗi.</div>
+            <div class="vlm-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>B. Prompt zero-shot:</strong> so sánh ba câu mẫu cho cùng một tập lớp; ghi lại lớp nào nhạy với prompt.</div>
+            <div class="vlm-card" style="background:#ffebee; border-left-color:#c62828;"><strong>C. Kiểm thử VLM:</strong> tạo 10 ảnh khó về đếm, chữ nhỏ và quan hệ trái-phải; đánh dấu câu trả lời bám ảnh và câu trả lời ảo giác.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Tài liệu tham khảo chính</h2>
+          <ul>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/slides/2025/lecture_16.pdf">Lecture 16: Vision and Language / Multimodal Foundation Models</a>, 2025.</li>
+            <li>Stanford CS231n, <a href="https://cs231n.stanford.edu/2025/schedule.html">Course schedule: Lecture 16 Vision and Language</a>, 2025.</li>
+            <li>Radford và cộng sự, <a href="https://arxiv.org/abs/2103.00020">Learning Transferable Visual Models From Natural Language Supervision</a>, 2021.</li>
+            <li>Alayrac và cộng sự, <a href="https://arxiv.org/abs/2204.14198">Flamingo: a Visual Language Model for Few-Shot Learning</a>, 2022.</li>
+            <li>Li và cộng sự, <a href="https://arxiv.org/abs/2301.12597">BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</a>, 2023.</li>
+            <li>Liu và cộng sự, <a href="https://arxiv.org/abs/2304.08485">Visual Instruction Tuning</a>, 2023.</li>
+            <li>Kirillov và cộng sự, <a href="https://arxiv.org/abs/2304.02643">Segment Anything</a>, 2023.</li>
+          </ul>
+        </section>
+      </section>
+
+      <div class="footer">
+        Xử lý và Phân tích Hình ảnh (Học kỳ 2, 2025-2026) §15: Mô hình ngôn ngữ thị giác
+      </div>
+    </div>
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+    });
+  </script>
+</body>
+
+</html>

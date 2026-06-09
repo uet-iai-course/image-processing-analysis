@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:15;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Captioning và VQA: mô hình phải sinh chuỗi từ có điều kiện trên ảnh</text>
+  <rect x="75" y="150" width="210" height="120" class="blue"/>
+  <text x="180" y="197" text-anchor="middle" class="label" fill="#1565c0">Ảnh</text>
+  <text x="180" y="230" text-anchor="middle" class="small">đặc trưng vùng / mảnh</text>
+  <path d="M285 210 H405" class="arrow"/>
+  <rect x="410" y="150" width="220" height="120" class="box"/>
+  <text x="520" y="197" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="520" y="230" text-anchor="middle" class="small">token ảnh</text>
+  <path d="M630 210 H750" class="arrow"/>
+  <rect x="755" y="150" width="250" height="120" class="green"/>
+  <text x="880" y="197" text-anchor="middle" class="label" fill="#2e7d32">Bộ sinh ngôn ngữ</text>
+  <text x="880" y="230" text-anchor="middle" class="small">tự hồi quy</text>
+  <path d="M1005 210 H1130" class="arrow"/>
+  <rect x="1135" y="150" width="95" height="120" class="box"/>
+  <text x="1182" y="196" text-anchor="middle" class="label">Câu</text>
+  <text x="1182" y="228" text-anchor="middle" class="small">ra</text>
+
+  <rect x="300" y="340" width="300" height="95" class="orange"/>
+  <text x="450" y="378" text-anchor="middle" class="label" fill="#ef6c00">Câu hỏi tùy chọn</text>
+  <text x="450" y="410" text-anchor="middle" class="small">"vật ở bên trái là gì?"</text>
+  <path d="M600 388 C690 388 710 275 790 250" class="arrow"/>
+
+  <text x="640" y="505" text-anchor="middle" class="small">Khác với CLIP, mô hình phải dự đoán token tiếp theo; sai một token có thể kéo lệch toàn bộ câu trả lời.</text>
+</svg>

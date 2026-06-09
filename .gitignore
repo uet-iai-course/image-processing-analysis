@@ -6,6 +6,8 @@ package-lock.json
 temp-*.html
 .conda
 .claude
-2526-2/img/
+2526-2/img/*
+!2526-2/img/lec-15/
+!2526-2/img/lec-15/**
 2526-2/index-pages.css
 apple-touch-icon.png

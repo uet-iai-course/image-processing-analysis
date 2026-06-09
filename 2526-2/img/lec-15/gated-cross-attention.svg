@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="430" viewBox="0 0 1280 430">
+  <defs>
+    <style>
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .red{fill:#ffebee;stroke:#c62828}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#78909c;stroke-width:3;fill:none;stroke-dasharray:8 7;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+
+  <rect x="55" y="95" width="230" height="120" class="orange"/>
+  <text x="170" y="142" text-anchor="middle" class="label" fill="#ef6c00">Token chữ</text>
+  <text x="170" y="174" text-anchor="middle" class="small">trạng thái LLM \(H\)</text>
+
+  <rect x="55" y="255" width="230" height="105" class="blue"/>
+  <text x="170" y="296" text-anchor="middle" class="label" fill="#1565c0">Token thị giác</text>
+  <text x="170" y="328" text-anchor="middle" class="small">sau bộ rút gọn \(R\)</text>
+
+  <path d="M285 155 H390" class="arrow"/>
+  <path d="M285 308 C340 308 350 245 390 215" class="dash"/>
+
+  <rect x="395" y="85" width="300" height="290" class="purple"/>
+  <text x="545" y="132" text-anchor="middle" class="label" fill="#5e35b1">Chú ý chéo có cổng</text>
+  <rect x="445" y="170" width="200" height="42" rx="10" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+  <text x="545" y="197" text-anchor="middle" class="small">Q từ token chữ</text>
+  <rect x="445" y="225" width="200" height="42" rx="10" fill="#fff" stroke="#1565c0" stroke-width="2"/>
+  <text x="545" y="252" text-anchor="middle" class="small">K,V từ token thị giác</text>
+  <rect x="445" y="280" width="200" height="42" rx="10" fill="#fff" stroke="#c62828" stroke-width="2"/>
+  <text x="545" y="307" text-anchor="middle" class="small">cổng \(g\) điều tiết</text>
+
+  <path d="M695 230 H805" class="arrow"/>
+
+  <rect x="810" y="115" width="250" height="230" class="green"/>
+  <text x="935" y="163" text-anchor="middle" class="label" fill="#2e7d32">Trạng thái đã nhìn ảnh</text>
+  <text x="935" y="199" text-anchor="middle" class="small">\(H'\)</text>
+  <text x="935" y="232" text-anchor="middle" class="tiny">đưa tiếp qua tầng LLM</text>
+  <text x="935" y="265" text-anchor="middle" class="tiny">hoặc sinh token kế tiếp</text>
+
+  <path d="M1060 230 H1140" class="arrow"/>
+  <rect x="1145" y="160" width="95" height="140" class="red"/>
+  <text x="1192" y="220" text-anchor="middle" class="label" fill="#c62828">Từ ra</text>
+  <text x="1192" y="250" text-anchor="middle" class="small">tiếp</text>
+
+  <text x="640" y="405" text-anchor="middle" class="small">Cổng giúp mô hình quyết định lúc nào cần dựa vào ảnh, lúc nào chỉ cần tiếp tục xử lý ngôn ngữ.</text>
+</svg>

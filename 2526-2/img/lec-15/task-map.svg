@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .node{font:700 21px Arial,sans-serif;fill:#263238}
+      .desc{font:17px Arial,sans-serif;fill:#455a64}
+      .pill{rx:18;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .center{fill:#ede7f6;stroke:#5e35b1}
+      .line{stroke:#90a4ae;stroke-width:4}
+    </style>
+  </defs>
+  <text x="640" y="46" text-anchor="middle" class="title">Bản đồ tác vụ thị giác-ngôn ngữ</text>
+  <line x1="640" y1="160" x2="290" y2="180" class="line"/>
+  <line x1="640" y1="160" x2="990" y2="180" class="line"/>
+  <line x1="640" y1="160" x2="260" y2="360" class="line"/>
+  <line x1="640" y1="160" x2="640" y2="385" class="line"/>
+  <line x1="640" y1="160" x2="1020" y2="360" class="line"/>
+  <rect x="475" y="95" width="330" height="130" rx="22" class="center" stroke-width="4"/>
+  <text x="640" y="145" text-anchor="middle" class="node" fill="#5e35b1">VLM</text>
+  <text x="640" y="177" text-anchor="middle" class="desc">nhìn ảnh và xử lý câu chữ</text>
+
+  <rect x="75" y="128" width="360" height="115" class="pill"/>
+  <text x="255" y="170" text-anchor="middle" class="node">Truy xuất ảnh-văn bản</text>
+  <text x="255" y="202" text-anchor="middle" class="desc">tìm ảnh bằng câu, tìm câu bằng ảnh</text>
+
+  <rect x="845" y="128" width="360" height="115" class="pill"/>
+  <text x="1025" y="170" text-anchor="middle" class="node">Sinh mô tả ảnh</text>
+  <text x="1025" y="202" text-anchor="middle" class="desc">ảnh → chuỗi từ có cấu trúc</text>
+
+  <rect x="70" y="330" width="380" height="120" class="pill"/>
+  <text x="260" y="374" text-anchor="middle" class="node">Hỏi đáp ảnh</text>
+  <text x="260" y="406" text-anchor="middle" class="desc">ảnh + câu hỏi → câu trả lời</text>
+
+  <rect x="460" y="355" width="360" height="120" class="pill"/>
+  <text x="640" y="399" text-anchor="middle" class="node">Grounding</text>
+  <text x="640" y="431" text-anchor="middle" class="desc">câu chữ → vùng, hộp, mặt nạ</text>
+
+  <rect x="850" y="330" width="360" height="120" class="pill"/>
+  <text x="1030" y="374" text-anchor="middle" class="node">Tài liệu và biểu đồ</text>
+  <text x="1030" y="406" text-anchor="middle" class="desc">chữ, bảng, trục, ký hiệu toán học</text>
+</svg>

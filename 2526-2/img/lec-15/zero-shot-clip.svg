@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Zero-shot: biến tên lớp thành câu rồi so khớp với ảnh</text>
+  <rect x="70" y="160" width="210" height="120" class="blue"/>
+  <text x="175" y="207" text-anchor="middle" class="label" fill="#1565c0">Ảnh cần phân loại</text>
+  <text x="175" y="240" text-anchor="middle" class="small">không huấn luyện lại</text>
+  <path d="M280 220 H405" class="arrow"/>
+  <rect x="410" y="160" width="200" height="120" class="box"/>
+  <text x="510" y="207" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="510" y="240" text-anchor="middle" class="small">véc-tơ \(v\)</text>
+
+  <rect x="70" y="335" width="540" height="120" class="orange"/>
+  <text x="340" y="375" text-anchor="middle" class="label" fill="#ef6c00">Tập câu mẫu</text>
+  <text x="340" y="407" text-anchor="middle" class="small">"một ảnh của chó" · "một ảnh của mèo" · "một ảnh của xe buýt"</text>
+  <path d="M610 395 H735" class="arrow"/>
+  <rect x="740" y="335" width="205" height="120" class="box"/>
+  <text x="842" y="375" text-anchor="middle" class="label">Bộ mã hóa chữ</text>
+  <text x="842" y="407" text-anchor="middle" class="small">các véc-tơ \(u_k\)</text>
+
+  <path d="M610 220 H1000 V318" class="arrow"/>
+  <path d="M945 395 H1000 V318" class="arrow"/>
+  <rect x="1010" y="230" width="210" height="150" class="green"/>
+  <text x="1115" y="278" text-anchor="middle" class="label" fill="#2e7d32">Chọn lớp</text>
+  <text x="1115" y="312" text-anchor="middle" class="small">lớn nhất</text>
+  <text x="1115" y="342" text-anchor="middle" class="small">\(v^\top u_k\)</text>
+  <text x="640" y="505" text-anchor="middle" class="small">Tên lớp trở thành mô tả ngôn ngữ; mô hình phân loại bằng độ gần trong không gian chung.</text>
+</svg>

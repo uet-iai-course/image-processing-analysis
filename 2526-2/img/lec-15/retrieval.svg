@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:14;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .query{fill:#fff3e0;stroke:#ef6c00}
+      .hit{fill:#e8f5e9;stroke:#2e7d32}
+      .miss{fill:#f5f5f5;stroke:#b0bec5}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Truy xuất: tìm mẫu gần nhất trong không gian ảnh-văn bản</text>
+  <rect x="70" y="205" width="300" height="135" class="query"/>
+  <text x="220" y="252" text-anchor="middle" class="label" fill="#ef6c00">Truy vấn văn bản</text>
+  <text x="220" y="286" text-anchor="middle" class="small">"xe buýt màu vàng</text>
+  <text x="220" y="313" text-anchor="middle" class="small">trên đường phố"</text>
+  <path d="M370 273 H515" class="arrow"/>
+  <rect x="520" y="205" width="230" height="135" class="box"/>
+  <text x="635" y="255" text-anchor="middle" class="label">Mã hóa truy vấn</text>
+  <text x="635" y="290" text-anchor="middle" class="small">véc-tơ \(q\)</text>
+  <path d="M750 273 H875" class="arrow"/>
+  <g transform="translate(895,105)">
+    <rect x="0" y="0" width="285" height="82" class="hit"/>
+    <text x="142" y="34" text-anchor="middle" class="label" fill="#2e7d32">ảnh 17</text>
+    <text x="142" y="62" text-anchor="middle" class="small">độ gần 0.82</text>
+    <rect x="0" y="98" width="285" height="82" class="miss"/>
+    <text x="142" y="132" text-anchor="middle" class="label">ảnh 08</text>
+    <text x="142" y="160" text-anchor="middle" class="small">độ gần 0.61</text>
+    <rect x="0" y="196" width="285" height="82" class="miss"/>
+    <text x="142" y="230" text-anchor="middle" class="label">ảnh 31</text>
+    <text x="142" y="258" text-anchor="middle" class="small">độ gần 0.58</text>
+    <rect x="0" y="294" width="285" height="82" class="miss"/>
+    <text x="142" y="328" text-anchor="middle" class="label">ảnh 04</text>
+    <text x="142" y="356" text-anchor="middle" class="small">độ gần 0.47</text>
+  </g>
+  <text x="640" y="505" text-anchor="middle" class="small">Retrieval không cần sinh câu trả lời; nó chỉ cần embedding tốt và phép xếp hạng ổn định.</text>
+</svg>

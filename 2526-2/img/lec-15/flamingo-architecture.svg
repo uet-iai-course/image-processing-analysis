@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 95 1280 440">
+  <defs>
+    <style>
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .purple{fill:#ede7f6;stroke:#5e35b1}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#78909c;stroke-width:3;fill:none;stroke-dasharray:8 7}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <g transform="translate(70,120)">
+    <rect x="0" y="0" width="150" height="70" class="orange"/>
+    <text x="75" y="43" text-anchor="middle" class="small">ví dụ chữ</text>
+    <rect x="165" y="0" width="120" height="70" class="blue"/>
+    <text x="225" y="43" text-anchor="middle" class="small">ảnh 1</text>
+    <rect x="300" y="0" width="150" height="70" class="orange"/>
+    <text x="375" y="43" text-anchor="middle" class="small">trả lời 1</text>
+    <rect x="465" y="0" width="120" height="70" class="blue"/>
+    <text x="525" y="43" text-anchor="middle" class="small">ảnh 2</text>
+    <rect x="600" y="0" width="210" height="70" class="orange"/>
+    <text x="705" y="43" text-anchor="middle" class="small">câu hỏi mới</text>
+  </g>
+
+  <path d="M620 220 V285" class="arrow"/>
+
+  <rect x="165" y="300" width="230" height="135" class="box"/>
+  <text x="280" y="345" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="280" y="378" text-anchor="middle" class="small">xử lý ảnh hoặc video</text>
+  <text x="280" y="407" text-anchor="middle" class="tiny">thường đóng băng</text>
+
+  <path d="M395 368 H500" class="arrow"/>
+  <rect x="505" y="300" width="230" height="135" class="purple"/>
+  <text x="620" y="345" text-anchor="middle" class="label" fill="#5e35b1">Bộ rút gọn</text>
+  <text x="620" y="378" text-anchor="middle" class="small">gom token thị giác</text>
+  <text x="620" y="407" text-anchor="middle" class="tiny">số token cố định</text>
+
+  <path d="M735 368 H840" class="arrow"/>
+  <rect x="845" y="260" width="300" height="215" class="green"/>
+  <text x="995" y="305" text-anchor="middle" class="label" fill="#2e7d32">LLM có chú ý chéo</text>
+  <rect x="895" y="335" width="200" height="38" rx="9" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+  <text x="995" y="360" text-anchor="middle" class="small">tầng ngôn ngữ</text>
+  <rect x="895" y="385" width="200" height="38" rx="9" fill="#fff" stroke="#5e35b1" stroke-width="2"/>
+  <text x="995" y="410" text-anchor="middle" class="small">chú ý chéo có cổng</text>
+  <text x="995" y="450" text-anchor="middle" class="tiny">truy cập ảnh khi cần</text>
+
+  <path d="M620 300 C690 245 850 210 995 260" class="dash"/>
+  <text x="640" y="520" text-anchor="middle" class="small">Điểm khác biệt: ảnh/video có thể nằm giữa prompt; LLM truy cập biểu diễn thị giác qua các tầng chú ý chéo xen kẽ.</text>
+</svg>

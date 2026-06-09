@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .red{fill:#ffebee;stroke:#c62828}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Tinh chỉnh theo lệnh: dạy VLM biến quan sát thành câu trả lời đúng dạng</text>
+  <rect x="70" y="145" width="250" height="135" class="blue"/>
+  <text x="195" y="192" text-anchor="middle" class="label" fill="#1565c0">Ảnh</text>
+  <text x="195" y="225" text-anchor="middle" class="small">đầu vào thị giác</text>
+  <rect x="70" y="320" width="250" height="135" class="orange"/>
+  <text x="195" y="367" text-anchor="middle" class="label" fill="#ef6c00">Lệnh</text>
+  <text x="195" y="400" text-anchor="middle" class="small">"hãy giải thích..."</text>
+  <path d="M320 212 H450" class="arrow"/>
+  <path d="M320 388 H450" class="arrow"/>
+  <rect x="455" y="205" width="250" height="170" class="box"/>
+  <text x="580" y="262" text-anchor="middle" class="label">VLM</text>
+  <text x="580" y="296" text-anchor="middle" class="small">dự đoán token tiếp theo</text>
+  <text x="580" y="326" text-anchor="middle" class="small">có điều kiện trên ảnh và lệnh</text>
+  <path d="M705 290 H840" class="arrow"/>
+  <rect x="845" y="150" width="330" height="120" class="green"/>
+  <text x="1010" y="194" text-anchor="middle" class="label" fill="#2e7d32">Câu trả lời chuẩn</text>
+  <text x="1010" y="228" text-anchor="middle" class="small">chuỗi token mục tiêu</text>
+  <rect x="845" y="315" width="330" height="110" class="red"/>
+  <text x="1010" y="358" text-anchor="middle" class="label" fill="#c62828">Loss</text>
+  <text x="1010" y="392" text-anchor="middle" class="small">entropy chéo trên token trả lời</text>
+  <path d="M1010 270 V315" class="arrow"/>
+</svg>

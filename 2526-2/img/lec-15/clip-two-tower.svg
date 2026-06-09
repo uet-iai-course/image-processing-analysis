@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 22px Arial,sans-serif;fill:#263238}
+      .small{font:18px Arial,sans-serif;fill:#455a64}
+      .tiny{font:15px Arial,sans-serif;fill:#607d8b}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .img{fill:#e3f2fd;stroke:#1565c0}
+      .txt{fill:#fff3e0;stroke:#ef6c00}
+      .emb{fill:#e8f5e9;stroke:#2e7d32}
+      .arrow{stroke:#455a64;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#455a64"/>
+    </marker>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">CLIP: hai bộ mã hóa đưa ảnh và văn bản vào cùng không gian</text>
+
+  <rect x="90" y="105" width="210" height="130" class="img"/>
+  <text x="195" y="155" text-anchor="middle" class="label" fill="#1565c0">Ảnh</text>
+  <text x="195" y="187" text-anchor="middle" class="small">\(x_i\)</text>
+  <path d="M300 170 H420" class="arrow"/>
+  <rect x="425" y="105" width="245" height="130" class="box"/>
+  <text x="548" y="155" text-anchor="middle" class="label">Bộ mã hóa ảnh</text>
+  <text x="548" y="188" text-anchor="middle" class="small">CNN hoặc ViT</text>
+  <path d="M670 170 H790" class="arrow"/>
+  <rect x="795" y="105" width="230" height="130" class="emb"/>
+  <text x="910" y="155" text-anchor="middle" class="label" fill="#2e7d32">Véc-tơ ảnh</text>
+  <text x="910" y="188" text-anchor="middle" class="small">\(v_i \in R^d\)</text>
+
+  <rect x="90" y="325" width="210" height="130" class="txt"/>
+  <text x="195" y="375" text-anchor="middle" class="label" fill="#ef6c00">Văn bản</text>
+  <text x="195" y="407" text-anchor="middle" class="small">\(t_i\)</text>
+  <path d="M300 390 H420" class="arrow"/>
+  <rect x="425" y="325" width="245" height="130" class="box"/>
+  <text x="548" y="375" text-anchor="middle" class="label">Bộ mã hóa chữ</text>
+  <text x="548" y="408" text-anchor="middle" class="small">Transformer</text>
+  <path d="M670 390 H790" class="arrow"/>
+  <rect x="795" y="325" width="230" height="130" class="emb"/>
+  <text x="910" y="375" text-anchor="middle" class="label" fill="#2e7d32">Véc-tơ chữ</text>
+  <text x="910" y="408" text-anchor="middle" class="small">\(u_i \in R^d\)</text>
+
+  <line x1="1035" y1="170" x2="1170" y2="390" stroke="#2e7d32" stroke-width="4" stroke-dasharray="9 7"/>
+  <line x1="1035" y1="390" x2="1170" y2="170" stroke="#c62828" stroke-width="3" stroke-dasharray="7 7"/>
+  <circle cx="1170" cy="390" r="22" fill="#c8e6c9" stroke="#2e7d32" stroke-width="4"/>
+  <circle cx="1170" cy="170" r="22" fill="#ffcdd2" stroke="#c62828" stroke-width="4"/>
+  <text x="1138" y="486" text-anchor="middle" class="tiny">Cặp đúng kéo gần, cặp sai đẩy xa.</text>
+</svg>

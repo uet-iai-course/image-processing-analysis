@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .title{font:700 30px Arial,sans-serif;fill:#263238}
+      .label{font:700 21px Arial,sans-serif;fill:#263238}
+      .small{font:17px Arial,sans-serif;fill:#455a64}
+      .box{rx:16;fill:#fff;stroke:#cfd8dc;stroke-width:3}
+      .green{fill:#e8f5e9;stroke:#2e7d32}
+      .red{fill:#ffebee;stroke:#c62828}
+      .orange{fill:#fff3e0;stroke:#ef6c00}
+      .blue{fill:#e3f2fd;stroke:#1565c0}
+    </style>
+  </defs>
+  <text x="640" y="48" text-anchor="middle" class="title">Đánh giá VLM: câu trả lời hay chưa chắc đã đúng với ảnh</text>
+  <rect x="70" y="115" width="250" height="155" class="blue"/>
+  <text x="195" y="166" text-anchor="middle" class="label" fill="#1565c0">Ảnh thật</text>
+  <text x="195" y="202" text-anchor="middle" class="small">2 người, 1 xe đạp</text>
+  <text x="195" y="232" text-anchor="middle" class="small">không có chó</text>
+
+  <rect x="370" y="115" width="370" height="155" class="red"/>
+  <text x="555" y="160" text-anchor="middle" class="label" fill="#c62828">Câu trả lời sai nhưng trôi chảy</text>
+  <text x="555" y="197" text-anchor="middle" class="small">"một người đang dắt chó"</text>
+  <text x="555" y="227" text-anchor="middle" class="small">→ hallucination</text>
+
+  <rect x="790" y="115" width="420" height="155" class="green"/>
+  <text x="1000" y="160" text-anchor="middle" class="label" fill="#2e7d32">Câu trả lời bám ảnh</text>
+  <text x="1000" y="197" text-anchor="middle" class="small">"hai người đứng gần xe đạp"</text>
+  <text x="1000" y="227" text-anchor="middle" class="small">→ đúng đối tượng và quan hệ</text>
+
+  <g transform="translate(90,335)">
+    <rect x="0" y="0" width="245" height="100" class="box"/>
+    <text x="122" y="42" text-anchor="middle" class="label">Đếm</text>
+    <text x="122" y="72" text-anchor="middle" class="small">số vật, số dòng</text>
+    <rect x="285" y="0" width="245" height="100" class="box"/>
+    <text x="407" y="42" text-anchor="middle" class="label">Không gian</text>
+    <text x="407" y="72" text-anchor="middle" class="small">trái, phải, sau, trước</text>
+    <rect x="570" y="0" width="245" height="100" class="box"/>
+    <text x="692" y="42" text-anchor="middle" class="label">OCR</text>
+    <text x="692" y="72" text-anchor="middle" class="small">chữ nhỏ, bảng</text>
+    <rect x="855" y="0" width="245" height="100" class="box"/>
+    <text x="977" y="42" text-anchor="middle" class="label">Thiên lệch</text>
+    <text x="977" y="72" text-anchor="middle" class="small">dữ liệu web, ngữ cảnh</text>
+  </g>
+  <text x="640" y="505" text-anchor="middle" class="small">Cần đánh giá cả đúng nội dung ảnh, đúng định vị, đúng suy luận và mức độ tự tin.</text>
+</svg>
