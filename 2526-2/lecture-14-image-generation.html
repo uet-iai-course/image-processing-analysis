@@ -81,7 +81,10 @@
           <h3>Bài 14: Tạo sinh ảnh</h3>
           <p>Tự mã hóa · VAE · DCGAN · Pix2Pix · CycleGAN · DDPM · DDIM · Flow Matching · Stable Diffusion · CLIP</p>
           <p style="color:#888; font-size:0.85em;">Trường ĐH Công nghệ · Đại học Quốc gia Hà Nội</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Mở đầu bằng bối cảnh của buổi học: sau các bài nhận dạng và phân tích ảnh, hôm nay chuyển sang bài toán tạo ảnh. Nhấn mạnh rằng mô hình sinh không chỉ dự đoán nhãn mà học cấu trúc của phân phối ảnh.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>Nội dung bài học</h2>
@@ -104,7 +107,10 @@
             </div>
           </div>
           <p class="caption">Bài học đi từ cách nén ảnh sang không gian ẩn, đến mô hình sinh đối nghịch, rồi đến học quá trình ngược từ nhiễu về mẫu ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi nhanh qua bản đồ bài học để người học thấy mạch phát triển: từ khái niệm mô hình sinh, sang tự mã hóa và VAE, rồi GAN, khuếch tán, Flow Matching và Stable Diffusion. Nói rõ các phần sau đều xoay quanh biểu diễn ẩn, hàm mất mát và cách lấy mẫu.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Câu hỏi xuyên suốt buổi học</h2>
@@ -115,7 +121,10 @@
             <strong style="color:#e65100;">Câu hỏi xuyên suốt:</strong>
             <span style="font-style:italic;">Làm thế nào một mô hình tạo được ảnh mới, không sao chép ảnh huấn luyện, nhưng vẫn nằm trong cùng phân phối dữ liệu?</span>
           </div>
-        </section>
+        
+        <aside class="notes">
+          <p>Đặt câu hỏi xuyên suốt như một khung kiểm tra cho mọi mô hình. Với mỗi họ mô hình, yêu cầu người học tự hỏi: học phân phối bằng cách nào, sinh ảnh từ đâu, hàm mất mát kéo mô hình theo hướng nào, và đánh đổi chính là gì.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>Mục tiêu buổi học</h2>
@@ -137,7 +146,10 @@
               <p style="margin:0.35em 0 0;">Stable Diffusion là tổ hợp của tự mã hóa, khuếch tán trong không gian ẩn và điều kiện văn bản.</p>
             </div>
           </div>
-        </section>
+        
+        <aside class="notes">
+          <p>Làm rõ mục tiêu thực hành của buổi học: nhìn vào sơ đồ phải nhận ra được các khối chính, đọc được công thức hàm mất mát, và giải thích được vì sao mỗi họ mô hình có ưu nhược điểm khác nhau. Đây là tiêu chí hiểu bài, không phải chỉ nhớ tên mô hình.</p>
+        </aside></section>
       </section>
 
       <!-- ===================== PHẦN 1 ===================== -->
@@ -145,7 +157,10 @@
         <section>
           <h1><span class="text-light">1.</span><br />Mô hình sinh ảnh</h1>
           <p>Phân phối dữ liệu · Mật độ xác suất · Lấy mẫu · Điều kiện · Hàm mất mát</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn vào phần 1 bằng việc định nghĩa mô hình sinh ảnh là bài toán học cách tạo mẫu mới giống dữ liệu huấn luyện. Nhấn mạnh từ khóa “phân phối dữ liệu”, vì đây là sợi chỉ xuyên suốt cả buổi.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>Từ nhận dạng sang tạo sinh</h2>
@@ -178,7 +193,10 @@
             </div>
           </div>
           <p class="caption">Bước chuyển tư duy: không chỉ hỏi ảnh thuộc lớp nào, mà hỏi ảnh hợp lệ trong phân phối dữ liệu trông như thế nào.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>So sánh trực diện với phân loại: phân loại nén ảnh thành nhãn, còn tạo sinh đi theo chiều ngược lại, từ mô tả ẩn hoặc nhiễu tạo ra ảnh. Điểm khó là ảnh có rất nhiều nghiệm hợp lệ, không chỉ một đáp án đúng.</p>
+        </aside></section>
 
         <section style="font-size:0.76em;">
           <h2>Phân phối dữ liệu là đối tượng cần học</h2>
@@ -186,7 +204,10 @@
             <img src="img/lec-14/density-vs-sampling.svg" alt="Học mật độ so với học lấy mẫu" />
           </div>
           <p class="caption">Một số mô hình cố tính hoặc xấp xỉ \(p(x)\); một số mô hình chỉ cần tạo mẫu nhìn như đến từ \(p_{\text{data}}(x)\).</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích rằng ảnh trong tập huấn luyện chỉ là mẫu rời rạc từ một phân phối rất phức tạp. Mô hình sinh cố gắng học phân phối đó đủ tốt để tạo ra mẫu mới, không chỉ ghi nhớ ảnh cũ.</p>
+        </aside></section>
 
         <section style="font-size:0.58em;">
           <h2 style="font-size:1.55em; margin-bottom:0.25em;">Không gian ảnh</h2>
@@ -211,7 +232,10 @@
             </div>
           </div>
           <p class="caption" style="margin-top:0.45em;">Tạo sinh ảnh khó vì phần lớn không gian ảnh chỉ là nhiễu không có nghĩa.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh không gian ảnh có số chiều cực lớn: mỗi điểm ảnh và mỗi kênh màu là một chiều. Dữ liệu thật chỉ nằm trên một phần rất mỏng và có cấu trúc trong không gian đó, nên lấy mẫu ngẫu nhiên trực tiếp gần như không tạo được ảnh có nghĩa.</p>
+        </aside></section>
 
         <section style="font-size:0.76em;">
           <h2>2 cách tiếp cận: mật độ và lấy mẫu</h2>
@@ -219,7 +243,10 @@
             <img src="img/lec-14/generative-taxonomy.svg" alt="Phân loại mô hình sinh ảnh" />
           </div>
           <p class="caption">CS231n nhấn mạnh trục chính: mô hình có tính được \(p(x)\) không, và quá trình lấy mẫu là trực tiếp hay lặp nhiều bước.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Trình bày hai hướng tư duy chính. Hướng mật độ cố gắng mô tả xác suất của dữ liệu; hướng lấy mẫu tập trung vào quy trình biến nhiễu thành ảnh. Các mô hình hiện đại thường ưu tiên quy trình lấy mẫu ổn định hơn là viết mật độ tường minh.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>Mỗi mô hình sinh trả lời bốn câu hỏi</h2>
@@ -238,11 +265,14 @@
             </div>
             <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;">
               <strong style="color:#c62828;">Sai lỗi ở đâu?</strong>
-              <p style="margin:0.35em 0 0;">Mờ, sụp kiểu mẫu, không khớp điều kiện, nhiều bước suy luận.</p>
+              <p style="margin:0.35em 0 0;">Mờ, suy biến mode, không khớp điều kiện, nhiều bước suy luận.</p>
             </div>
           </div>
           <p class="caption">Các phần sau dùng cùng khung đọc này để tránh học thuộc tên mô hình rời rạc.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dùng bốn câu hỏi này như danh sách kiểm tra. Khi sang VAE, GAN, khuếch tán hay Flow Matching, luôn quay lại: biến ngẫu nhiên là gì, mạng học gì, hàm mất mát đo gì, và lấy mẫu bằng cách nào.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Hàm mất mát là cách đặt lực lên phân phối</h2>
@@ -265,7 +295,10 @@
             </div>
           </div>
           <p class="caption">Không có hàm mất mát chung cho mọi mô hình sinh; mỗi hàm mất mát phản ánh một cách nhìn về “ảnh hợp lệ”.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói rằng hàm mất mát không chỉ là công thức tối ưu, mà là cách đặt lực lên phân phối sinh. L1, L2, KL, hàm mất mát đối nghịch, hàm mất mát khử nhiễu hay hàm mất mát khớp dòng đều kéo mô hình theo những tiêu chí khác nhau.</p>
+        </aside></section>
 
       </section>
 
@@ -274,7 +307,10 @@
         <section>
           <h1><span class="text-light">2.</span><br />Mô hình tự mã hóa và VAE</h1>
           <p>Bộ mã hóa · Bộ giải mã · Không gian ẩn · ELBO · KL · Tái tham số hóa</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn vào phần 2: tự mã hóa là bước trung gian quan trọng để hiểu không gian ẩn. VAE thêm xác suất vào tự mã hóa, giúp không gian ẩn có thể lấy mẫu được.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>2.1 Vấn đề: ảnh nằm trong không gian quá lớn</h2>
@@ -297,7 +333,10 @@
             </div>
           </div>
           <p class="caption">Tự mã hóa không bắt đầu bằng câu hỏi “ảnh này thuộc lớp nào”, mà hỏi “cần giữ thông tin gì để dựng lại ảnh này”.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích vấn đề nền: ảnh có số chiều lớn nhưng nội dung thị giác thường nằm trên cấu trúc thấp chiều hơn. Tự mã hóa khai thác giả thiết đó bằng cách ép ảnh đi qua một mã ẩn gọn.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>Luồng dữ liệu của mô hình tự mã hóa</h2>
@@ -314,7 +353,10 @@
             \]
           </div>
           <p class="caption">Bộ mã hóa biến ảnh thành mã ẩn \(z\); bộ giải mã biến \(z\) thành ảnh tái tạo \(\hat{x}\).</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi theo luồng trái sang phải: ảnh vào, bộ mã hóa, mã ẩn, bộ giải mã, ảnh tái tạo. Nhấn mạnh hàm mất mát tái tạo buộc mã ẩn phải giữ thông tin đủ để dựng lại ảnh đầu vào.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Kiến trúc ảnh: nén không gian, tăng kênh, rồi dựng lại</h2>
@@ -322,7 +364,10 @@
             <img src="img/lec-14/conv-autoencoder-architecture.svg" alt="Kiến trúc tự mã hóa tích chập" />
           </div>
           <p class="caption">Với ảnh, bộ mã hóa thường dùng tích chập và giảm mẫu; bộ giải mã dùng tăng mẫu để phục hồi kích thước không gian.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích kiến trúc tích chập: khi giảm kích thước không gian, mạng thường tăng số kênh để giữ thông tin trừu tượng hơn. Bộ giải mã làm ngược lại: tăng kích thước và giảm dần kênh để dựng ảnh.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Bộ mã hóa phải chọn thông tin nào được giữ</h2>
@@ -346,7 +391,10 @@
             \]
           </div>
           <p class="caption">Chất lượng của mã ẩn phụ thuộc vào áp lực nén: mô hình phải bỏ thông tin ít quan trọng trước.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh bottleneck buộc bộ mã hóa phải chọn lọc. Nếu mã ẩn quá nhỏ, mất chi tiết; nếu quá lớn, mô hình có thể sao chép gần như nguyên ảnh và không học biểu diễn hữu ích.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Bộ giải mã không đảo ngược bộ mã hóa một cách hoàn hảo</h2>
@@ -369,7 +417,10 @@
             </div>
           </div>
           <p class="caption">Bộ giải mã học một phép dựng ảnh hợp lý từ mã ẩn, không khôi phục từng chi tiết nếu chi tiết đó đã bị bộ mã hóa loại bỏ.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Làm rõ rằng decoder không phải phép nghịch đảo toán học hoàn hảo của encoder. Nó học một ánh xạ xấp xỉ, nên chi tiết nhỏ bị mất ở mã ẩn có thể không phục hồi được.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Hàm mất mát tái tạo: học bằng chính ảnh đầu vào</h2>
@@ -377,7 +428,10 @@
             <img src="img/lec-14/reconstruction-loss-ae.svg" alt="Hàm mất mát tái tạo trong tự mã hóa" style="max-height:52vh;" />
           </div>
           <p class="caption">Hàm mất mát tái tạo phạt khoảng cách giữa ảnh thật \(x\) và ảnh tái tạo \(\hat{x}\), nên không cần nhãn lớp.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích hàm mất mát tái tạo như học tự giám sát: đầu vào tự đóng vai trò nhãn. L2 phạt sai khác từng điểm ảnh, nên mô hình tối ưu bằng cách làm ảnh ra gần ảnh vào nhất theo nghĩa bình phương sai số.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>L2 dễ làm ảnh tái tạo bị mượt</h2>
@@ -401,7 +455,10 @@
             </div>
           </div>
           <p class="caption">Đây là lý do hàm mất mát điểm ảnh đơn giản có thể tái tạo đúng bố cục nhưng không tạo ảnh sắc như ảnh thật.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói rõ vì sao L2 tạo ảnh mượt: khi có nhiều khả năng hợp lý, trung bình hóa theo điểm ảnh thường làm mất biên sắc và kết cấu. Đây là lý do hàm mất mát theo điểm ảnh không luôn tương ứng với cảm nhận thị giác.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Mã ẩn của AE chưa phải nơi lấy mẫu tốt</h2>
@@ -409,7 +466,10 @@
             <img src="img/lec-14/latent-space-ae-limit.svg" alt="Giới hạn của không gian ẩn trong tự mã hóa" />
           </div>
           <p class="caption">AE chỉ học mã ẩn cho các ảnh đã thấy; nó không ép toàn bộ không gian ẩn thành một phân phối liên tục, dễ lấy mẫu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh AE tạo mã ẩn để tái tạo, không bắt buộc mã ẩn có phân phối dễ lấy mẫu. Các vùng giữa các mã huấn luyện có thể rỗng hoặc giải mã ra ảnh kém tự nhiên.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Bước chuyển sang VAE</h2>
@@ -417,7 +477,10 @@
             <img src="img/lec-14/ae-to-vae-bridge.svg" alt="Từ tự mã hóa sang VAE" />
           </div>
           <p class="caption">VAE biến bộ mã hóa thành mô hình xác suất: thay vì sinh một mã \(z\), bộ mã hóa sinh phân phối của \(z\) quanh ảnh đầu vào.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn sang VAE: thay vì mã hóa mỗi ảnh thành một điểm, ta mã hóa thành một phân phối. Đây là bước chuyển từ biểu diễn tất định sang biểu diễn xác suất.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>2.2 Bộ tự mã hóa biến phân (VAE)</h2>
@@ -440,7 +503,10 @@
             </div>
           </div>
           <p class="caption">Bước chuyển chính: VAE học không gian ẩn có xác suất, không chỉ học một phép nén tất định.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giới thiệu VAE như mô hình tự mã hóa có ràng buộc xác suất trên không gian ẩn. Mục tiêu không chỉ tái tạo ảnh mà còn làm mã ẩn gần một phân phối chuẩn để có thể sinh mẫu mới.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Kiến trúc VAE</h2>
@@ -448,7 +514,10 @@
             <img src="img/lec-14/vae-architecture.svg" alt="Kiến trúc VAE" />
           </div>
           <p class="caption">Bộ mã hóa sinh tham số của phân phối mã ẩn; bộ giải mã nhận mẫu \(z\) và mô hình hóa xác suất sinh ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi qua kiến trúc: bộ mã hóa xuất trung bình và độ lệch chuẩn, sau đó lấy mẫu z, rồi bộ giải mã sinh ảnh từ z. Nhấn mạnh z là biến ngẫu nhiên, không phải vectơ tất định như AE thường.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Mô hình sinh của VAE đi từ \(z\) đến ảnh</h2>
@@ -472,7 +541,10 @@
             </div>
           </div>
           <p class="caption">Khi sinh ảnh mới, VAE không cần ảnh đầu vào: lấy mẫu \(z\) từ tiên nghiệm rồi chạy bộ giải mã.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Trình bày đường sinh: lấy z từ phân phối tiên nghiệm chuẩn, đưa qua decoder để tạo ảnh. Đây là lý do VAE là mô hình sinh, không chỉ là mạng nén và giải nén.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Bộ mã hóa xấp xỉ hậu nghiệm</h2>
@@ -492,7 +564,10 @@
             </div>
           </div>
           <p class="caption">Bộ mã hóa của VAE không trả về một mã duy nhất; nó trả về một phân phối để lấy mẫu mã ẩn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích hậu nghiệm thật khó tính nên encoder học phân phối xấp xỉ. q_phi(z|x) trả lời câu hỏi: với ảnh x, những mã ẩn nào có thể đã sinh ra nó.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Bộ giải mã là mô hình xác suất trên ảnh</h2>
@@ -516,7 +591,10 @@
             </div>
           </div>
           <p class="caption">Chọn dạng \(p_\theta(x \mid z)\) quyết định hàm mất mát tái tạo và loại lỗi mà VAE bị phạt.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích bộ giải mã theo xác suất: nó không chỉ xuất ảnh, mà tham số hóa phân phối p_theta(x|z). Cách chọn phân phối quan sát quyết định hàm mất mát tái tạo là L2, BCE hoặc biến thể khác.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Huấn luyện và sinh ảnh dùng hai đường khác nhau</h2>
@@ -524,7 +602,10 @@
             <img src="img/lec-14/vae-training-sampling.svg" alt="Huấn luyện và lấy mẫu VAE" />
           </div>
           <p class="caption">Khi huấn luyện cần ảnh thật để học hậu nghiệm xấp xỉ; khi sinh ảnh chỉ cần lấy mẫu từ tiên nghiệm và chạy bộ giải mã.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh hai đường khác nhau: khi huấn luyện dùng x để suy ra z rồi tái tạo; khi sinh ảnh chỉ lấy z từ prior rồi giải mã. KL là cầu nối giúp hai đường này tương thích.</p>
+        </aside></section>
 
         <section style="font-size:0.78em;">
           <h2>2.3 Vì sao không tối đa hóa trực tiếp \(p_\theta(x)\)?</h2>
@@ -544,7 +625,10 @@
             </div>
           </div>
           <p class="caption">ELBO xuất hiện vì xác suất sinh ảnh cần tích phân qua biến ẩn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đặt vấn đề tính p_theta(x): phải tích phân qua mọi z có thể sinh ra x, thường không khả thi. Đây là lý do cần ELBO như một cận dưới tối ưu được.</p>
+        </aside></section>
 
         <section style="font-size:0.66em;">
           <h2>ELBO: cận dưới của log xác suất sinh dữ liệu</h2>
@@ -568,7 +652,10 @@
             </div>
           </div>
           <p class="caption">Tối đa hóa ELBO tương đương vừa tái tạo ảnh tốt, vừa giữ không gian ẩn có luật để lấy mẫu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích ELBO như mục tiêu thay thế cho log-likelihood. Tối đa hóa ELBO đồng thời tăng khả năng tái tạo và làm posterior xấp xỉ không lệch quá xa prior.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Hai thành phần của ELBO</h2>
@@ -576,7 +663,10 @@
             <img src="img/lec-14/elbo-components.svg" alt="Hai thành phần của ELBO" />
           </div>
           <p class="caption">Hạng tái tạo kéo ảnh ra về dữ liệu; hạng KL kéo phân phối mã ẩn về tiên nghiệm chuẩn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Tách hai thành phần: reconstruction term giữ thông tin ảnh; KL term tổ chức không gian ẩn. Nếu chỉ có tái tạo thì giống AE; nếu KL quá mạnh thì z mất thông tin.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Hàm mất mát VAE thường viết dưới dạng cần tối thiểu hóa</h2>
@@ -600,7 +690,10 @@
             </div>
           </div>
           <p class="caption">Dấu trừ xuất hiện vì ta chuyển từ tối đa hóa ELBO sang tối thiểu hóa hàm mất mát.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dạng hàm mất mát tối thiểu hóa chỉ đổi dấu từ ELBO. Khi giảng, nhấn mạnh đây là tổng của hàm mất mát tái tạo và chính quy hóa KL, có thể thêm hệ số beta để điều chỉnh cân bằng.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>KL có công thức đóng với Gaussian đường chéo</h2>
@@ -627,7 +720,10 @@
             </div>
           </div>
           <p class="caption">KL buộc mã ẩn vừa gần chuẩn, vừa không biến thành một điểm cứng cho từng ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói công thức KL đóng là lợi thế của Gaussian đường chéo. Nó giúp tính hàm mất mát ổn định, không cần ước lượng phức tạp cho phần chính quy hóa.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>KL làm không gian ẩn dễ lấy mẫu hơn</h2>
@@ -635,7 +731,10 @@
             <img src="img/lec-14/kl-latent-regularization.svg" alt="Vai trò của KL trong không gian ẩn" />
           </div>
           <p class="caption">Không có KL, mã ẩn có thể rời rạc và nhiều vùng rỗng; có KL, các mã ẩn bị kéo về vùng mà ta biết cách lấy mẫu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích trực giác: KL kéo các cụm mã ẩn về gần chuẩn, làm khoảng giữa các điểm huấn luyện có ý nghĩa hơn. Nhờ vậy lấy z ngẫu nhiên từ N(0,I) có cơ hội giải mã ra ảnh hợp lý.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Vấn đề của lấy mẫu trong lúc huấn luyện</h2>
@@ -643,7 +742,10 @@
             <img src="img/lec-14/reparameterization-trick.svg" alt="Thủ thuật tái tham số hóa" />
           </div>
           <p class="caption">Nếu lấy mẫu trực tiếp từ phân phối của bộ mã hóa, đường truyền đạo hàm qua bước ngẫu nhiên bị đứt.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nêu vấn đề lấy mẫu: nếu z được lấy ngẫu nhiên, tín hiệu đạo hàm không đi xuyên qua phép lấy mẫu theo cách thông thường. Cần biến ngẫu nhiên thành một phần tách biệt khỏi tham số học.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Thủ thuật tái tham số hóa</h2>
@@ -668,7 +770,10 @@
             </div>
           </div>
           <p class="caption">Tái tham số hóa không bỏ ngẫu nhiên; nó đặt ngẫu nhiên ở vị trí không chặn đạo hàm.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích tái tham số hóa: lấy epsilon từ chuẩn cố định, rồi tạo z bằng mu cộng sigma nhân epsilon. Nhờ vậy đạo hàm đi qua mu và sigma, còn ngẫu nhiên nằm ở epsilon.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>2.4 Vì sao VAE thường sinh ảnh mờ?</h2>
@@ -676,7 +781,10 @@
             <img src="img/lec-14/vae-blurry-likelihood.svg" alt="Vì sao VAE dễ sinh ảnh mờ" />
           </div>
           <p class="caption">Khi nhiều chi tiết đều hợp lý, hàm mất mát điểm ảnh có thể thưởng ảnh trung bình hơn là một chi tiết sắc nét cụ thể.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn sang nhược điểm: VAE có nền xác suất đẹp nhưng ảnh thường mờ. Nguyên nhân không chỉ do kiến trúc mà còn do dạng likelihood và hàm mất mát tái tạo theo điểm ảnh.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Cân bằng chính của VAE</h2>
@@ -699,7 +807,10 @@
             </div>
           </div>
           <p class="caption">VAE đổi độ sắc của mẫu lấy không gian ẩn có cấu trúc và cách huấn luyện có cơ sở xác suất.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh trade-off chính: tái tạo tốt cần mã ẩn giàu thông tin, còn lấy mẫu tốt cần mã ẩn được regularize mạnh. VAE phải cân bằng hai lực này.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>VAE vẫn là ý tưởng nền cho mô hình hiện đại</h2>
@@ -718,7 +829,10 @@
             </div>
           </div>
           <p class="caption">Ngay cả khi VAE không phải mô hình sinh ảnh sắc nhất, tư duy “sinh trong không gian ẩn” vẫn rất quan trọng.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Kết nối tới Stable Diffusion: dù VAE gốc không sinh ảnh sắc nhất, ý tưởng nén ảnh vào latent space vẫn cực kỳ quan trọng. Các mô hình hiện đại dùng không gian ẩn để giảm chi phí sinh ảnh.</p>
+        </aside></section>
 
       </section>
 
@@ -727,7 +841,10 @@
         <section>
           <h1><span class="text-light">3.</span><br />Mô hình sinh đối nghịch</h1>
           <p>GAN · DCGAN · Pix2Pix · CycleGAN · Hàm mất mát sinh đối nghịch · Hàm mất mát tái tạo · Hàm mất mát cảm quan</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn vào phần 3: GAN học sinh ảnh bằng trò chơi đối nghịch. Đây là bước chuyển từ likelihood rõ ràng sang tín hiệu học do một mạng phân biệt cung cấp.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Trò chơi sinh đối nghịch</h2>
@@ -735,7 +852,10 @@
             <img src="img/lec-14/gan-adversarial-game.svg" alt="Trò chơi sinh đối nghịch GAN" />
           </div>
           <p class="caption">Bộ phân biệt học phát hiện ảnh giả; bộ sinh học tạo ảnh làm bộ phân biệt nhầm là thật.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích vai trò hai mạng: generator tạo ảnh giả, discriminator phân biệt thật giả. Generator không so điểm ảnh với nhãn cố định mà học qua phản hồi của discriminator.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>Hàm mục tiêu GAN gốc</h2>
@@ -758,7 +878,10 @@
             </div>
           </div>
           <p class="caption">GAN không cần viết rõ mật độ \(p(x)\); mô hình học qua tín hiệu phân biệt thật-giả.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi qua objective: discriminator tối đa hóa khả năng phân biệt, generator tối thiểu hóa khả năng bị phát hiện. Nhấn mạnh GAN học phân phối gián tiếp, không cần viết mật độ p(x).</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Huấn luyện GAN: cập nhật luân phiên</h2>
@@ -777,7 +900,10 @@
             </div>
           </div>
           <p class="caption">Sự khó của GAN nằm ở động lực hai mạng cùng thay đổi, không phải chỉ ở một hàm mất mát cố định.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Mô tả vòng lặp huấn luyện: cập nhật discriminator khi generator cố định, rồi cập nhật generator khi discriminator cố định. Động lực hai mạng cùng thay đổi làm GAN khó ổn định.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Lỗi thường gặp của GAN</h2>
@@ -796,7 +922,10 @@
             </div>
           </div>
           <p class="caption">GAN giỏi tạo ảnh sắc, nhưng phải kiểm tra cả chất lượng lẫn độ đa dạng của mẫu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích ba lỗi chính: suy biến mode là thiếu đa dạng, dao động là không hội tụ mượt, đánh giá khó vì ảnh sắc chưa đủ. Đây là lý do GAN cần nhiều kỹ thuật ổn định hóa.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>DCGAN: đưa cấu trúc ảnh vào GAN</h2>
@@ -804,7 +933,10 @@
             <img src="img/lec-14/dcgan-architecture.svg" alt="Kiến trúc DCGAN" />
           </div>
           <p class="caption">DCGAN thay mạng kết nối đầy đủ bằng kiến trúc tích chập, để bộ sinh học cấu trúc không gian của ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh DCGAN đưa giả định ảnh vào kiến trúc: tích chập, tăng mẫu, chuẩn hóa lô và activation phù hợp. Kiến trúc tốt giúp tín hiệu đối nghịch dễ học hơn.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Vì sao DCGAN ổn định hơn GAN gốc?</h2>
@@ -823,7 +955,10 @@
             </div>
           </div>
           <p class="caption">DCGAN không đổi bản chất đối nghịch, nhưng làm kiến trúc phù hợp hơn với ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích từng lựa chọn của DCGAN: tích chập giữ cấu trúc cục bộ, chuẩn hóa lô giảm dao động, tăng mẫu học được giúp dựng chi tiết. DCGAN không đổi hàm mất mát GAN, chỉ làm mô hình phù hợp ảnh hơn.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Pix2Pix và CycleGAN: sinh ảnh có điều kiện</h2>
@@ -831,7 +966,10 @@
             <img src="img/lec-14/image-translation-gans.svg" alt="Pix2Pix và CycleGAN" />
           </div>
           <p class="caption">Pix2Pix cần cặp ảnh cùng nội dung; CycleGAN chỉ cần hai tập ảnh thuộc hai miền khác nhau.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn sang GAN có điều kiện: thay vì sinh ảnh bất kỳ, mô hình nhận thêm ảnh hoặc miền nguồn làm điều kiện. Pix2Pix cần cặp ảnh, CycleGAN xử lý tình huống không có cặp tương ứng.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>Pix2Pix: đối nghịch cộng với tái tạo</h2>
@@ -855,7 +993,10 @@
             </div>
           </div>
           <p class="caption">Pix2Pix cần cả “nhìn thật” và “đúng với ảnh điều kiện”.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói rõ Pix2Pix kết hợp hai lực: hàm mất mát đối nghịch làm ảnh nhìn thật trong miền đích, L1 giữ cấu trúc khớp với ảnh điều kiện. Nếu bỏ L1, ảnh có thể thật nhưng sai nội dung.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>CycleGAN: nhất quán chu trình thay cho cặp ảnh</h2>
@@ -879,7 +1020,10 @@
             </div>
           </div>
           <p class="caption">Nhất quán chu trình thay nhãn cặp ảnh bằng ràng buộc “đi rồi về phải giống ban đầu”.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích CycleGAN dùng ràng buộc đi-về: A sang B rồi về A phải gần ảnh ban đầu. Đây là cách thay thế nhãn cặp ảnh khi chỉ có hai tập ảnh không ghép cặp.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Hàm mất mát cảm quan</h2>
@@ -887,7 +1031,10 @@
             <img src="img/lec-14/perceptual-loss.svg" alt="Hàm mất mát cảm quan" style="max-height:54vh;" />
           </div>
           <p class="caption">Thay vì chỉ so sánh từng điểm ảnh, hàm mất mát cảm quan so sánh đặc trưng trích từ một mạng đã huấn luyện trước.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giới thiệu hàm mất mát cảm quan: thay vì đo sai khác điểm ảnh, đo sai khác trong không gian đặc trưng của mạng đã huấn luyện. Cách này gần cảm nhận thị giác hơn, nhất là cho kết cấu và cấu trúc.</p>
+        </aside></section>
 
         <section style="font-size:0.66em;">
           <h2>Công thức hàm mất mát cảm quan</h2>
@@ -914,7 +1061,10 @@
             </div>
           </div>
           <p class="caption">Trong Pix2Pix, siêu phân giải và chuyển phong cách, hàm cảm quan thường được cộng với L1/L2 và hàm đối nghịch.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích công thức: phi_l là đặc trưng ở tầng l, w_l cân trọng số từng tầng. Hàm mất mát này thường đi cùng L1 hoặc hàm mất mát đối nghịch để vừa giữ nội dung vừa tăng chất lượng thị giác.</p>
+        </aside></section>
 
       </section>
 
@@ -923,7 +1073,10 @@
         <section>
           <h1><span class="text-light">4.</span><br />Mô hình khuếch tán</h1>
           <p>DDPM · DDIM · Nhiễu thuận · Khử nhiễu ngược · U-Net · Lịch nhiễu</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn vào phần 4: mô hình khuếch tán biến sinh ảnh thành bài toán khử nhiễu lặp lại. Ý tưởng chính là học quá trình ngược từ nhiễu về dữ liệu.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Quá trình thuận và quá trình ngược</h2>
@@ -931,7 +1084,10 @@
             <img src="img/lec-14/diffusion-forward-reverse.svg" alt="Quá trình thuận và ngược của mô hình khuếch tán" />
           </div>
           <p class="caption">Quá trình thuận phá ảnh bằng nhiễu đã biết; quá trình ngược học khử nhiễu để sinh ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích forward process là quá trình ta tự thiết kế, không cần học: thêm nhiễu dần vào ảnh thật. Reverse process mới là phần mô hình phải học để khử nhiễu.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>Quá trình thuận có công thức đóng</h2>
@@ -952,7 +1108,10 @@
             <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">\(\bar{\alpha}_t\)</strong><p style="margin:0.35em 0 0;">lịch giữ lại tín hiệu ảnh sạch.</p></div>
           </div>
           <p class="caption">Ta có thể lấy mẫu ảnh nhiễu ở bất kỳ mức \(t\) mà không cần chạy tuần tự từ đầu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh công thức đóng cho phép lấy x_t trực tiếp từ x_0 và epsilon. Điều này làm huấn luyện hiệu quả vì không cần mô phỏng tuần tự mọi bước trước t.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>U-Net học dự đoán nhiễu</h2>
@@ -963,7 +1122,10 @@
             Từ \(x_t\), mô hình có đoán được nhiễu \(\epsilon\) đã tạo ra nó?
           </div>
           <p class="caption">Mạng nhận ảnh nhiễu và thời điểm nhiễu, rồi dự đoán nhiễu cần loại bỏ.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đặt câu hỏi trên slide: từ ảnh nhiễu x_t, có đoán lại được epsilon đã thêm vào không. U-Net học chính bài toán đó, với t cho biết mức nhiễu hiện tại.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Hàm mất mát khử nhiễu</h2>
@@ -980,7 +1142,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Bài toán ổn định</strong><p style="margin:0.35em 0 0;">Không có trò chơi hai mạng; chỉ tối thiểu hóa sai số dự đoán nhiễu.</p></div>
           </div>
           <p class="caption">Đây là lý do khuếch tán thường dễ huấn luyện ổn định hơn GAN.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích hàm mất mát đơn giản của DDPM: vì ta tự thêm epsilon nên nhãn huấn luyện biết chính xác. Mạng chỉ cần tối thiểu hóa sai số giữa nhiễu thật và nhiễu dự đoán.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>U-Net tích hợp mã hóa thời điểm</h2>
@@ -993,7 +1158,10 @@
             \]
           </div>
           <p class="caption">Mã hóa thời điểm cho mạng biết mức nhiễu hiện tại, nên cùng một \(x_t\) được xử lý khác nhau ở các bước \(t\).</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói rõ time embedding cần thiết vì cùng một kiến trúc phải xử lý nhiều mức nhiễu. Positional encoding của t được đưa vào các khối U-Net để điều chỉnh hành vi theo thời điểm.</p>
+        </aside></section>
 
         <section style="font-size:0.6em;">
           <h2>Lấy mẫu DDPM là lặp nhiều bước ngược</h2>
@@ -1016,7 +1184,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">3. Cập nhật ảnh</strong><p style="margin:0.35em 0 0;">Đi từ \(x_t\) sang \(x_{t-1}\), lặp đến ảnh sạch.</p></div>
           </div>
           <p class="caption">Chi phí lấy mẫu cao vì mỗi ảnh cần nhiều lần chạy mạng khử nhiễu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi qua công thức sampling: dùng epsilon_theta để ước lượng phần nhiễu trong x_t, rồi cập nhật về x_{t-1}. Quá trình này lặp nhiều lần nên chất lượng cao nhưng chậm.</p>
+        </aside></section>
 
         <section style="font-size:0.66em;">
           <h2>DDIM: lấy mẫu ít bước hơn</h2>
@@ -1034,7 +1205,10 @@
             \]
           </div>
           <p class="caption">DDIM giữ mục tiêu huấn luyện nhưng đi theo đường lấy mẫu rút gọn để sinh ảnh nhanh hơn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích DDIM rút gọn đường lấy mẫu: vẫn dùng mạng đã huấn luyện theo DDPM nhưng chọn ít mốc thời gian hơn. Nhấn mạnh đây là cải thiện tốc độ suy luận, không phải thay mục tiêu huấn luyện cơ bản.</p>
+        </aside></section>
 
         <section style="font-size:0.64em;">
           <h2>Lịch nhiễu quyết định độ khó từng bước</h2>
@@ -1056,7 +1230,10 @@
             </div>
           </div>
           <p class="caption">Huấn luyện ở nhiều mức nhiễu biến bài toán sinh ảnh thành chuỗi bài toán khử nhiễu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nói về lịch nhiễu: beta_t quyết định mỗi bước phá ảnh mạnh đến đâu. Lịch tuyến tính đơn giản, còn cosine giữ tín hiệu ảnh lâu hơn ở đầu quá trình nên thường ổn định hơn.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Cân bằng của mô hình khuếch tán</h2>
@@ -1065,7 +1242,10 @@
             <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Điểm yếu</strong><ul><li>Lấy mẫu nhiều bước.</li><li>Chi phí tính toán cao.</li><li>Chất lượng phụ thuộc lịch nhiễu và cách hướng dẫn.</li></ul></div>
           </div>
           <p class="caption">Khuếch tán ưu tiên ổn định và chất lượng mẫu, đổi lại chi phí suy luận cao.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Tổng hợp điểm mạnh yếu: diffusion ổn định, đa dạng và dễ điều kiện hóa, nhưng cần nhiều lần chạy mạng. Đây là đánh đổi tốc độ lấy mẫu lấy chất lượng và độ ổn định.</p>
+        </aside></section>
 
       </section>
 
@@ -1074,7 +1254,10 @@
         <section>
           <h1><span class="text-light">5.</span><br />Khớp dòng và sinh có điều kiện</h1>
           <p>Flow Matching · CLIP · Stable Diffusion · Điều kiện văn bản · Hướng dẫn không dùng bộ phân loại</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dẫn vào phần 5: Flow Matching nhìn sinh ảnh như vận chuyển liên tục từ nhiễu sang dữ liệu. Sau đó kết nối với CLIP và Stable Diffusion để thấy điều kiện văn bản đi vào mô hình sinh như thế nào.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Trường vận tốc là gì?</h2>
@@ -1082,7 +1265,10 @@
             <img src="img/lec-14/flow-velocity-field.svg" alt="Trường vận tốc trong Flow Matching" style="max-height:52vh;" />
           </div>
           <p class="caption">Thay vì hỏi “ảnh này có xác suất bao nhiêu?”, Flow Matching hỏi “điểm hiện tại phải dịch chuyển theo hướng nào?”.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích trường vận tốc bằng trực giác vật lý: tại mỗi điểm trong không gian và thời điểm, vectơ vận tốc chỉ hướng di chuyển. Mô hình học vectơ này thay vì học xác suất trực tiếp.</p>
+        </aside></section>
 
         <section style="font-size:0.66em;">
           <h2>Dòng xác suất được mô tả bằng phương trình vận chuyển</h2>
@@ -1101,7 +1287,10 @@
             <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">\(u_t(x)\)</strong><p style="margin:0.35em 0 0;">Trường vận tốc thật làm phân phối \(p_t\) chảy từ \(p_0\) sang \(p_{data}\).</p></div>
           </div>
           <p class="caption">Nếu biết trường vận tốc thật, ta chỉ cần giải ODE từ nhiễu để nhận được mẫu dữ liệu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Trình bày ODE và phương trình liên tục ở mức ý nghĩa: ODE mô tả đường đi của từng điểm, phương trình liên tục mô tả cách toàn bộ phân phối dịch chuyển. Nếu trường vận tốc đúng, p_0 sẽ chảy thành p_data.</p>
+        </aside></section>
 
         <section style="font-size:0.64em;">
           <h2>Trường vận tốc có điều kiện và trường vận tốc biên</h2>
@@ -1127,10 +1316,13 @@
             </p>
           </div>
           <p class="caption">Ta thường biết công thức có điều kiện dễ hơn nhiều so với trường vận tốc biên trực tiếp.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Làm rõ z là điều kiện tổng quát, ở đây nên hiểu là cặp x_0 và x_1. Trường có điều kiện dễ viết vì biết đường nối từng cặp; trường biên là trung bình qua mọi cặp có thể.</p>
+        </aside></section>
 
         <section style="font-size:0.6em;">
-          <h2>Định lý: hai mục tiêu có cùng gradient</h2>
+          <h2>Định lý: hai mục tiêu có cùng đạo hàm</h2>
           <div class="eqbox">
             \[
               \mathcal{L}_{FM}(\theta)
@@ -1150,8 +1342,11 @@
               \nabla_\theta\mathcal{L}_{CFM}(\theta)
             \]
           </div>
-          <p class="caption">Ý nghĩa thực tế: có thể huấn luyện bằng trường vận tốc có điều kiện, nhưng gradient vẫn đẩy mô hình như khi khớp trường vận tốc biên.</p>
-        </section>
+          <p class="caption">Ý nghĩa thực tế: có thể huấn luyện bằng trường vận tốc có điều kiện, nhưng đạo hàm vẫn đẩy mô hình như khi khớp trường vận tốc biên.</p>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh định lý này là lý do CFM hữu dụng. Ta không cần trực tiếp biết trường vận tốc biên khó tính, chỉ cần học từ trường có điều kiện mà đạo hàm vẫn đúng.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Flow Matching học hướng di chuyển</h2>
@@ -1159,7 +1354,10 @@
             <img src="img/lec-14/flow-matching-field.svg" alt="Flow Matching học trường vận tốc" />
           </div>
           <p class="caption">Mô hình học vận tốc tại từng điểm trung gian thay vì học trực tiếp xác suất ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Quay lại hình để trực quan hóa sau phần toán: mỗi điểm trung gian cần một hướng di chuyển về dữ liệu. Flow Matching huấn luyện v_theta khớp hướng đó.</p>
+        </aside></section>
 
         <section style="font-size:0.58em;">
           <h2>Hàm mất mát Flow Matching</h2>
@@ -1189,7 +1387,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Vận tốc dự đoán</strong><p style="margin:0.35em 0 0;">Mạng học trường vectơ để giải phương trình dòng khi lấy mẫu.</p></div>
           </div>
           <p class="caption">Flow Matching nhìn mô hình sinh như một dòng liên tục từ nhiễu sang dữ liệu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích hàm mất mát FM và CFM: FM khớp trường biên u_t, CFM khớp trường có điều kiện u_t(.|x0,x1). Với đường tuyến tính, nhãn vận tốc đơn giản là x1 trừ x0.</p>
+        </aside></section>
 
         <section style="font-size:0.58em;">
           <h2>Lấy mẫu bằng giải phương trình vi phân</h2>
@@ -1229,7 +1430,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">3. Nhận mẫu</strong><p style="margin:0.35em 0 0;">Điểm cuối \(x_1\) là mẫu trong miền dữ liệu.</p></div>
           </div>
           <p class="caption">Khác với DDPM lấy mẫu theo chuỗi Markov ngược, Flow Matching sinh ảnh bằng cách giải một phương trình vi phân thường.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích lấy mẫu sau huấn luyện: lấy x_0 từ nhiễu, giải ODE đến t=1. Euler là bước đơn giản, Midpoint dùng hướng giữa bước nên thường bám đường dòng tốt hơn.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Khuếch tán và Flow Matching khác nhau ở cách nhìn</h2>
@@ -1238,7 +1442,10 @@
             <div class="gen-card" style="background:#f3e5f5; border-left-color:#7b1fa2;"><strong style="color:#7b1fa2;">Flow Matching</strong><ul><li>Học trường vận tốc liên tục.</li><li>Lấy mẫu bằng giải đường dòng.</li><li>Trực giác: vận chuyển nhiễu thành dữ liệu.</li></ul></div>
           </div>
           <p class="caption">Hai hướng đều tránh trò chơi đối nghịch và đều mô tả đường đi từ nhiễu về ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>So sánh cách nhìn: diffusion học sửa nhiễu theo các mức rời rạc, Flow Matching học vận tốc liên tục. Cả hai đều tránh trò chơi đối nghịch và sinh từ nhiễu về dữ liệu.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>CLIP nối ảnh và văn bản</h2>
@@ -1246,7 +1453,10 @@
             <img src="img/lec-14/clip-contrastive.svg" alt="CLIP học tương phản ảnh và văn bản" />
           </div>
           <p class="caption">CLIP học để vectơ ảnh và vectơ văn bản đúng cặp gần nhau trong cùng không gian biểu diễn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giới thiệu CLIP như cầu nối giữa ảnh và văn bản. Nó không sinh ảnh, nhưng tạo không gian chung để văn bản trở thành điều kiện có nghĩa thị giác.</p>
+        </aside></section>
 
         <section style="font-size:0.62em;">
           <h2>Học tương phản trong CLIP</h2>
@@ -1276,7 +1486,10 @@
             <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong style="color:#1565c0;">Kết quả</strong><p style="margin:0.35em 0 0;">Văn bản trở thành tín hiệu điều kiện có ý nghĩa thị giác.</p></div>
           </div>
           <p class="caption">CLIP tối đa hóa điểm tương đồng của cặp đúng trên đường chéo và giảm điểm của các cặp sai.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích ma trận tương đồng: đường chéo là cặp đúng, ngoài đường chéo là cặp sai. Hàm mất mát hai chiều buộc ảnh tìm đúng văn bản và văn bản tìm đúng ảnh.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Stable Diffusion ghép ba ý tưởng</h2>
@@ -1298,7 +1511,10 @@
             <img src="img/lec-14/stable-diffusion-pipeline.svg" alt="Stable Diffusion ghép VAE, diffusion và điều kiện văn bản" style="max-height:40vh;" />
           </div>
           <p class="caption">Ý chính: mô hình không sinh ảnh trực tiếp từ chữ; nó khử nhiễu trong không gian ẩn rồi giải mã thành ảnh.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dùng slide này như bản đồ tổng hợp Stable Diffusion: VAE nén ảnh, diffusion sinh mã ẩn, văn bản điều kiện hóa U-Net. Các slide sau sẽ tách ba ý này.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>VAE: biểu diễn ảnh trong không gian ẩn</h2>
@@ -1319,7 +1535,10 @@
             </div>
           </div>
           <p class="caption">Stable Diffusion không khuếch tán trực tiếp trên điểm ảnh; nó làm việc trên mã ẩn của bộ tự mã hóa.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích vai trò VAE trong Stable Diffusion: ảnh được mã hóa thành latent z nhỏ hơn ảnh RGB. Việc sinh trong latent space giảm chi phí nhưng vẫn giữ cấu trúc thị giác cần thiết.</p>
+        </aside></section>
 
         <section style="font-size:0.66em;">
           <h2>Diffusion: sinh mã hóa ảnh trong không gian ẩn</h2>
@@ -1341,7 +1560,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Giải mã</strong><p style="margin:0.35em 0 0;">Sau khi có \(\widehat{z}_0\), bộ giải mã tạo ảnh \(\widehat{x}=D(\widehat{z}_0)\).</p></div>
           </div>
           <p class="caption">Cùng một nguyên lý DDPM, nhưng biến ngẫu nhiên cần sinh là mã ẩn \(z\), không phải ảnh \(x\).</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Nhấn mạnh khuếch tán bây giờ không chạy trên x mà chạy trên z. Hàm mất mát khử nhiễu giữ nguyên dạng, chỉ thay biến ảnh bằng biến mã ẩn.</p>
+        </aside></section>
 
         <section style="font-size:0.62em;">
           <h2>Diffusion có điều kiện: thêm mã hóa văn bản</h2>
@@ -1371,7 +1593,10 @@
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Mục tiêu học</strong><p style="margin:0.35em 0 0;">Dự đoán đúng nhiễu \(\epsilon\) khi đã biết cả \(t\) và văn bản.</p></div>
           </div>
           <p class="caption">So với diffusion thường, U-Net có thêm tín hiệu văn bản bên cạnh mã hóa thời điểm \(t\).</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích text conditioning: text encoder tạo c_text, time embedding tạo thông tin t, U-Net nhận cả hai để dự đoán nhiễu. Khi huấn luyện, mục tiêu vẫn là dự đoán epsilon nhưng có điều kiện văn bản.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Vì sao khuếch tán trong không gian ẩn?</h2>
@@ -1381,7 +1606,10 @@
             <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong style="color:#ef6c00;">Giải mã cuối</strong><p style="margin:0.35em 0 0;">Sau khi khử nhiễu, bộ giải mã đưa mã ẩn về ảnh RGB.</p></div>
           </div>
           <p class="caption">Ý tưởng phần 2 quay lại ở đây: không gian ẩn làm bài toán sinh ảnh rẻ và dễ điều khiển hơn.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Tổng kết lý do latent diffusion hiệu quả: không gian ẩn nhỏ hơn nên U-Net rẻ hơn, nhưng decoder vẫn đưa kết quả về ảnh RGB. Đây là điểm giúp Stable Diffusion khả thi trên ảnh độ phân giải cao.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Hướng dẫn không dùng bộ phân loại</h2>
@@ -1389,7 +1617,10 @@
             <img src="img/lec-14/cfg-guidance.svg" alt="Hướng dẫn không dùng bộ phân loại" />
           </div>
           <p class="caption">Cùng một mô hình khử nhiễu được gọi hai lần: một lần bỏ điều kiện, một lần có văn bản, rồi trộn hai dự đoán nhiễu.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Giải thích classifier-free guidance: chạy hoặc học cả trường hợp có điều kiện và bỏ điều kiện. Hiệu giữa hai dự đoán cho biết hướng làm mẫu bám văn bản hơn.</p>
+        </aside></section>
 
         <section style="font-size:0.68em;">
           <h2>Công thức hướng dẫn thường dùng</h2>
@@ -1408,7 +1639,10 @@
             <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">\(s\) cao</strong><p style="margin:0.35em 0 0;">Bám chữ mạnh nhưng dễ tạo ảnh gắt, lặp hoặc kém đa dạng.</p></div>
           </div>
           <p class="caption">Hướng dẫn không dùng bộ phân loại là hệ số chỉnh mức bám mô tả, không phải bảo đảm đúng tuyệt đối.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Đi qua công thức guidance: s điều chỉnh độ mạnh của hướng điều kiện. s quá thấp dễ lệch prompt, s quá cao có thể làm ảnh gắt, kém tự nhiên hoặc giảm đa dạng.</p>
+        </aside></section>
 
         <section style="font-size:0.64em;">
           <h2>So sánh các họ mô hình trong bài</h2>
@@ -1429,7 +1663,10 @@
             </tbody>
           </table>
           <p class="caption">Không có mô hình thắng tuyệt đối; mỗi họ chọn một cách đặt bài toán và một loại hàm mất mát khác nhau.</p>
-        </section>
+        
+        <aside class="notes">
+          <p>Dùng bảng để hệ thống hóa toàn bộ bài. Yêu cầu người học nhìn mỗi hàng theo cùng các trục: học gì, hàm mất mát là gì, sinh bằng cách nào, điểm mạnh yếu là gì.</p>
+        </aside></section>
 
       </section>
 
@@ -1446,7 +1683,10 @@
             <div class="gen-card" style="background:#ffebee; border-left-color:#c62828;"><strong style="color:#c62828;">Khuếch tán:</strong> học đường khử nhiễu từ nhiễu về ảnh.</div>
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong style="color:#2e7d32;">Stable Diffusion:</strong> làm việc trong không gian ẩn và điều khiển bằng văn bản.</div>
           </div>
-        </section>
+        
+        <aside class="notes">
+          <p>Quay lại câu hỏi đầu buổi để đóng vòng. Mỗi mô hình đã trả lời cùng bốn câu hỏi theo một cách khác nhau, từ biến ẩn đến trò chơi đối nghịch, khử nhiễu và trường vectơ.</p>
+        </aside></section>
 
         <section style="font-size:0.72em;">
           <h2>Tự kiểm tra</h2>
@@ -1457,16 +1697,22 @@
             <li>DDPM học dự đoán ảnh sạch hay dự đoán nhiễu?</li>
             <li>Stable Diffusion khác DDPM trên ảnh gốc ở điểm nào?</li>
           </ol>
-        </section>
+        
+        <aside class="notes">
+          <p>Dùng slide này như kiểm tra nhanh mức hiểu. Người học nên tự giải thích được từng sơ đồ và công thức mà không cần học thuộc nguyên văn.</p>
+        </aside></section>
 
         <section style="font-size:0.7em;">
           <h2>Bài tập mở rộng</h2>
           <div class="stub-list">
             <div class="gen-card" style="background:#e3f2fd; border-left-color:#1565c0;"><strong>A. VAE:</strong> huấn luyện VAE nhỏ trên MNIST, vẽ nội suy giữa hai mã ẩn và giải thích vùng ảnh bị mờ.</div>
-            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>B. GAN:</strong> so sánh ảnh sinh khi bộ phân biệt quá mạnh và khi bộ sinh quá mạnh; mô tả dấu hiệu sụp kiểu mẫu.</div>
+            <div class="gen-card" style="background:#fff3e0; border-left-color:#ef6c00;"><strong>B. GAN:</strong> so sánh ảnh sinh khi bộ phân biệt quá mạnh và khi bộ sinh quá mạnh; mô tả dấu hiệu suy biến mode.</div>
             <div class="gen-card" style="background:#e8f5e9; border-left-color:#2e7d32;"><strong>C. Khuếch tán:</strong> cài thí nghiệm thêm nhiễu thuận ở nhiều mức \(t\), rồi huấn luyện mạng nhỏ dự đoán nhiễu.</div>
           </div>
-        </section>
+        
+        <aside class="notes">
+          <p>Gợi ý bài tập mở rộng theo hướng so sánh và triển khai nhỏ. Mục tiêu không phải huấn luyện mô hình lớn, mà là tự nhìn thấy ảnh hưởng của hàm mất mát, không gian ẩn và số bước lấy mẫu.</p>
+        </aside></section>
 
         <section style="font-size:0.74em;">
           <h2>Tài liệu tham khảo chính</h2>
@@ -1479,7 +1725,10 @@
             <li>Ho, Jain và Abbeel, <a href="https://arxiv.org/abs/2006.11239">Denoising Diffusion Probabilistic Models</a>, 2020.</li>
             <li>Rombach và cộng sự, <a href="https://arxiv.org/abs/2112.10752">High-Resolution Image Synthesis with Latent Diffusion Models</a>, 2022.</li>
           </ul>
-        </section>
+        
+        <aside class="notes">
+          <p>Kết thúc bằng tài liệu tham khảo. Nhấn mạnh CS231n hữu ích để nắm nền tảng, còn các bài VAE, GAN, DDPM, Flow Matching và Stable Diffusion là nguồn gốc của các công thức chính trong bài.</p>
+        </aside></section>
       </section>
 
       <div class="footer">
