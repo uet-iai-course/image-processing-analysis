@@ -202,17 +202,13 @@
           <p class="caption">Kết quả: cải thiện <em>dải động</em> (dynamic range) và <em>tương phản</em> của ảnh.</p>
         </section>
 
-        <section style="font-size: 0.85em;">
+        <section style="font-size: 0.8em;">
           <h2>Ràng buộc: giữ toàn vẹn ảnh</h2>
-          <ul>
-            <li>Phép gán lại mức xám không được làm <strong>đảo lộn thứ tự sáng–tối</strong> giữa các điểm.</li>
-            <li>Nghĩa là giữ nguyên <span class="keyword">thứ hạng cường độ</span> (intensity ranking): vùng nào đang sáng hơn thì sau biến đổi vẫn sáng hơn.</li>
-          </ul>
-          <div class="question-box" style="margin-top:0.6em;">
-            <div class="question-title">Điều kiện then chốt</div>
-            <p style="margin:0; text-align:center; font-size:1.1em;">Nếu \(r_{k_2} > r_{k_1}\) thì \(s_{k_2} \ge s_{k_1}\).</p>
+          <p style="margin:0 0 0.3em;">Gán lại mức xám phải giữ <span class="keyword">thứ hạng cường độ</span>: nếu \(r_{k_2} > r_{k_1}\) thì \(s_{k_2} \ge s_{k_1}\) — tức \(T(r)\) đơn điệu tăng.</p>
+          <div class="text-center">
+            <img src="img/week3/he-integrity.png" style="max-height: 44vh; max-width: 100%; object-fit: contain;" />
           </div>
-          <p style="margin-top:0.5em; color:#555;">→ Hàm ánh xạ \(s = T(r)\) phải <strong>không giảm</strong> (đơn điệu tăng).</p>
+          <p class="caption">Điểm tối <span class="text-red">A</span> vẫn tối hơn điểm sáng <span class="text-green">B</span> sau cân bằng — thứ hạng không đảo.</p>
         </section>
 
         <section style="font-size: 0.82em;">
@@ -239,22 +235,27 @@
           </div>
         </section>
 
-        <section style="font-size: 0.85em;">
+        <section style="font-size: 0.8em;">
           <h2>Ý tưởng thuật toán: dùng CDF</h2>
-          <p>Muốn histogram sau phẳng thì <strong>hàm phân bố tích luỹ</strong> (CDF) sau phải là <strong>đường thẳng</strong>. Chọn ngay \(T(r)\) tỉ lệ với CDF của ảnh gốc.</p>
-          <p>Số điểm ảnh có mức \(\le r_k\) ở ảnh gốc phải bằng số điểm ảnh trải đều tới mức mới \(s_k\):</p>
-          <div class="text-center">
-            \[ \sum_{i=0}^{k} n_R(i) \;=\; \frac{N}{L}\,(s_k + 1) \]
+          <p style="margin:0 0 0.4em;">Đặt hàm biến đổi \(T(r)\) <strong>tỉ lệ với CDF</strong> của ảnh gốc — CDF là histogram cộng dồn, luôn không giảm.</p>
+          <div style="display:flex; gap:22px; align-items:center;">
+            <div style="flex:1.15;">
+              <img src="img/week3/he-cdf-build.png" style="max-height: 40vh; max-width: 100%; object-fit: contain;" />
+            </div>
+            <div style="flex:1;">
+              <p style="margin:0 0 0.3em;">Điều kiện: số điểm có mức \(\le r_k\) bằng số điểm trải đều tới mức mới \(s_k\):</p>
+              <div class="text-center">\[ \sum_{i=0}^{k} n_R(i) = \frac{N}{L}(s_k + 1) \]</div>
+              <p style="color:#555; margin:0.3em 0 0;">\(N\) = tổng số điểm ảnh, \(L\) = số mức xám. Giải ra \(s_k\) ở slide sau.</p>
+            </div>
           </div>
-          <p style="color:#555; margin-top:0.3em;">Với \(N\) = tổng số điểm ảnh, \(L\) = số mức xám. Vế trái là <em>histogram tích luỹ</em>; vế phải là phân bố đều tới mức \(s_k\).</p>
         </section>
 
         <section style="font-size: 0.85em;">
-          <h2>Histogram tích luỹ trước và sau</h2>
+          <h2>Histogram và CDF, trước và sau</h2>
           <div class="text-center">
-            <img src="img/week3/cumulative.png" style="max-height: 50vh; max-width: 100%; object-fit: contain;" />
+            <img src="img/week3/cumulative.png" style="max-height: 52vh; max-width: 100%; object-fit: contain;" />
           </div>
-          <p class="caption">CDF ảnh gốc <strong>cong</strong> (mức xám dồn cục). Sau cân bằng, CDF bám sát <strong>đường chéo</strong> — dấu hiệu histogram đã gần đều.</p>
+          <p class="caption">Hàng trên là histogram, hàng dưới là CDF tương ứng. Histogram dồn cục ⇒ CDF <strong>cong</strong>; sau cân bằng histogram trải đều ⇒ CDF <strong>gần thẳng</strong>, bám đường chéo.</p>
         </section>
 
         <section style="font-size: 0.85em;">
@@ -291,6 +292,64 @@
             <div class="stage"><div class="stage-title">3. Biến đổi</div><div class="stage-desc">Tra bảng cho từng điểm ảnh</div></div>
           </div>
           <p class="caption" style="margin-top:1em;">Chỉ một lần quét ảnh để dựng histogram, một lần quét nữa để tra bảng — rất nhanh.</p>
+        </section>
+
+        <!-- Ví dụ từng bước — Bước 1 -->
+        <section style="font-size: 0.72em;">
+          <style>
+            .he-tbl { width:100%; border-collapse:collapse; text-align:center; margin-top:0.3em; }
+            .he-tbl th, .he-tbl td { border:1px solid #ccc; padding:5px 7px; }
+            .he-tbl thead th { background:#F7EFE6; }
+            .he-tbl .rowlabel { background:#fafafa; font-weight:bold; text-align:left; }
+            .he-tbl .srow td { background:#fff3e0; }
+            .he-tbl .srow .rowlabel { background:#ffe0b2; }
+          </style>
+          <h2>Ví dụ từng bước — ảnh 3-bit (L = 8)</h2>
+          <p style="margin:0 0 0.3em; color:#555;"><strong class="text-blue">Bước 1:</strong> đếm histogram, rồi cộng dồn thành CDF. Ảnh 64×64 nên \(MN = 4096\) điểm ảnh.</p>
+          <table class="he-tbl">
+            <thead>
+              <tr><th>\(r_k\)</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="rowlabel">\(n_k\) — số điểm</td><td>790</td><td>1023</td><td>850</td><td>656</td><td>329</td><td>245</td><td>122</td><td>81</td></tr>
+              <tr><td class="rowlabel">\(p(r_k)=n_k/MN\)</td><td>0.19</td><td>0.25</td><td>0.21</td><td>0.16</td><td>0.08</td><td>0.06</td><td>0.03</td><td>0.02</td></tr>
+              <tr><td class="rowlabel">CDF — cộng dồn</td><td>0.19</td><td>0.44</td><td>0.65</td><td>0.81</td><td>0.89</td><td>0.95</td><td>0.98</td><td>1.00</td></tr>
+            </tbody>
+          </table>
+          <p class="caption" style="margin-top:0.5em;">CDF cộng dồn \(p(r_k)\) từ trái sang phải; ô cuối luôn bằng 1.</p>
+        </section>
+
+        <!-- Ví dụ từng bước — Bước 2 -->
+        <section style="font-size: 0.72em;">
+          <h2>Ví dụ từng bước — ảnh 3-bit (L = 8)</h2>
+          <p style="margin:0 0 0.3em; color:#555;"><strong class="text-blue">Bước 2:</strong> lập bảng tra \(s_k = \operatorname{round}\big((L-1)\cdot\text{CDF}\big) = \operatorname{round}(7\cdot\text{CDF})\).</p>
+          <table class="he-tbl">
+            <thead>
+              <tr><th>\(r_k\)</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="rowlabel">CDF</td><td>0.19</td><td>0.44</td><td>0.65</td><td>0.81</td><td>0.89</td><td>0.95</td><td>0.98</td><td>1.00</td></tr>
+              <tr><td class="rowlabel">\(7\cdot\text{CDF}\)</td><td>1.33</td><td>3.08</td><td>4.55</td><td>5.67</td><td>6.23</td><td>6.65</td><td>6.86</td><td>7.00</td></tr>
+              <tr class="srow"><td class="rowlabel">\(s_k\) — làm tròn</td><td>1</td><td>3</td><td>5</td><td>6</td><td>6</td><td>7</td><td>7</td><td>7</td></tr>
+            </tbody>
+          </table>
+          <div style="display:flex; gap:14px; margin-top:0.5em;">
+            <div style="flex:1; background:#e3f2fd; border-left:5px solid #1565c0; padding:6px 12px; border-radius:8px;">
+              Ví dụ: \(s_2 = \operatorname{round}(7\times 0.65) = \operatorname{round}(4.55) = 5\).
+            </div>
+            <div style="flex:1; background:#f3e5f5; border-left:5px solid #7b1fa2; padding:6px 12px; border-radius:8px;">
+              Nhiều mức <strong>gộp</strong> lại: \(3,4 \to 6\) và \(5,6,7 \to 7\); không mức nào bị tách.
+            </div>
+          </div>
+        </section>
+
+        <!-- Ví dụ từng bước — Bước 3 -->
+        <section style="font-size: 0.85em;">
+          <h2>Ví dụ từng bước — Bước 3: ảnh sau</h2>
+          <div class="text-center">
+            <img src="img/week3/he-worked-example.png" style="max-height: 44vh; max-width: 100%; object-fit: contain;" />
+          </div>
+          <p class="caption">8 mức gốc dồn về <strong>5 mức {1, 3, 5, 6, 7}</strong> (có khoảng trống). Histogram trải rộng hơn ⇒ tương phản tăng — đúng ba bước ở slide trước, làm trên số cụ thể.</p>
         </section>
 
         <section style="font-size: 0.85em;">
@@ -435,6 +494,15 @@ def hist_equalize(img):
             </defs>
           </svg>
           <p class="caption" style="margin-top:0.4em;">Với mỗi mức đều \(s\), tra ngược sang mức xám mẫu có cùng CDF: \(z = G^{-1}(s)\).</p>
+        </section>
+
+        <!-- Ghép hai CDF trên số liệu thật -->
+        <section style="font-size: 0.85em;">
+          <h2>Ghép hai CDF: dựng hình</h2>
+          <div class="text-center">
+            <img src="img/week3/hist-match-flow.png" style="max-height: 52vh; max-width: 100%; object-fit: contain;" />
+          </div>
+          <p class="caption">Chọn mức \(r\) → lên CDF nguồn được \(s = T(r)\) → gióng ngang sang CDF mẫu ở <strong>cùng mức tích luỹ</strong> → xuống được \(z = G^{-1}(s)\). Ở đây \(r = 130 \to z = 165\) (kéo sáng theo mẫu).</p>
         </section>
 
         <section style="font-size: 0.85em;">
