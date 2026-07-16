@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Biến đổi Fourier và lọc trong miền tần số</title>
+
+  <link rel="stylesheet" href="revealjs/dist/reset.css" />
+  <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+  <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================ MO DAU ============================ -->
+      <section>
+        <section>
+          <h1>Xử lý và Phân tích Hình ảnh</h1>
+          <h3>Biến đổi Fourier và lọc trong miền tần số</h3>
+          <p>Frequency spectra, 2D DFT, low-pass và high-pass filtering.</p>
+          <p>Trường ĐH Công nghệ - Đại học Quốc gia Hà Nội</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Ảnh là tổng của nhiều tần số</h2>
+          <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:20px; align-items:center;">
+            <div>
+              <div class="question-box">
+                <div class="question-title">Câu hỏi xuyên suốt</div>
+                <p style="margin:0;">Không nhìn từng pixel, làm sao tách ảnh thành thành phần biến thiên chậm và nhanh?</p>
+              </div>
+              <ul style="margin-top:0.5em;">
+                <li>Biến thiên chậm tạo vùng trơn và hình dạng lớn.</li>
+                <li>Biến thiên nhanh tạo cạnh, vân và chi tiết nhỏ.</li>
+              </ul>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/notebook/cell-25-output-12.png" alt="Vân chéo và phổ Fourier tương ứng" style="max-height:336px; max-width:100%; object-fit:contain;" />
+            </div>
+          </div>
+          <p class="caption">Phổ Fourier biến hướng và khoảng cách của vân ảnh thành vị trí năng lượng trong miền tần số.</p>
+        </section>
+
+        <section style="font-size:0.86em;">
+          <h2>Nội dung</h2>
+          <ol>
+            <li>Từ tín hiệu đến phổ tần số <span style="color:#888;">- harmonic, DFT, FFT</span></li>
+            <li>Biến đổi Fourier 2D <span style="color:#888;">- magnitude, phase, fftshift, đọc phổ</span></li>
+            <li>Các tính chất quan trọng <span style="color:#888;">- tuyến tính, convolution, scaling, đạo hàm</span></li>
+            <li>Lọc trong miền tần số <span style="color:#888;">- Ideal, Butterworth, Gaussian, low-pass, high-pass</span></li>
+            <li>Thực hành với notebook</li>
+          </ol>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Vị trí trong lộ trình</h2>
+          <table style="width:100%; border-collapse:collapse; text-align:left;">
+            <thead>
+              <tr style="background:#F7EFE6;">
+                <th style="border:1px solid #ccc; padding:7px;">Tuần</th>
+                <th style="border:1px solid #ccc; padding:7px;">Chủ đề</th>
+                <th style="border:1px solid #ccc; padding:7px;">Góc nhìn chính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:1px solid #ccc; padding:7px;">4-5</td>
+                <td style="border:1px solid #ccc; padding:7px;">Lọc trong miền không gian</td>
+                <td style="border:1px solid #ccc; padding:7px;">Lân cận và kernel</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid #ccc; padding:7px;">7-8</td>
+                <td style="border:1px solid #ccc; padding:7px;">Đặc trưng và hình thái học</td>
+                <td style="border:1px solid #ccc; padding:7px;">Cạnh, đường, texture, cấu trúc hình học</td>
+              </tr>
+              <tr style="background:#fff3e0;">
+                <td style="border:1px solid #ccc; padding:7px;"><strong>9</strong></td>
+                <td style="border:1px solid #ccc; padding:7px;"><strong>Fourier và lọc miền tần số</strong></td>
+                <td style="border:1px solid #ccc; padding:7px;"><strong>Tần số không gian</strong></td>
+              </tr>
+              <tr>
+                <td style="border:1px solid #ccc; padding:7px;">10</td>
+                <td style="border:1px solid #ccc; padding:7px;">Ảnh màu</td>
+                <td style="border:1px solid #ccc; padding:7px;">Không gian màu và phân vùng</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Nhắc lại tuần trước: hình thái học xử lý cấu trúc</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:10px 14px; border-radius:8px;">
+              <strong style="color:#0d47a1;">Các phép toán</strong>
+              <ul>
+                <li>Phản xạ và tịnh tiến phần tử cấu trúc.</li>
+                <li>Giãn (dilation) và co (erosion).</li>
+                <li>Mở (opening) và đóng (closing).</li>
+              </ul>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:10px 14px; border-radius:8px;">
+              <strong style="color:#1b5e20;">Ứng dụng trong slide gốc</strong>
+              <ul>
+                <li>Phát hiện đối tượng, tách nền.</li>
+                <li>Lấp lỗ trong vùng ảnh.</li>
+                <li>Tìm thành phần liên thông.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="caption">Tuần 8 hỏi cấu trúc nằm ở đâu; tuần 9 hỏi cấu trúc ấy phân bố theo tần số nào.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Đồ án cuối kỳ: yêu cầu và đánh giá</h2>
+          <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:18px;">
+            <div>
+              <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+                <strong style="color:#0d47a1;">Tổ chức</strong> - Nhóm 4-5 sinh viên; mỗi nhóm tự xác định bài toán; không trùng đề tài.
+              </div>
+              <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+                <strong style="color:#1b5e20;">Được dùng</strong> - OpenCV; có thể kết hợp học máy.
+              </div>
+              <div style="background:#ffebee; border-left:5px solid #c62828; padding:8px 12px; border-radius:8px;">
+                <strong style="color:#b71c1c;">Không chọn</strong> - Deep learning; hiệu ứng/lọc ảnh đơn thuần; Sudoku; phân đoạn đường.
+              </div>
+            </div>
+            <div>
+              <table style="width:100%; border-collapse:collapse; text-align:left;">
+                <tbody>
+                  <tr><td style="border:1px solid #ccc; padding:7px;">Ý tưởng</td><td style="border:1px solid #ccc; padding:7px;"><strong>20%</strong></td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:7px;">Cài đặt</td><td style="border:1px solid #ccc; padding:7px;"><strong>30%</strong></td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:7px;">Đánh giá</td><td style="border:1px solid #ccc; padding:7px;"><strong>20%</strong></td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:7px;">Trình bày</td><td style="border:1px solid #ccc; padding:7px;"><strong>30%</strong></td></tr>
+                </tbody>
+              </table>
+              <p style="margin-top:0.5em;">Trình bày tuần 14-15; nộp mã nguồn và slide.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Mục tiêu buổi học</h2>
+          <p style="color:#555; margin:0 0 0.4em;">Sau buổi học, sinh viên có thể:</p>
+          <ol>
+            <li><strong>Giải thích</strong> tần số không gian và cách DFT tách ảnh thành các thành phần sin/cos.</li>
+            <li><strong>Đọc</strong> phổ biên độ đã dịch tâm: vị trí thấp/cao, hướng và khoảng cách.</li>
+            <li><strong>Liên hệ</strong> convolution trong không gian với phép nhân trong miền tần số.</li>
+            <li><strong>So sánh</strong> Ideal, Butterworth và Gaussian low-pass/high-pass filters.</li>
+            <li><strong>Cài đặt</strong> pipeline DFT - mask - IDFT bằng NumPy/OpenCV.</li>
+          </ol>
+        </section>
+      </section>
+
+      <!-- ============================ PHAN 1 ============================ -->
+      <section>
+        <section>
+          <h1><span class="text-light">1.</span><br />Từ tín hiệu đến phổ tần số</h1>
+          <p>Tần số đo tốc độ thay đổi.<br />Phổ cho biết mỗi tốc độ đóng góp bao nhiêu.</p>
+        </section>
+
+        <section style="font-size:0.84em;">
+          <h2>Tần số là tốc độ thay đổi</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:center;">
+            <div>
+              <ul>
+                <li>Tín hiệu thay đổi chậm: <strong>tần số thấp</strong>.</li>
+                <li>Tín hiệu dao động nhanh: <strong>tần số cao</strong>.</li>
+                <li>Trong ảnh, biến độc lập là vị trí thay vì thời gian.</li>
+              </ul>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/source/image23.png" alt="Bốn tín hiệu tuần hoàn: sin, vuông, tam giác và răng cưa" style="max-height:329px; max-width:100%; object-fit:contain;" />
+            </div>
+          </div>
+          <p class="caption">Các tín hiệu có cùng chu kỳ nhưng khác hình dạng cần thành phần harmonic khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Một sóng sin có ba tham số</h2>
+          <div class="question-box">
+            <div class="question-title">Mô hình cơ bản</div>
+            <p style="margin:0; text-align:center; font-size:1.2em;">\[x(t)=A\sin(2\pi f t+\phi)\]</p>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:0.7em;">
+            <div style="background:#e3f2fd; padding:9px 12px; border-radius:8px; border-left:5px solid #1565c0;"><strong>Biên độ \(A\)</strong><br />Mức đóng góp của thành phần.</div>
+            <div style="background:#fff3e0; padding:9px 12px; border-radius:8px; border-left:5px solid #ef6c00;"><strong>Tần số \(f\)</strong><br />Số chu kỳ trên một đơn vị.</div>
+            <div style="background:#f3e5f5; padding:9px 12px; border-radius:8px; border-left:5px solid #7b1fa2;"><strong>Pha \(\phi\)</strong><br />Vị trí của dao động.</div>
+          </div>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Một tín hiệu phức tạp có thể là tổng hai sóng sin</h2>
+          <p style="text-align:center;">\[g(t)=\sin(2\pi f t)+\frac{1}{3}\sin(2\pi(3f)t)\]</p>
+          <div style="display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:10px; align-items:center;">
+            <img src="img/week9/source/image20.png" alt="Sóng sin tần số f" style="width:100%; max-height:217px; object-fit:contain;" />
+            <strong>+</strong>
+            <img src="img/week9/source/image21.png" alt="Sóng sin tần số 3f" style="width:100%; max-height:217px; object-fit:contain;" />
+            <strong>=</strong>
+            <img src="img/week9/source/image19.png" alt="Tổng hai sóng sin" style="width:100%; max-height:217px; object-fit:contain;" />
+          </div>
+          <p class="caption">Phổ của \(g\) có năng lượng tại hai tần số \(f\) và \(3f\), với biên độ khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Tần số thấp và cao khác nhau ở mật độ dao động</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div class="text-center">
+              <img src="img/week9/source/image20.png" alt="Sóng sin tần số thấp" style="max-height:287px; max-width:100%; object-fit:contain;" />
+              <strong>Tần số thấp</strong>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/source/image21.png" alt="Sóng sin tần số cao" style="max-height:287px; max-width:100%; object-fit:contain;" />
+              <strong>Tần số cao</strong>
+            </div>
+          </div>
+          <p class="caption">Trong cùng một khoảng, càng nhiều chu kỳ thì tần số càng cao.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Sóng vuông cần nhiều harmonic lẻ</h2>
+          <p style="text-align:center;">\[s(t)\approx \sin(2\pi ft)+\frac{1}{3}\sin(2\pi3ft)+\frac{1}{5}\sin(2\pi5ft)+\cdots\]</p>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-items:center;">
+            <img src="img/week9/source/image24.png" alt="Xấp xỉ sóng vuông với ít harmonic" style="width:100%; max-height:203px; object-fit:contain;" />
+            <img src="img/week9/source/image26.png" alt="Xấp xỉ sóng vuông với thêm harmonic" style="width:100%; max-height:203px; object-fit:contain;" />
+            <img src="img/week9/source/image28.png" alt="Xấp xỉ sóng vuông với nhiều harmonic" style="width:100%; max-height:203px; object-fit:contain;" />
+            <img src="img/week9/source/image32.png" alt="Xấp xỉ sóng vuông gần hoàn chỉnh" style="width:100%; max-height:203px; object-fit:contain;" />
+          </div>
+          <p class="caption">Thêm tần số cao làm cạnh đứng sắc hơn, nhưng dao động gần cạnh vẫn tồn tại.</p>
+        </section>
+
+        <section style="font-size:0.84em;">
+          <h2>Phổ của sóng vuông giảm dần theo tần số</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image34.png" alt="Các vạch phổ harmonic giảm dần" style="max-height:336px; max-width:80%; object-fit:contain;" />
+          </div>
+          <div class="question-box" style="margin-top:0.45em;">
+            <div class="question-title">Ghi nhớ</div>
+            <p style="margin:0;">Hình dạng tín hiệu được mã hóa bằng <strong>tập tần số</strong>, <strong>biên độ</strong> và <strong>pha</strong> của từng thành phần.</p>
+          </div>
+        </section>
+
+        <section style="font-size:0.75em;">
+          <h2>DFT biến N mẫu thành N hệ số phức</h2>
+          <p>Với \(x_n\), \(n=0,\ldots,N-1\):</p>
+          <p style="text-align:center; font-size:1.15em;">\[X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}\]</p>
+          <ul>
+            <li>Chỉ số \(k\) biểu diễn một tần số rời rạc.</li>
+            <li>\(X_k\) là số phức: chứa cả biên độ và pha.</li>
+            <li>Quy ước hệ số \(1/N\) có thể đặt ở DFT hoặc IDFT.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>IDFT tái tạo lại tín hiệu</h2>
+          <p style="text-align:center; font-size:1.15em;">\[x_n=\frac{1}{N}\sum_{k=0}^{N-1}X_k e^{i2\pi kn/N}\]</p>
+          <div style="display:flex; gap:12px; justify-content:center; align-items:center; margin-top:0.8em;">
+            <div style="background:#e3f2fd; border:2px solid #1565c0; border-radius:8px; padding:12px 18px;">Tín hiệu \(x_n\)</div>
+            <strong style="font-size:1.5em; color:#B15A2B;">&#8594;</strong>
+            <div style="background:#fff3e0; border:2px solid #ef6c00; border-radius:8px; padding:12px 18px;">DFT: \(X_k\)</div>
+            <strong style="font-size:1.5em; color:#B15A2B;">&#8594;</strong>
+            <div style="background:#e8f5e9; border:2px solid #2e7d32; border-radius:8px; padding:12px 18px;">IDFT: \(x_n\)</div>
+          </div>
+          <p class="caption">Nếu không sửa phổ, IDFT khôi phục tín hiệu ban đầu trong sai số số học.</p>
+        </section>
+
+        <section style="font-size:0.82em;">
+          <h2>Mỗi hệ số phức có biên độ và pha</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:12px 16px; border-radius:8px;">
+              <strong style="color:#0d47a1;">Biên độ</strong>
+              <p style="text-align:center; font-size:0.95em;">\[|X_k|=\sqrt{\operatorname{Re}(X_k)^2+\operatorname{Im}(X_k)^2}\]</p>
+              <p>Mức mạnh của tần số \(k\).</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; padding:12px 16px; border-radius:8px;">
+              <strong style="color:#6a1b9a;">Pha</strong>
+              <p style="text-align:center; font-size:0.95em;">\[\phi_k=\operatorname{atan2}(\operatorname{Im}X_k,\operatorname{Re}X_k)\]</p>
+              <p>Vị trí tương đối của thành phần.</p>
+            </div>
+          </div>
+          <p class="caption">Ví dụ notebook: \(|3+4i|=5\).</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>DFT trực tiếp chậm, FFT khai thác cấu trúc</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div style="background:#ffebee; border-left:5px solid #c62828; padding:11px 15px; border-radius:8px;">
+              <strong style="color:#b71c1c;">DFT trực tiếp</strong>
+              <p>Nhân ma trận hoặc hai vòng lặp.</p>
+              <p style="text-align:center;">\[O(N^2)\]</p>
+            </div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:11px 15px; border-radius:8px;">
+              <strong style="color:#1b5e20;">FFT Cooley-Tukey</strong>
+              <p>Chia bài toán thành DFT chẵn và lẻ.</p>
+              <p style="text-align:center;">\[O(N\log N)\]</p>
+            </div>
+          </div>
+          <p class="caption">Notebook so sánh hàm DFT tự viết, nhân ma trận và <span class="inline-code">np.fft.fft</span>.</p>
+        </section>
+
+        <section style="font-size:0.69em;">
+          <h2>Ví dụ notebook: DFT bằng ma trận</h2>
+          <pre><code class="language-python" data-trim>def DFT_matrix(x):
+    x = np.asarray(x, dtype=float)
+    N = x.shape[0]
+    n = np.arange(N)
+    k = n.reshape((N, 1))
+    M = np.exp(-2j * np.pi * k * n / N)
+    return np.dot(M, x)
+
+np.allclose(DFT_matrix(x), np.fft.fft(x))</code></pre>
+          <p class="caption">Ma trận DFT làm rõ công thức; FFT cho cùng kết quả nhưng nhanh hơn nhiều.</p>
+        </section>
+      </section>
+
+      <!-- ============================ PHAN 2 ============================ -->
+      <section>
+        <section>
+          <h1><span class="text-light">2.</span><br />Biến đổi Fourier 2D</h1>
+          <p>Ảnh đi vào.<br />Phổ biên độ và pha đi ra.</p>
+        </section>
+
+        <section style="font-size:0.71em;">
+          <h2>DFT 2D cộng theo cả hàng và cột</h2>
+          <p>Với ảnh \(f(x,y)\) kích thước \(M\times N\):</p>
+          <p style="text-align:center; font-size:1.08em;">\[F(u,v)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1} f(x,y)e^{-i2\pi(ux/M+vy/N)}\]</p>
+          <p>Biến đổi ngược:</p>
+          <p style="text-align:center; font-size:1.08em;">\[f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{i2\pi(ux/M+vy/N)}\]</p>
+          <p class="caption">Mỗi \((u,v)\) là một mẫu dao động 2D theo hai trục ảnh.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Một pipeline Fourier có năm bước</h2>
+          <div class="pipeline" style="margin-top:0.6em;">
+            <div class="stage"><div class="stage-title">1. Ảnh</div><div class="stage-desc">\(f(x,y)\)</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">2. DFT</div><div class="stage-desc">\(F(u,v)\)</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">3. Dịch tâm</div><div class="stage-desc">fftshift</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">4. Phân tích/lọc</div><div class="stage-desc">magnitude, phase, mask</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">5. IDFT</div><div class="stage-desc">ảnh kết quả</div></div>
+          </div>
+          <div class="text-center" style="margin-top:0.7em;">
+            <img src="img/week9/notebook/cell-30-output-1.png" alt="Ảnh, phổ, phổ dịch tâm, bỏ dịch và ảnh khôi phục" style="max-height:245px; max-width:100%; object-fit:contain;" />
+          </div>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Magnitude cho biết mạnh bao nhiêu, phase cho biết nằm ở đâu</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:11px 15px; border-radius:8px;">
+              <strong style="color:#0d47a1;">Phổ biên độ</strong>
+              <p style="text-align:center;">\[|F(u,v)|=\sqrt{R(u,v)^2+I(u,v)^2}\]</p>
+              <p>Cho thấy năng lượng tại từng tần số.</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; padding:11px 15px; border-radius:8px;">
+              <strong style="color:#6a1b9a;">Phổ pha</strong>
+              <p style="text-align:center;">\[\phi(u,v)=\tan^{-1}\frac{I(u,v)}{R(u,v)}\]</p>
+              <p>Giữ quan hệ vị trí và hình học của cấu trúc.</p>
+            </div>
+          </div>
+          <div class="question-box" style="margin-top:0.55em;">
+            <div class="question-title">Trả lời câu hỏi của slide gốc</div>
+            <p style="margin:0;">Cả hai đều cần; phase thường quyết định cấu trúc nhận dạng, magnitude quyết định mức tương phản của các tần số.</p>
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>fftshift đưa tần số 0 vào giữa ảnh</h2>
+          <div class="text-center">
+            <img src="img/week9/notebook/cell-19-output-1.png" alt="Bốn phổ Fourier sau khi dịch tâm" style="max-height:329px; max-width:100%; object-fit:contain;" />
+          </div>
+          <ul>
+            <li>Sau DFT, tần số 0 nằm ở góc.</li>
+            <li><span class="inline-code">np.fft.fftshift</span> hoán đổi các góc để đưa DC vào tâm.</li>
+          </ul>
+          <p class="caption">Dịch tâm chỉ đổi cách hiển thị và thao tác mặt nạ, không làm thay đổi nội dung phổ.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Đọc phổ đã dịch tâm: thấp ở giữa, cao ở ngoài</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center;">
+            <div>
+              <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:10px 14px; border-radius:8px; margin-bottom:10px;">
+                <strong style="color:#1b5e20;">Gần tâm</strong> - giá trị trung bình, vùng trơn, cấu trúc lớn.
+              </div>
+              <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:10px 14px; border-radius:8px;">
+                <strong style="color:#e65100;">Xa tâm</strong> - cạnh, chi tiết nhỏ, nhiễu và vân dày.
+              </div>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/source/image51.png" alt="Minh họa vùng tần số thấp, trung bình và cao trong phổ" style="max-height:315px; max-width:100%; object-fit:contain;" />
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Mật độ vân quyết định khoảng cách đến tâm phổ</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image46.png" alt="Các vân dọc ngang ở hai tần số và công thức tương ứng" style="max-height:336px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Vân càng dày thì cặp điểm phổ càng xa tâm; cùng tần số nhưng đổi hướng sẽ quay cặp điểm trong phổ.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Hướng trong phổ vuông góc với hướng vân</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image48.png" alt="Ba mẫu vân và phổ Fourier tương ứng" style="max-height:343px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Vân dọc tạo điểm theo trục ngang; vân chéo tạo cặp điểm trên đường vuông góc với vân.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Ví dụ notebook: hình dạng lặp lại tạo hình dạng phổ</h2>
+          <div class="text-center">
+            <img src="img/week9/notebook/cell-25-output-2.png" alt="Mẫu xoắn và phổ Fourier" style="max-height:343px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Mẫu xoắn trải năng lượng theo nhiều hướng thay vì chỉ tạo một cặp điểm.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Phổ cho thấy hướng trội trong texture</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/notebook/cell-25-output-4.png" alt="Vân da ngựa vằn và phổ Fourier" style="width:100%; max-height:266px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-25-output-8.png" alt="Ảnh tán cây và phổ Fourier" style="width:100%; max-height:266px; object-fit:contain;" />
+          </div>
+          <p class="caption">Texture có hướng tạo dải sáng theo hướng liên quan; cảnh tự nhiên phân bố phổ rộng hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Mẫu đều tạo phổ có cấu trúc đều</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/notebook/cell-25-output-6.png" alt="Các vòng tròn đồng tâm và phổ Fourier" style="width:100%; max-height:266px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-25-output-10.png" alt="Bàn cờ và phổ Fourier" style="width:100%; max-height:266px; object-fit:contain;" />
+          </div>
+          <p class="caption">Đối xứng tròn tạo phổ tròn; lặp theo hai trục tạo mạng năng lượng theo hai trục.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Cùng là chữ A, phổ vẫn phản ánh nét viết</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/source/image54.png" alt="Sáu chữ A viết tay và phổ Fourier tương ứng" style="width:100%; max-height:301px; object-fit:contain;" />
+            <img src="img/week9/source/image55.png" alt="Các ký tự khác nhau và phổ Fourier tương ứng" style="width:100%; max-height:301px; object-fit:contain;" />
+          </div>
+          <p class="caption">Hướng và độ dài nét quyết định các dải sáng trong phổ.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Khác ký tự, vùng tần số thấp đã khác</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image56.png" alt="Các ký tự Z B W E T H Q K và phổ tương ứng" style="max-height:336px; max-width:85%; object-fit:contain;" />
+          </div>
+          <p class="caption">Slide gốc nhấn mạnh: phổ của từng ký tự khác nhau, đặc biệt ở vùng tần số thấp.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Ảnh tự nhiên cũng có dấu vân tay tần số</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <img src="img/week9/notebook/cell-26-output-2.png" alt="Ảnh bãi biển và phổ Fourier" style="width:100%; max-height:273px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-26-output-4.png" alt="Ảnh cửa sổ và phổ Fourier" style="width:100%; max-height:273px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-26-output-6.png" alt="Ảnh hoa và phổ Fourier" style="width:100%; max-height:273px; object-fit:contain;" />
+          </div>
+          <p class="caption">Đường chân trời, khung kiến trúc và texture hoa tạo các hướng năng lượng khác nhau.</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Bài tập nhanh: ghép ảnh với phổ</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; align-items:center;">
+            <div class="text-center"><img src="img/week9/code/beach.png" alt="Ảnh bãi biển" style="max-height:245px; max-width:100%; object-fit:contain;" /><strong>A. Bãi biển</strong></div>
+            <div class="text-center"><img src="img/week9/code/window.png" alt="Ảnh cửa sổ" style="max-height:245px; max-width:100%; object-fit:contain;" /><strong>B. Cửa sổ</strong></div>
+            <div class="text-center"><img src="img/week9/code/flower.png" alt="Ảnh hoa" style="max-height:245px; max-width:100%; object-fit:contain;" /><strong>C. Hoa</strong></div>
+          </div>
+          <div class="question-box" style="margin-top:0.5em;">
+            <div class="question-title">Quan sát trước khi tính</div>
+            <p style="margin:0;">Ảnh nào tạo dải ngang mạnh? Ảnh nào có năng lượng trải đều nhất? Giải thích bằng cấu trúc trong ảnh.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================ PHAN 3 ============================ -->
+      <section>
+        <section>
+          <h1><span class="text-light">3.</span><br />Các tính chất của Fourier</h1>
+          <p>Tính chất nối hai miền.<br />Đây là lý do ta có thể lọc bằng phép nhân.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Tuyến tính: biến đổi của tổng bằng tổng các biến đổi</h2>
+          <p style="text-align:center; font-size:1.2em;">\[\mathcal{F}\{c_1f+c_2g\}=c_1F+c_2G\]</p>
+          <ul>
+            <li>Mỗi thành phần tín hiệu có thể phân tích riêng.</li>
+            <li>Ghép các thành phần trong không gian tương ứng với ghép phổ.</li>
+          </ul>
+          <p class="caption">Ví dụ sóng vuông hoạt động vì ta cộng các harmonic rồi cộng luôn phổ của chúng.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Định lý convolution biến phép lọc thành phép nhân</h2>
+          <p style="text-align:center; font-size:1.18em;">\[f(x,y)*h(x,y)\quad\Longleftrightarrow\quad F(u,v)H(u,v)\]</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:0.7em;">
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:10px 14px; border-radius:8px;"><strong>Miền không gian</strong><br />Trượt kernel và cộng tích.</div>
+            <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:10px 14px; border-radius:8px;"><strong>Miền tần số</strong><br />Nhân từng phần tử của hai phổ.</div>
+          </div>
+          <p class="caption">Với kernel lớn, FFT - nhân - IFFT có thể rẻ hơn convolution trực tiếp.</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Co giãn trong một miền gây co giãn ngược ở miền kia</h2>
+          <p style="text-align:center; font-size:1.2em;">\[f(ax)\quad\Longleftrightarrow\quad \frac{1}{|a|}F\left(\frac{u}{a}\right)\]</p>
+          <ul>
+            <li>Nén tín hiệu theo không gian làm phổ trải rộng.</li>
+            <li>Kéo giãn tín hiệu làm phổ tập trung hơn.</li>
+          </ul>
+          <div class="question-box" style="margin-top:0.55em;">
+            <div class="question-title">Trực giác</div>
+            <p style="margin:0;">Chi tiết càng nhỏ trong ảnh thì cần dải tần càng rộng để biểu diễn.</p>
+          </div>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Đạo hàm khuếch đại tần số cao</h2>
+          <p style="text-align:center; font-size:1.2em;">\[\frac{d^n f(x)}{dx^n}\quad\Longleftrightarrow\quad (i2\pi u)^nF(u)\]</p>
+          <ul>
+            <li>Hệ số \(|u|^n\) tăng theo tần số.</li>
+            <li>Cạnh là thay đổi nhanh nên đáp ứng đạo hàm lớn.</li>
+            <li>High-pass filtering và phát hiện biên có cùng trực giác.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bốn tính chất cốt lõi trong slide gốc</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image85.png" alt="Bảng tính chất tuyến tính, convolution, scaling và differentiation" style="max-height:350px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Convolution là bản lề: từ đây việc thiết kế filter chuyển thành thiết kế hàm truyền \(H(u,v)\).</p>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Nhìn lại và đi tiếp</h2>
+          <div style="background:#e8f5e9; padding:10px 14px; border-radius:8px; border-left:5px solid #2e7d32; margin-bottom:10px;">
+            <strong style="color:#2e7d32;">Ta vừa biết:</strong> phổ mô tả tần số, hướng và mức đóng góp của cấu trúc ảnh.
+          </div>
+          <div style="background:#ffebee; padding:10px 14px; border-radius:8px; border-left:5px solid #c62828; margin-bottom:10px;">
+            <strong style="color:#c62828;">Câu hỏi chưa giải:</strong> làm sao giữ hoặc loại một vùng tần số cụ thể?
+          </div>
+          <div style="background:#e3f2fd; padding:10px 14px; border-radius:8px; border-left:5px solid #1565c0;">
+            <strong style="color:#1565c0;">Phần tiếp theo:</strong> tạo mặt nạ \(H(u,v)\), nhân với phổ và biến đổi ngược.
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================ PHAN 4 ============================ -->
+      <section>
+        <section>
+          <h1><span class="text-light">4.</span><br />Lọc trong miền tần số</h1>
+          <p>Chọn vùng tần số cần giữ.<br />Nhân phổ với một mặt nạ.</p>
+        </section>
+
+        <section style="font-size:0.78em;">
+          <h2>Lọc miền tần số là nhân phổ với hàm truyền</h2>
+          <p style="text-align:center; font-size:1.12em;">\[G(u,v)=H(u,v)F(u,v)\]</p>
+          <div class="pipeline" style="margin-top:0.6em;">
+            <div class="stage"><div class="stage-title">Ảnh</div><div class="stage-desc">\(f(x,y)\)</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">DFT + shift</div><div class="stage-desc">\(F(u,v)\)</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">Nhân mask</div><div class="stage-desc">\(H\cdot F\)</div></div>
+            <div class="arrow">&#8594;</div>
+            <div class="stage"><div class="stage-title">Bỏ shift + IDFT</div><div class="stage-desc">\(g(x,y)\)</div></div>
+          </div>
+          <p class="caption">Mọi filter trong phần này khác nhau chủ yếu ở hình dạng của \(H(u,v)\).</p>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>Low-pass giữ vùng trơn và loại thay đổi nhanh</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center;">
+            <div>
+              <ul>
+                <li>Giữ vùng gần tâm phổ.</li>
+                <li>Làm mờ chi tiết nhỏ và nhiễu tần số cao.</li>
+                <li>Cutoff \(D_0\) càng nhỏ, ảnh càng mờ.</li>
+              </ul>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/notebook/cell-41-output-1.png" alt="Mặt nạ ideal low-pass, phổ sau lọc và ảnh kết quả" style="max-height:315px; max-width:100%; object-fit:contain;" />
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.75em;">
+          <h2>Ideal low-pass cắt phổ bằng một hình tròn sắc</h2>
+          <p style="text-align:center; font-size:1.12em;">\[H(u,v)=\begin{cases}1,&D(u,v)\le D_0\\0,&D(u,v)>D_0\end{cases}\]</p>
+          <p style="text-align:center;">\[D(u,v)=\sqrt{(u-P/2)^2+(v-Q/2)^2}\]</p>
+          <div class="question-box" style="margin-top:0.5em;">
+            <div class="question-title">Đánh đổi</div>
+            <p style="margin:0;">Cắt rất rõ trong miền tần số, nhưng không thực tế với linh kiện điện tử và dễ gây ringing trong miền không gian.</p>
+          </div>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Notebook: mặt nạ Ideal low-pass</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:center;">
+            <img src="img/week9/notebook/cell-36-output-2.png" alt="Mặt nạ low-pass vuông và ảnh sau lọc" style="width:100%; max-height:280px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-41-output-1.png" alt="Mặt nạ ideal low-pass tròn và ảnh sau lọc" style="width:100%; max-height:280px; object-fit:contain;" />
+          </div>
+          <p class="caption">Hình dạng mask đi vào ảnh kết quả: mask vuông thiên theo trục, mask tròn đẳng hướng hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Ideal low-pass gây vòng lặp sáng tối gần cạnh</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image90.png" alt="Test pattern và phổ Fourier với các vòng cutoff" style="max-height:336px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Cutoff sắc tương ứng với kernel sinc có đuôi dao động; các đuôi tạo ringing quanh biên.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Butterworth làm mềm biên cutoff</h2>
+          <p style="text-align:center; font-size:1.15em;">\[H(u,v)=\frac{1}{1+\left[D(u,v)/D_0\right]^{2n}}\]</p>
+          <ul>
+            <li>\(D_0\): bán kính cutoff.</li>
+            <li>\(n\): bậc filter, điều khiển độ dốc chuyển tiếp.</li>
+            <li>Không có bước nhảy tuyệt đối như Ideal.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Bậc Butterworth càng cao, ringing càng dễ xuất hiện</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image96.png" alt="Butterworth low-pass bậc 1, 2, 5 và 20 cùng kernel không gian" style="max-height:336px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Tăng \(n\) làm chuyển tiếp dốc hơn và kernel không gian dao động mạnh hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Butterworth giảm ringing so với Ideal</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image97.png" alt="So sánh kết quả Ideal và Butterworth low-pass ở nhiều cutoff" style="max-height:343px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Cùng cutoff, Butterworth chuyển tiếp mềm hơn nên biên ít xuất hiện vòng giả hơn.</p>
+        </section>
+
+        <section style="font-size:0.74em;">
+          <h2>Gaussian low-pass không có điểm gãy</h2>
+          <p style="text-align:center; font-size:1.18em;">\[H(u,v)=e^{-D(u,v)^2/(2D_0^2)}\]</p>
+          <ul>
+            <li>Trọng số giảm trơn theo khoảng cách đến tâm.</li>
+            <li>Không có tham số bậc \(n\).</li>
+            <li>Đáp ứng không gian cũng là Gaussian, không có đuôi dao động.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Notebook: Gaussian low-pass làm mượt ổn định</h2>
+          <div class="text-center">
+            <img src="img/week9/notebook/cell-49-output-1.png" alt="Mặt nạ Gaussian low-pass, phổ sau lọc và ảnh kết quả" style="max-height:343px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Mask Gaussian mờ dần từ tâm, vì vậy ảnh kết quả không có biên cutoff nhân tạo.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Gaussian ít ringing hơn Ideal ở cùng mức làm mờ</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image100.png" alt="Kết quả Gaussian low-pass với nhiều cutoff" style="max-height:343px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Cutoff nhỏ làm mất nhiều chi tiết; cutoff lớn giữ ảnh gần bản gốc hơn.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Chọn low-pass theo đánh đổi cần thiết</h2>
+          <table style="width:100%; border-collapse:collapse; text-align:left;">
+            <thead>
+              <tr style="background:#F7EFE6;">
+                <th style="border:1px solid #ccc; padding:8px;">Filter</th>
+                <th style="border:1px solid #ccc; padding:8px;">Chuyển tiếp</th>
+                <th style="border:1px solid #ccc; padding:8px;">Ringing</th>
+                <th style="border:1px solid #ccc; padding:8px;">Khi phù hợp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="border:1px solid #ccc; padding:8px;"><strong>Ideal</strong></td><td style="border:1px solid #ccc; padding:8px;">Đột ngột</td><td style="border:1px solid #ccc; padding:8px;">Mạnh</td><td style="border:1px solid #ccc; padding:8px;">Minh họa lý thuyết</td></tr>
+              <tr><td style="border:1px solid #ccc; padding:8px;"><strong>Butterworth</strong></td><td style="border:1px solid #ccc; padding:8px;">Điều chỉnh bằng \(n\)</td><td style="border:1px solid #ccc; padding:8px;">Vừa</td><td style="border:1px solid #ccc; padding:8px;">Cần kiểm soát độ dốc</td></tr>
+              <tr><td style="border:1px solid #ccc; padding:8px;"><strong>Gaussian</strong></td><td style="border:1px solid #ccc; padding:8px;">Trơn</td><td style="border:1px solid #ccc; padding:8px;">Rất ít</td><td style="border:1px solid #ccc; padding:8px;">Làm mượt tự nhiên</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section style="font-size:0.8em;">
+          <h2>High-pass giữ thay đổi nhanh và loại nền chậm</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center;">
+            <div>
+              <ul>
+                <li>Chặn vùng gần tâm phổ.</li>
+                <li>Làm nổi cạnh, texture và chi tiết nhỏ.</li>
+                <li>Giá trị DC bị loại nên ảnh thường tối.</li>
+              </ul>
+            </div>
+            <div class="text-center">
+              <img src="img/week9/notebook/cell-42-output-1.png" alt="Mặt nạ ideal high-pass, phổ và ảnh kết quả" style="max-height:308px; max-width:100%; object-fit:contain;" />
+            </div>
+          </div>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>High-pass là phần bù của low-pass</h2>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:9px 12px; border-radius:8px;">
+              <strong>Ideal</strong>
+              <p style="font-size:0.9em;">\[H_{HP}=1-H_{ILP}\]</p>
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:9px 12px; border-radius:8px;">
+              <strong>Butterworth</strong>
+              <p style="font-size:0.86em;">\[H_{HP}=\frac{1}{1+(D_0/D)^{2n}}\]</p>
+            </div>
+            <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; padding:9px 12px; border-radius:8px;">
+              <strong>Gaussian</strong>
+              <p style="font-size:0.86em;">\[H_{HP}=1-e^{-D^2/(2D_0^2)}\]</p>
+            </div>
+          </div>
+          <p class="caption">Ba họ filter giữ cùng ý tưởng, chỉ khác cách chuyển từ vùng chặn sang vùng cho qua.</p>
+        </section>
+
+        <section style="font-size:0.7em;">
+          <h2>Notebook: Ideal và Butterworth high-pass</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/notebook/cell-42-output-1.png" alt="Ideal high-pass" style="width:100%; max-height:308px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-46-output-1.png" alt="Butterworth high-pass" style="width:100%; max-height:308px; object-fit:contain;" />
+          </div>
+          <p class="caption">Ideal tạo chuyển tiếp gắt; Butterworth làm mềm mặt nạ và đáp ứng cạnh.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Notebook: Gaussian high-pass cho chuyển tiếp mềm</h2>
+          <div class="text-center">
+            <img src="img/week9/notebook/cell-50-output-1.png" alt="Gaussian high-pass" style="max-height:350px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Gaussian không có biên cutoff đột ngột nên đáp ứng ít ringing hơn.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>High-pass làm nổi cạnh ở nhiều kích thước</h2>
+          <div class="text-center">
+            <img src="img/week9/source/image108.png" alt="Kết quả Ideal, Gaussian và Butterworth high-pass tại hai cutoff" style="max-height:350px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Cutoff lớn chỉ giữ các biến thiên nhanh hơn, nên ảnh cạnh thưa và tối hơn.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Radius nhỏ và vừa giữ lượng chi tiết khác nhau</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/notebook/cell-53-output-1.png" alt="High-pass trên ảnh highfreq với radius 30" style="width:100%; max-height:308px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-54-output-1.png" alt="High-pass trên ảnh highfreq với radius 400" style="width:100%; max-height:308px; object-fit:contain;" />
+          </div>
+          <p class="caption">Tăng bán kính vùng chặn làm mất dần các tần số thấp và trung bình.</p>
+        </section>
+
+        <section style="font-size:0.72em;">
+          <h2>Radius quá lớn chỉ còn lại vân tần số rất cao</h2>
+          <div class="text-center">
+            <img src="img/week9/notebook/cell-55-output-1.png" alt="High-pass trên ảnh highfreq với radius 6000" style="max-height:350px; max-width:100%; object-fit:contain;" />
+          </div>
+          <p class="caption">Khi vùng chặn phủ gần hết phổ, chỉ những thành phần xa tâm nhất còn lại.</p>
+        </section>
+
+        <section style="font-size:0.68em;">
+          <h2>Ảnh ít chi tiết phản ứng khác với cùng high-pass</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <img src="img/week9/notebook/cell-56-output-1.png" alt="High-pass trên ảnh lowfreq với radius 30" style="width:100%; max-height:294px; object-fit:contain;" />
+            <img src="img/week9/notebook/cell-57-output-1.png" alt="High-pass trên ảnh lowfreq với radius 400" style="width:100%; max-height:294px; object-fit:contain;" />
+          </div>
+          <p class="caption">Khi ảnh chủ yếu chứa tần số thấp, chặn rộng có thể loại gần như toàn bộ nội dung.</p>
+        </section>
+      </section>
+
+      <!-- ============================ PHAN 5 ============================ -->
+      <section>
+        <section>
+          <h1><span class="text-light">5.</span><br />Thực hành với notebook</h1>
+          <p>Tính phổ.<br />Tạo mask.<br />Biến đổi ngược và giải thích kết quả.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Tính và hiển thị phổ biên độ</h2>
+          <pre><code class="language-python" data-trim>def get_spectrum(image):
+    dft = cv2.dft(np.float32(image),
+                  flags=cv2.DFT_COMPLEX_OUTPUT)
+    dft_shift = np.fft.fftshift(dft)
+    magnitude = cv2.magnitude(
+        dft_shift[:, :, 0], dft_shift[:, :, 1]
+    )
+    return 20 * np.log(magnitude + 1)
+
+image = cv2.imread("example.jpg", 0)
+plt.imshow(get_spectrum(image), cmap="gray")</code></pre>
+          <p class="caption">Log transform nén dải động để các thành phần yếu vẫn nhìn thấy được.</p>
+        </section>
+
+        <section style="font-size:0.62em;">
+          <h2>Áp mask và biến đổi ngược</h2>
+          <pre><code class="language-python" data-trim>def apply_filter(mask, dft_shift):
+    filtered = dft_shift * mask
+    filtered = np.fft.ifftshift(filtered)
+    image_back = cv2.idft(filtered)
+    image_back = cv2.magnitude(
+        image_back[:, :, 0], image_back[:, :, 1]
+    )
+    return image_back
+
+mask = gaussianLP(30, image.shape)
+mask = np.dstack([mask, mask])
+result = apply_filter(mask, dft_shift)</code></pre>
+          <p class="caption">Mask phải có hai kênh để nhân với phần thực và phần ảo của phổ OpenCV.</p>
+        </section>
+
+        <section style="font-size:0.69em;">
+          <h2>Bài thực hành trên lớp</h2>
+          <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+            <strong style="color:#0d47a1;">A. Đọc phổ</strong> - Chạy toàn bộ ảnh trong <span class="inline-code">fourier_test_imgs</span>; ghi lại hướng và khoảng cách của vùng sáng.
+          </div>
+          <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+            <strong style="color:#1b5e20;">B. So sánh low-pass</strong> - Cùng \(D_0\), so Ideal, Butterworth \(n=1,3,10\) và Gaussian.
+          </div>
+          <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+            <strong style="color:#e65100;">C. High-pass</strong> - Thử nhiều radius trên <span class="inline-code">highfreq.png</span> và <span class="inline-code">lowfreq.png</span>.
+          </div>
+          <div style="background:#f3e5f5; border-left:5px solid #7b1fa2; padding:8px 12px; border-radius:8px;">
+            <strong style="color:#6a1b9a;">D. Giải thích</strong> - Không chỉ báo ảnh đẹp/xấu; liên hệ kết quả với vùng phổ đã giữ hoặc loại.
+          </div>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Quay lại câu hỏi xuyên suốt</h2>
+          <div class="question-box">
+            <div class="question-title">Một ảnh được tách theo tần số như thế nào?</div>
+            <p style="margin:0;">DFT biểu diễn ảnh bằng các dao động 2D. Vị trí trong phổ cho biết tần số và hướng; magnitude cho biết mức đóng góp; phase giữ quan hệ vị trí.</p>
+          </div>
+          <ul style="margin-top:0.7em;">
+            <li>Low-pass giữ cấu trúc lớn và vùng trơn.</li>
+            <li>High-pass giữ cạnh, texture và chi tiết nhỏ.</li>
+            <li>Hình dạng cutoff quyết định ringing và độ mềm của kết quả.</li>
+          </ul>
+        </section>
+
+        <section style="font-size:0.76em;">
+          <h2>Tự kiểm tra</h2>
+          <ol>
+            <li>Trong phổ đã <span class="inline-code">fftshift</span>, tần số thấp nằm ở đâu?</li>
+            <li>Vì sao vân dọc tạo điểm sáng theo trục ngang?</li>
+            <li>Magnitude và phase mang thông tin khác nhau thế nào?</li>
+            <li>Định lý convolution giúp lọc miền tần số ra sao?</li>
+            <li>Vì sao Ideal low-pass gây ringing?</li>
+            <li>Tham số \(n\) của Butterworth thay đổi điều gì?</li>
+          </ol>
+        </section>
+
+        <section style="font-size:0.69em;">
+          <h2>Bài thực hành ở nhà</h2>
+          <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+            <strong style="color:#0d47a1;">1. Frequency quiz</strong> - Tạo 6 ảnh vân với ba hướng và hai tần số; dự đoán phổ trước khi chạy DFT.
+          </div>
+          <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:8px 12px; border-radius:8px; margin-bottom:8px;">
+            <strong style="color:#1b5e20;">2. Filter comparison</strong> - Lập bảng PSNR hoặc sai số tái tạo cho ba low-pass filters ở ba cutoff.
+          </div>
+          <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:8px 12px; border-radius:8px;">
+            <strong style="color:#e65100;">3. Ringing</strong> - Chọn ảnh có cạnh sắc; đo profile cường độ qua cạnh sau Ideal, Butterworth và Gaussian.
+          </div>
+        </section>
+
+        <section style="font-size:0.64em;">
+          <h2>Tài liệu và mã nguồn trong bài gốc</h2>
+          <ul>
+            <li>R. C. Gonzalez & R. E. Woods, <em>Digital Image Processing</em>: DFT, low-pass/high-pass filters và các hình so sánh.</li>
+            <li>A. Efros, slides về frequency spectra và biểu diễn tín hiệu bằng harmonic.</li>
+            <li>Jake VanderPlas, <em>Understanding the FFT Algorithm</em>: https://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/</li>
+            <li>ActiveState recipe, <em>Discrete Fourier Transform</em>: http://code.activestate.com/recipes/578994-discrete-fourier-transform/</li>
+            <li>Notebook week 9: <span class="inline-code">Fourier transform.ipynb</span>, ảnh pattern, quiz và ví dụ frequency filtering.</li>
+          </ul>
+        </section>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    Xử lý và Phân tích Hình ảnh (Học kỳ 2 2025-2026) · Biến đổi Fourier và lọc trong miền tần số
+  </div>
+
+  <script src="revealjs/dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      controlsLayout: "edges",
+      slideNumber: true,
+      hashOneBasedIndex: true,
+      hash: true,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+    });
+  </script>
+</body>
+
+</html>
