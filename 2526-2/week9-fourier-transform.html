@@ -268,6 +268,48 @@
           <p class="caption">Nếu không sửa phổ, IDFT khôi phục tín hiệu ban đầu trong sai số số học.</p>
         </section>
 
+        <section style="font-size:0.68em;">
+          <h2>Ví dụ tính tay: DFT của 4 mẫu</h2>
+          <p>Cho tín hiệu \(x=[1,2,1,0]\), \(N=4\). Đặt \(W_4=e^{-i2\pi/4}=-i\):</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start;">
+            <div style="background:#e3f2fd; border-left:5px solid #1565c0; padding:10px 15px; border-radius:8px;">
+              <strong style="color:#0d47a1;">Thay vào công thức</strong>
+              <p style="text-align:center; margin:0.35em 0;">\[X_k=1+2W_4^k+W_4^{2k}\]</p>
+              <p style="margin:0.25em 0;">\(X_0=1+2+1=4\)</p>
+              <p style="margin:0.25em 0; white-space:nowrap;">\(X_1=1+2(-i)-1=-2i\)</p>
+            </div>
+            <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:10px 15px; border-radius:8px;">
+              <strong style="color:#e65100;">Tính các hệ số còn lại</strong>
+              <p style="margin:0.65em 0 0.25em;">\(X_2=1-2+1=0\)</p>
+              <p style="margin:0.25em 0;">\(X_3=1+2i-1=2i\)</p>
+            </div>
+          </div>
+          <div style="background:#F7EFE6; border:3px solid #B15A2B; border-radius:8px; padding:10px 16px; margin-top:0.55em; text-align:center;">
+            <strong style="color:#B15A2B; margin-right:1em;">Kết quả DFT</strong>
+            <span style="font-size:1.08em;">\(X=[4,\,-2i,\,0,\,2i]\)</span>
+          </div>
+          <p class="caption" style="margin-top:0.5em;">\(X_0=4\) là thành phần DC; cặp \(X_1\) và \(X_3\) liên hợp phức vì tín hiệu đầu vào là số thực.</p>
+        </section>
+
+        <section style="font-size:0.66em;">
+          <h2>Ví dụ tính tay: IDFT khôi phục từng mẫu</h2>
+          <p>Với \(X=[4,-2i,0,2i]\), dùng \(x_n=\frac{1}{4}\sum_{k=0}^{3}X_k e^{i2\pi kn/4}\):</p>
+          <table style="width:100%; font-size:0.92em; margin-top:0.35em;">
+            <thead>
+              <tr><th style="width:13%;">Mẫu</th><th>Phép tính IDFT</th><th style="width:16%;">Kết quả</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="white-space:nowrap;">\(n=0\)</td><td>\(\frac14[4-2i+0+2i]\)</td><td>\(x_0=1\)</td></tr>
+              <tr><td style="white-space:nowrap;">\(n=1\)</td><td>\(\frac14[4+(-2i)i+(2i)(-i)]\)</td><td>\(x_1=2\)</td></tr>
+              <tr><td style="white-space:nowrap;">\(n=2\)</td><td>\(\frac14[4+(-2i)(-1)+(2i)(-1)]\)</td><td>\(x_2=1\)</td></tr>
+              <tr><td style="white-space:nowrap;">\(n=3\)</td><td>\(\frac14[4+(-2i)(-i)+(2i)i]\)</td><td>\(x_3=0\)</td></tr>
+            </tbody>
+          </table>
+          <div style="background:#e8f5e9; border-left:5px solid #2e7d32; padding:9px 15px; border-radius:8px; margin-top:0.5em; text-align:center;">
+            <strong style="color:#1b5e20;">IDFT\([4,-2i,0,2i]\) \(=[1,2,1,0]\): tín hiệu ban đầu được khôi phục chính xác.</strong>
+          </div>
+        </section>
+
         <section style="font-size:0.82em;">
           <h2>Mỗi hệ số phức có biên độ và pha</h2>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
