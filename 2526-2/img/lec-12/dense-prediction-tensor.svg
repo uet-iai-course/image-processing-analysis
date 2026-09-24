@@ -1,53 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="Từ ảnh sang ten-xơ điểm logit theo điểm ảnh">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="590" viewBox="0 0 1200 590" role="img" aria-label="Từ ảnh sang ten-xơ điểm logit theo điểm ảnh">
   <defs>
-    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10 Z" fill="#555"/>
-    </marker>
+    <marker id="dense-arrow" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0 0 L12 6 L0 12 Z" fill="#555"/></marker>
     <style>
-      .t{font:700 27px Arial,sans-serif;fill:#263238}
-      .l{font:700 20px Arial,sans-serif;fill:#263238}
-      .s{font:17px Arial,sans-serif;fill:#455a64}
-      .eq{font:20px Arial,sans-serif;fill:#263238}
+      .dense-title{font:700 34px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .dense-label{font:700 32px Arial,sans-serif;fill:#263238;text-anchor:middle}
+      .dense-text{font:30px Arial,sans-serif;fill:#455a64;text-anchor:middle}
+      .dense-arrow{fill:none;stroke:#555;stroke-width:4;marker-end:url(#dense-arrow)}
     </style>
+    <pattern id="dense-grid" width="30" height="40" patternUnits="userSpaceOnUse"><path d="M30 0 H0 V40" fill="none" stroke="#607d8b" stroke-width="1.5"/></pattern>
   </defs>
-  <text x="600" y="42" text-anchor="middle" class="t">Dự đoán dày đặc: mỗi điểm ảnh cần một phân phối lớp</text>
-
-  <g transform="translate(50 96)">
-    <rect x="0" y="0" width="230" height="230" rx="12" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
-    <path d="M0 150 C44 115 83 135 120 94 C158 53 198 70 230 46 L230 230 L0 230 Z" fill="#c8e6c9"/>
-    <circle cx="92" cy="122" r="34" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
-    <ellipse cx="160" cy="120" rx="28" ry="44" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
-    <text x="115" y="275" text-anchor="middle" class="l">Ảnh đầu vào</text>
-    <text x="115" y="302" text-anchor="middle" class="s">3 × H × W</text>
+  <text class="dense-title" x="600" y="45">Phân phối lớp tại mỗi điểm ảnh</text>
+  <g>
+    <rect x="40" y="130" width="240" height="220" rx="12" fill="#e3f2fd" stroke="#90a4ae" stroke-width="2"/>
+    <path d="M40 265 C95 215 130 250 180 195 C220 160 248 175 280 165 L280 350 H40 Z" fill="#c8e6c9"/>
+    <circle cx="115" cy="245" r="36" fill="#ffcc80" stroke="#ef6c00" stroke-width="3"/>
+    <ellipse cx="210" cy="240" rx="30" ry="48" fill="#bbdefb" stroke="#1565c0" stroke-width="3"/>
+    <text class="dense-label" x="160" y="402">Ảnh đầu vào</text>
+    <text class="dense-text" x="160" y="445">3 × H × W</text>
   </g>
-
-  <path d="M310 210 L390 210" stroke="#555" stroke-width="4" marker-end="url(#arr)"/>
-  <g transform="translate(410 112)">
-    <rect x="0" y="24" width="78" height="190" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-    <rect x="98" y="54" width="70" height="130" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-    <rect x="188" y="82" width="58" height="74" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
-    <text x="123" y="275" text-anchor="middle" class="l">Bộ mã hóa</text>
-    <text x="123" y="302" text-anchor="middle" class="s">giảm H, W; tăng ngữ nghĩa</text>
+  <path class="dense-arrow" d="M298 240 H380"/>
+  <g>
+    <rect x="398" y="130" width="78" height="220" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <rect x="506" y="165" width="70" height="150" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <rect x="606" y="200" width="58" height="80" rx="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+    <text class="dense-label" x="530" y="402">Bộ mã hóa</text>
+    <text class="dense-text" x="530" y="445">giảm H, W</text>
   </g>
-
-  <path d="M685 210 L765 210" stroke="#555" stroke-width="4" marker-end="url(#arr)"/>
-  <g transform="translate(790 96)">
-    <rect x="0" y="0" width="230" height="230" rx="12" fill="#f7f7f7" stroke="#78909c" stroke-width="2"/>
-    <g transform="translate(42 44)">
-      <rect x="0" y="0" width="128" height="128" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
-      <rect x="18" y="-16" width="128" height="128" fill="#fff3e0" stroke="#ef6c00" stroke-width="3" opacity="0.86"/>
-      <rect x="36" y="-32" width="128" height="128" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3" opacity="0.86"/>
-      <text x="170" y="0" class="s">lớp 1</text>
-      <text x="188" y="28" class="s">lớp 2</text>
-      <text x="205" y="56" class="s">...</text>
-      <text x="214" y="84" class="s">lớp C</text>
-    </g>
-    <text x="115" y="275" text-anchor="middle" class="l">Điểm logit theo điểm ảnh</text>
-    <text x="115" y="302" text-anchor="middle" class="s">C × H × W</text>
+  <path class="dense-arrow" d="M682 240 H768"/>
+  <g>
+    <text class="dense-text" x="833" y="112">lớp 1</text>
+    <text class="dense-text" x="941" y="112">lớp 2</text>
+    <text class="dense-text" x="1115" y="112">lớp C</text>
+    <rect x="788" y="130" width="90" height="220" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+    <rect x="896" y="130" width="90" height="220" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/>
+    <rect x="1070" y="130" width="90" height="220" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3"/>
+    <rect x="788" y="130" width="90" height="220" fill="url(#dense-grid)"/>
+    <rect x="896" y="130" width="90" height="220" fill="url(#dense-grid)"/>
+    <rect x="1070" y="130" width="90" height="220" fill="url(#dense-grid)"/>
+    <text class="dense-text" x="1028" y="250">…</text>
+    <text class="dense-label" x="977" y="402">Logit theo điểm ảnh</text>
+    <text class="dense-text" x="977" y="445">C × H × W</text>
   </g>
-
-  <g transform="translate(210 420)">
-    <rect x="0" y="0" width="780" height="54" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
-    <text x="390" y="35" text-anchor="middle" class="eq">softmax theo chiều lớp: p(y=c | điểm ảnh i) = exp zᵢ,c / Σₖ exp zᵢ,k</text>
-  </g>
+  <rect x="30" y="480" width="1140" height="90" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text class="dense-label" x="600" y="516">Softmax theo chiều lớp</text>
+  <text class="dense-text" x="600" y="555">p(y = c | điểm ảnh i) = exp(zᵢ,c) / Σₖ exp(zᵢ,k)</text>
 </svg>
