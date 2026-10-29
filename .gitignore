@@ -19,3 +19,9 @@ temp-*.html
 !2526-2/img/week9/**
 2526-2/index-pages.css
 apple-touch-icon.png
+
+# Workspace tooling and environments live outside this repo (../tools, ../.venv).
+.venv/
+node_modules/
+openrouter-mcp/
+codex-orchestrator
